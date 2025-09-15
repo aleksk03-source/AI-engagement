@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Oracle - AI Predictions</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@100;300;500;700&display=swap');
+
+        :root {
+            --neon-cyan: #00ffff;
+            --neon-pink: #ff00ff;
+            --neon-yellow: #ffff00;
+            --neon-green: #00ff00;
+            --electric-blue: #0080ff;
+            --deep-purple: #4000ff;
+            --dark-bg: #0a0015;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        /* Кастомный курсор */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s ease;
+            mix-blend-mode: screen;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.3s ease;
+            opacity: 0.3;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(to bottom, #0a0015 0%, #1a0f3a 30%, #2d1b69 60%, #3f2b84 80%, #6b46c1 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Космические световые волны */
+        .cosmic-waves {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(0, 255, 255, 0.1) 40%, 
+                rgba(255, 0, 255, 0.1) 50%, 
+                rgba(0, 255, 255, 0.1) 60%, 
+                transparent 70%);
+            animation: waveFlow 15s linear infinite;
+            transform: rotate(-45deg);
+        }
+
+        .wave:nth-child(2) {
+            animation-delay: -5s;
+            opacity: 0.5;
+            animation-duration: 20s;
+        }
+
+        .wave:nth-child(3) {
+            animation-delay: -10s;
+            opacity: 0.3;
+            animation-duration: 25s;
+        }
+
+        @keyframes waveFlow {
+            0% { transform: rotate(-45deg) translateY(0); }
+            100% { transform: rotate(-45deg) translateY(-50%); }
+        }
+
+        /* Звезды */
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Модальное окно Pastebin */
+        .pastebin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 0, 21, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            transition: opacity 0.5s ease;
+        }
+
+        .pastebin-modal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(30, 10, 60, 0.9), rgba(60, 20, 100, 0.9));
+            border: 2px solid var(--neon-cyan);
+            border-radius: 30px;
+            padding: 50px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 
+                0 0 100px rgba(0, 255, 255, 0.5),
+                inset 0 0 50px rgba(0, 255, 255, 0.1);
+            animation: modalAppear 0.5s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                transform: scale(0.8) translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .modal-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            letter-spacing: 0.1em;
+        }
+
+        .pastebin-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(0, 10, 20, 0.5);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 15px;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Exo 2', sans-serif;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            cursor: text;
+        }
+
+        .pastebin-input:focus {
+            outline: none;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            background: rgba(0, 10, 20, 0.8);
+        }
+
+        .input-hint {
+            font-size: 0.8rem;
+            color: rgba(0, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--electric-blue));
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .modal-btn.secondary {
+            background: linear-gradient(45deg, #333, #555);
+        }
+
+        /* Главный контейнер */
+        .hologram-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        /* Левая панель */
+        .data-panel {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            animation: slideInLeft 1s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .data-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+        }
+
+        .data-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--neon-cyan);
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .data-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mini-chart {
+            height: 60px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            margin-top: 15px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--neon-cyan), var(--electric-blue));
+            border-radius: 2px;
+            opacity: 0.8;
+            transition: height 0.3s ease;
+        }
+
+        /* Центральная область */
+        .central-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Заголовок */
+        .main-header {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 200;
+        }
+
+        .logo-container {
+            display: inline-block;
+            padding: 10px;
+            background: linear-gradient(135deg, var(--glass), transparent);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            display: block;
+        }
+
+        .logo-placeholder {
+            padding: 8px 20px;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .main-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 0.1em;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .main-title .word1 {
+            background: linear-gradient(45deg, var(--text-primary), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-title .word2 {
+            background: linear-gradient(45deg, var(--neon-pink), var(--deep-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 20px var(--neon-cyan);
+            font-weight: 500;
+        }
+
+        /* Камера */
+        .hologram-display {
+            width: 800px;
+            height: 450px; /* 16:9 */
+            position: relative;
+            transform-style: preserve-3d;
+            animation: hologramFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes hologramFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hologram-frame {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(135deg, var(--glass), transparent);
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow), var(--neon-green));
+            border-image-slice: 1;
+            border-radius: 30px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 100px rgba(0, 255, 255, 0.3);
+            transition: all 0.5s ease;
+        }
+
+        .hologram-frame.dimmed {
+            filter: brightness(0.3);
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            opacity: 0.9;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+            pointer-events: none;
+        }
+
+        /* Приглашение */
+        .camera-invitation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 300;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .camera-invitation.hidden {
+            opacity: 0;
+        }
+
+        .invitation-main {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px var(--neon-cyan);
+            animation: invitePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes invitePulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Таймер авторежима */
+        .auto-timer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 10, 20, 0.9);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-size: 0.9rem;
+            color: var(--neon-cyan);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            z-index: 250;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .auto-timer.show {
+            opacity: 1;
+        }
+
+        /* Предсказание */
+        .prediction-display {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 900px;
+            padding: 40px;
+            background: linear-gradient(135deg, 
+                rgba(0, 10, 20, 0.98),
+                rgba(10, 0, 20, 0.98)
+            );
+            border: 2px solid var(--neon-cyan);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: translateX(-50%) translateY(50px);
+            transition: all 0.5s ease;
+            z-index: 300;
+            box-shadow: 0 0 100px rgba(0, 255, 255, 0.5);
+        }
+
+        .prediction-display.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .prediction-display.auto-mode {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .prediction-text {
+            font-size: 2.2rem;
+            line-height: 1.6;
+            text-align: center;
+            font-weight: 400;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            letter-spacing: 0.02em;
+        }
+
+        /* Правая панель */
+        .status-panel {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            animation: slideInRight 1s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Радар */
+        .radar-container {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            height: 250px;
+        }
+
+        .radar {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid var(--neon-green);
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                rgba(0, 255, 0, 0.3) 45deg,
+                transparent 90deg
+            );
+            transform: translate(-50%, -50%);
+            animation: radarSweep 4s linear infinite;
+        }
+
+        @keyframes radarSweep {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Индикаторы */
+        .status-indicators {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .indicator {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .indicator-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+            margin-bottom: 5px;
+        }
+
+        .indicator-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-cyan);
+        }
+
+        /* Countdown */
+        .countdown-huge {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 200px;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 50px currentColor;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .countdown-huge.show {
+            animation: countdownZoom 1s ease-out;
+        }
+
+        @keyframes countdownZoom {
+            0% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% { 
+                opacity: 1;
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(2);
+            }
+        }
+
+        /* Кнопки управления */
+        .control-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: rgba(0, 10, 20, 0.8);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 20px;
+            color: var(--neon-cyan);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1400px) {
+            .data-panel, .status-panel { flex: 0 0 250px; }
+            .hologram-display { width: 640px; height: 360px; }
+        }
+
+        @media (max-width: 1200px) {
+            .data-panel { display: none; }
+            .status-panel { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кастомный курсор -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <!-- Космический фон -->
+    <div class="cosmic-waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    
+    <!-- Звезды -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Модальное окно Pastebin -->
+    <div class="pastebin-modal" id="pastebinModal">
+        <div class="modal-content">
+            <h2 class="modal-title">NEURAL ORACLE</h2>
+            <p class="modal-subtitle">Введите ссылку на Pastebin с предсказаниями</p>
+            <input 
+                type="text" 
+                class="pastebin-input" 
+                id="pastebinInput" 
+                placeholder="https://pastebin.com/raw/XXXXXX"
+                value=""
+            >
+            <p class="input-hint">Формат: RAW ссылка с Pastebin</p>
+            <div class="modal-buttons">
+                <button class="modal-btn" onclick="loadPredictions()">ЗАПУСК ОРАКУЛА</button>
+                <button class="modal-btn secondary" onclick="useDefault()">БЕЗ ССЫЛКИ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Главный контейнер -->
+    <div class="hologram-container">
+        <!-- Левая панель -->
+        <div class="data-panel">
+            <div class="data-card">
+                <div class="data-label">AI мощность</div>
+                <div class="data-value" id="aiPower">98%</div>
+                <div class="mini-chart" id="miniChart">
+                    <div class="chart-bar" style="height: 40%"></div>
+                    <div class="chart-bar" style="height: 60%"></div>
+                    <div class="chart-bar" style="height: 45%"></div>
+                    <div class="chart-bar" style="height: 80%"></div>
+                    <div class="chart-bar" style="height: 95%"></div>
+                    <div class="chart-bar" style="height: 70%"></div>
+                    <div class="chart-bar" style="height: 85%"></div>
+                </div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label">Нейросеть</div>
+                <div class="data-value">ON</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label">Точность</div>
+                <div class="data-value">∞</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label">Квантовый процессор</div>
+                <div class="data-value" id="quantumProcessor">42</div>
+            </div>
+        </div>
+
+        <!-- Центральная область -->
+        <div class="central-area">
+            <!-- Заголовок -->
+            <div class="main-header">
+                <div class="logo-container">
+                    <!-- Замените на ваше лого: <img src="logo.png" alt="Logo"> -->
+                    <div class="logo-placeholder">[ YOUR LOGO ]</div>
+                </div>
+                <h1 class="main-title">
+                    <span class="word1">NEURAL</span>
+                    <span class="word2">ORACLE</span>
+                </h1>
+                <p class="tagline">Предсказания из будущего</p>
+            </div>
+
+            <!-- Камера -->
+            <div class="hologram-display">
+                <div class="hologram-frame" id="hologramFrame">
+                    <video id="video" autoplay muted playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    
+                    <!-- Приглашение -->
+                    <div class="camera-invitation" id="cameraInvitation">
+                        <div class="invitation-main">Посмотри в камеру</div>
+                        <div class="invitation-sub">для предсказания</div>
+                    </div>
+                    
+                    <!-- Таймер авторежима -->
+                    <div class="auto-timer" id="autoTimer">
+                        Авторежим через <span id="timerCount">5</span> сек
+                    </div>
+                </div>
+            </div>
+
+            <!-- Предсказание -->
+            <div class="prediction-display" id="predictionDisplay">
+                <p class="prediction-text" id="predictionText"></p>
+            </div>
+        </div>
+
+        <!-- Правая панель -->
+        <div class="status-panel">
+            <div class="radar-container">
+                <div class="data-label">Сканирование</div>
+                <div class="radar"></div>
+            </div>
+
+            <div class="status-indicators">
+                <div class="indicator">
+                    <div class="indicator-label">Статус</div>
+                    <div class="indicator-value" id="status">ON</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-label">Память</div>
+                    <div class="indicator-value" id="memory">8GB</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-label">Энергия</div>
+                    <div class="indicator-value">∞</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-label">Связь</div>
+                    <div class="indicator-value">5G</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопки управления -->
+    <div class="control-buttons">
+        <button class="control-btn" onclick="changePredictions()">Сменить набор</button>
+        <button class="control-btn" onclick="shareLink()">Поделиться</button>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown-huge" id="countdown"></div>
+
+    <!-- Face-API -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
+
+    <script>
+        // Глобальные переменные
+        let PREDICTIONS = {
+            individual: [
+                "Квантовый процессор выбрал для вас путь к технологическому просветлению",
+                "Нейросеть предвидит прорыв в вашем следующем проекте",
+                "Алгоритмы судьбы указывают на встречу с революционной технологией",
+                "Искусственный интеллект видит в вашем коде зачатки гениальности",
+                "Матрица возможностей открывает портал к инновациям",
+                "Ваша цифровая аура резонирует с частотой успеха",
+                "Блокчейн судьбы записал ваше имя в историю технологий",
+                "Квантовая запутанность связывает вас с прорывными идеями",
+                "Нейронные связи предсказывают экспоненциальный рост навыков",
+                "Голограмма будущего показывает вас лидером инноваций",
+                "Код вселенной раскрывает секреты оптимизации",
+                "Виртуальная реальность станет вашей новой playground",
+                "Машинное обучение выберет вас своим проводником",
+                "Криптографическая удача зашифрована в вашей ДНК",
+                "Облачные вычисления поднимут ваши проекты на новую высоту"
+            ],
+            group: [
+                "Ваша команда создаст революционный AI-продукт, который изменит индустрию",
+                "Совместный код-ревью принесет прорывные идеи и новые подходы",
+                "Групповой брейншторм откроет неожиданные горизонты развития",
+                "Ваш следующий парный programming будет легендарным",
+                "Команда достигнет квантового превосходства в решении задач",
+                "Синергия вашей группы породит инновационный стартап",
+                "Коллективный разум найдет решение невозможной задачи",
+                "Ваша команда получит признание на международном уровне",
+                "Совместный проект станет бенчмарком для всей индустрии",
+                "Групповая динамика приведет к технологическому прорыву",
+                "Ваш коллектив создаст новый стандарт разработки",
+                "Командная работа принесет неожиданные дивиденды",
+                "Вместе вы покорите вершины технологического Олимпа",
+                "Групповая карма настроена на максимальный успех",
+                "Ваша команда станет легендой в мире разработки"
+            ]
+        };
+
+        let pastebinUrl = '';
+
+        // Кастомный курсор
+        const cursor = document.getElementById('cursor');
+        const cursorFollower = document.getElementById('cursorFollower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX - 20 + 'px';
+                cursorFollower.style.top = e.clientY - 20 + 'px';
+            }, 100);
+        });
+
+        // Создание звезд
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Загрузка предсказаний из Pastebin
+        async function loadPredictions() {
+            const input = document.getElementById('pastebinInput').value.trim();
+            
+            if (!input) {
+                alert('Пожалуйста, введите ссылку на Pastebin');
+                return;
+            }
+
+            // Преобразование в raw ссылку
+            let rawUrl = input;
+            if (input.includes('pastebin.com/') && !input.includes('/raw/')) {
+                const id = input.split('/').pop();
+                rawUrl = `https://pastebin.com/raw/${id}`;
+            }
+
+            try {
+                const response = await fetch(rawUrl);
+                if (!response.ok) throw new Error('Не удалось загрузить');
+                
+                const text = await response.text();
+                parsePredictions(text);
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('pastebinUrl', rawUrl);
+                pastebinUrl = rawUrl;
+                
+                // Скрываем модальное окно
+                document.getElementById('pastebinModal').classList.add('hidden');
+                
+                // Запускаем приложение
+                initApp();
+            } catch (error) {
+                alert('Ошибка загрузки предсказаний. Проверьте ссылку.');
+                console.error(error);
+            }
+        }
+
+        // Парсинг предсказаний
+        function parsePredictions(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            let currentSection = '';
+            
+            PREDICTIONS.individual = [];
+            PREDICTIONS.group = [];
+            
+            lines.forEach(line => {
+                if (line.includes('=== INDIVIDUAL ===') || line.includes('INDIVIDUAL')) {
+                    currentSection = 'individual';
+                } else if (line.includes('=== GROUP ===') || line.includes('GROUP')) {
+                    currentSection = 'group';
+                } else if (currentSection && line.trim()) {
+                    PREDICTIONS[currentSection].push(line.trim());
+                }
+            });
+        }
+
+        // Использовать стандартные предсказания
+        function useDefault() {
+            document.getElementById('pastebinModal').classList.add('hidden');
+            initApp();
+        }
+
+        // Сменить набор предсказаний
+        function changePredictions() {
+            document.getElementById('pastebinModal').classList.remove('hidden');
+        }
+
+        // Поделиться ссылкой
+        function shareLink() {
+            const url = new URL(window.location);
+            if (pastebinUrl) {
+                url.searchParams.set('pastebin', pastebinUrl);
+            }
+            
+            navigator.clipboard.writeText(url.toString()).then(() => {
+                alert('Ссылка скопирована!');
+            });
+        }
+
+        // Обновление данных
+        function updateProcessorLoad() {
+            const processor = document.getElementById('quantumProcessor');
+            const aiPower = document.getElementById('aiPower');
+            const memory = document.getElementById('memory');
+            const chartBars = document.querySelectorAll('.chart-bar');
+            
+            setInterval(() => {
+                const value = Math.floor(20 + Math.random() * 60);
+                processor.textContent = value;
+                processor.style.color = value > 60 ? '#ff00ff' : value > 40 ? '#00ffff' : '#00ff00';
+            }, 2000);
+            
+            setInterval(() => {
+                const value = Math.floor(85 + Math.random() * 15);
+                aiPower.textContent = value + '%';
+            }, 3000);
+            
+            setInterval(() => {
+                const values = ['8GB', '12GB', '16GB', '32GB'];
+                memory.textContent = values[Math.floor(Math.random() * values.length)];
+            }, 5000);
+            
+            setInterval(() => {
+                chartBars.forEach(bar => {
+                    const height = Math.floor(20 + Math.random() * 80);
+                    bar.style.height = height + '%';
+                });
+            }, 1500);
+        }
+
+        // Основной класс приложения
+        class FuturisticOracle {
+            constructor() {
+                this.faceApiLoaded = false;
+                this.lastDetection = 0;
+                this.cooldown = 10000;
+                this.autoTimer = null;
+                this.autoCountdown = 5;
+                this.autoInterval = null;
+                this.autoPredictionInterval = null;
+                this.faceDetected = false;
+                this.isAutoMode = false;
+
+                this.video = document.getElementById('video');
+                this.canvas = document.getElementById('canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.predictionDisplay = document.getElementById('predictionDisplay');
+                this.predictionText = document.getElementById('predictionText');
+                this.countdown = document.getElementById('countdown');
+                this.status = document.getElementById('status');
+                this.cameraInvitation = document.getElementById('cameraInvitation');
+                this.autoTimerEl = document.getElementById('autoTimer');
+                this.timerCount = document.getElementById('timerCount');
+                this.hologramFrame = document.getElementById('hologramFrame');
+
+                this.init();
+            }
+
+            async init() {
+                try {
+                    await this.initCamera();
+                    await this.loadFaceAPI();
+                    this.startDetection();
+                    this.initEffects();
+                    updateProcessorLoad();
+                } catch (error) {
+                    console.error('Ошибка инициализации:', error);
+                    this.status.textContent = 'AUTO';
+                    this.cameraInvitation.querySelector('.invitation-main').textContent = 'Камера недоступна';
+                    this.cameraInvitation.querySelector('.invitation-sub').textContent = 'автоматический режим';
+                    this.startAutoMode();
+                    updateProcessorLoad();
+                }
+            }
+
+            async initCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: 1280, height: 720, facingMode: 'user' }
+                    });
+                    this.video.srcObject = stream;
+                    
+                    return new Promise((resolve) => {
+                        this.video.onloadedmetadata = () => {
+                            this.canvas.width = this.video.videoWidth;
+                            this.canvas.height = this.video.videoHeight;
+                            resolve();
+                        };
+                    });
+                } catch (error) {
+                    console.warn('Камера недоступна');
+                    throw error;
+                }
+            }
+
+            async loadFaceAPI() {
+                try {
+                    if (typeof faceapi === 'undefined') return;
+                    
+                    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
+                    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                    this.faceApiLoaded = true;
+                    console.log('✓ Face-API загружен');
+                } catch (error) {
+                    console.warn('Face-API недоступен');
+                }
+            }
+
+            startDetection() {
+                if (!this.faceApiLoaded) {
+                    this.startAutoMode();
+                    return;
+                }
+                
+                setInterval(() => this.detect(), 200);
+            }
+
+            async detect() {
+                if (!this.faceApiLoaded || !this.video.videoWidth) return;
+
+                try {
+                    const detections = await faceapi.detectAllFaces(
+                        this.video,
+                        new faceapi.TinyFaceDetectorOptions({
+                            inputSize: 416,
+                            scoreThreshold: 0.5
+                        })
+                    );
+
+                    this.drawHologram(detections);
+
+                    if (detections.length > 0) {
+                        if (!this.faceDetected) {
+                            this.faceDetected = true;
+                            this.cameraInvitation.classList.add('hidden');
+                            this.hologramFrame.classList.remove('dimmed');
+                            this.status.textContent = detections.length > 1 ? 'GROUP' : 'SCAN';
+                            this.stopAutoMode();
+                        }
+                        
+                        if (Date.now() - this.lastDetection > this.cooldown) {
+                            this.triggerPrediction(detections.length > 1);
+                            this.lastDetection = Date.now();
+                        }
+                    } else {
+                        if (this.faceDetected) {
+                            this.faceDetected = false;
+                            this.cameraInvitation.classList.remove('hidden');
+                            this.hologramFrame.classList.add('dimmed');
+                            this.status.textContent = 'WAIT';
+                            this.startAutoMode();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка детекции:', error);
+                }
+            }
+
+            drawHologram(detections) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (detections.length === 0) return;
+
+                this.ctx.strokeStyle = '#00ffff';
+                this.ctx.fillStyle = '#00ffff';
+                this.ctx.lineWidth = 2;
+                this.ctx.shadowColor = '#00ffff';
+                this.ctx.shadowBlur = 20;
+
+                detections.forEach(detection => {
+                    const { x, y, width, height } = detection.box;
+                    
+                    for (let i = 0; i < 3; i++) {
+                        this.ctx.globalAlpha = 1 - (i * 0.3);
+                        const offset = i * 5;
+                        
+                        this.ctx.strokeRect(
+                            x - offset,
+                            y - offset,
+                            width + (offset * 2),
+                            height + (offset * 2)
+                        );
+                    }
+                    
+                    this.ctx.globalAlpha = 1;
+                    
+                    const time = Date.now() / 1000;
+                    const scanY = y + (height * ((Math.sin(time * 2) + 1) / 2));
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x - 10, scanY);
+                    this.ctx.lineTo(x + width + 10, scanY);
+                    this.ctx.stroke();
+                    
+                    this.ctx.font = '12px Orbitron';
+                    this.ctx.fillText('ID: ' + Math.random().toString(36).substr(2, 9).toUpperCase(), x, y - 10);
+                    
+                    const match = Math.floor(85 + Math.random() * 15);
+                    this.ctx.fillText('MATCH: ' + match + '%', x, y + height + 20);
+                });
+                
+                this.ctx.shadowBlur = 0;
+            }
+
+            startAutoMode() {
+                if (this.autoInterval) return;
+                
+                this.isAutoMode = true;
+                this.autoCountdown = 5;
+                this.autoTimerEl.classList.add('show');
+                
+                this.autoInterval = setInterval(() => {
+                    this.autoCountdown--;
+                    this.timerCount.textContent = this.autoCountdown;
+                    
+                    if (this.autoCountdown <= 0) {
+                        this.showPrediction(false, true);
+                        this.autoTimerEl.classList.remove('show');
+                        
+                        // В авторежиме обновляем каждые 60 секунд
+                        if (this.autoPredictionInterval) {
+                            clearInterval(this.autoPredictionInterval);
+                        }
+                        
+                        this.autoPredictionInterval = setInterval(() => {
+                            if (this.isAutoMode) {
+                                this.showPrediction(false, true);
+                            }
+                        }, 60000);
+                        
+                        clearInterval(this.autoInterval);
+                        this.autoInterval = null;
+                    }
+                }, 1000);
+            }
+
+            stopAutoMode() {
+                this.isAutoMode = false;
+                
+                if (this.autoInterval) {
+                    clearInterval(this.autoInterval);
+                    this.autoInterval = null;
+                }
+                
+                if (this.autoPredictionInterval) {
+                    clearInterval(this.autoPredictionInterval);
+                    this.autoPredictionInterval = null;
+                }
+                
+                this.autoTimerEl.classList.remove('show');
+                this.predictionDisplay.classList.remove('auto-mode');
+                this.predictionDisplay.classList.remove('show');
+                this.autoCountdown = 5;
+                this.timerCount.textContent = '5';
+            }
+
+            triggerPrediction(isGroup = false) {
+                let count = 3;
+                const showCount = () => {
+                    if (count > 0) {
+                        this.countdown.textContent = count;
+                        this.countdown.classList.add('show');
+                        this.playBeep(800 + (3 - count) * 200);
+                        
+                        setTimeout(() => {
+                            this.countdown.classList.remove('show');
+                            count--;
+                            if (count > 0) {
+                                setTimeout(showCount, 300);
+                            } else {
+                                this.showPrediction(isGroup, false);
+                            }
+                        }, 700);
+                    }
+                };
+                showCount();
+            }
+
+            showPrediction(isGroup = false, isAuto = false) {
+                const predictions = isGroup ? PREDICTIONS.group : PREDICTIONS.individual;
+                const prediction = predictions[Math.floor(Math.random() * predictions.length)];
+                
+                this.predictionText.textContent = prediction;
+                
+                if (isAuto) {
+                    this.predictionDisplay.classList.add('auto-mode');
+                    this.predictionDisplay.classList.add('show');
+                } else {
+                    this.predictionDisplay.classList.remove('auto-mode');
+                    this.predictionDisplay.classList.add('show');
+                    
+                    setTimeout(() => {
+                        this.predictionDisplay.classList.remove('show');
+                    }, 8000);
+                }
+                
+                this.playReveal();
+            }
+
+            initEffects() {
+                // Пробел - индивидуальное предсказание
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        if (Date.now() - this.lastDetection > 2000) {
+                            this.triggerPrediction(false);
+                            this.lastDetection = Date.now();
+                        }
+                    }
+                    // G - групповое предсказание
+                    if (e.key === 'g' || e.key === 'G') {
+                        e.preventDefault();
+                        if (Date.now() - this.lastDetection > 2000) {
+                            this.triggerPrediction(true);
+                            this.lastDetection = Date.now();
+                        }
+                    }
+                });
+            }
+
+            playBeep(freq) {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } catch (error) {
+                    console.log('Звук недоступен');
+                }
+            }
+
+            playReveal() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const frequencies = [261.63, 329.63, 392.00, 523.25];
+                    
+                    frequencies.forEach((freq, i) => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.type = 'sine';
+                        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(freq * 1.5, audioContext.currentTime + 1);
+                        
+                        gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1);
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        oscillator.start(audioContext.currentTime + i * 0.05);
+                        oscillator.stop(audioContext.currentTime + 1);
+                    });
+                } catch (error) {
+                    console.log('Звук недоступен');
+                }
+            }
+        }
+
+        // Инициализация приложения
+        function initApp() {
+            createStars();
+            window.oracle = new FuturisticOracle();
+        }
+
+        // Проверка URL параметров и localStorage
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlPastebin = urlParams.get('pastebin');
+            const savedPastebin = localStorage.getItem('pastebinUrl');
+            
+            if (urlPastebin) {
+                document.getElementById('pastebinInput').value = urlPastebin;
+                await loadPredictions();
+            } else if (savedPastebin) {
+                document.getElementById('pastebinInput').value = savedPastebin;
+                await loadPredictions();
+            } else {
+                // Показываем модальное окно
+                document.getElementById('pastebinModal').classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
