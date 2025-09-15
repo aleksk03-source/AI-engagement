@@ -942,16 +942,7 @@
                 this.init();
             }
 
-            async loadPredictions(url) {
-    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-    const response = await fetch(proxyUrl);
-    const text = await response.text();
-    
-    // ОТЛАДКА - покажет что загрузилось
-    console.log('Загруженный текст:', text.substring(0, 200));
-    console.log('Есть INDIVIDUAL?', text.includes('=== INDIVIDUAL ==='));
-    console.log('Есть GROUP?', text.includes('=== GROUP ==='));
-}
+          
 
             async init() {
                 // Проверка URL параметров
@@ -1025,21 +1016,20 @@
                 }
             }
 
-            async loadPredictionsFromUrl(url) {
-                try {
-                    // Используем AllOrigins прокси
-                    const PROXY = 'https://api.allorigins.win/raw?url=';
-                    const proxyUrl = PROXY + encodeURIComponent(url);
-                    
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error('Failed to fetch');
-                    
-                    const text = await response.text();
-                    this.parsePredictions(text);
-                    
-                    console.log('✅ Предсказания загружены');
-                    return true;
-                } catch (error) {
+
+              async loadPredictions(url) {
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+    const response = await fetch(proxyUrl);
+    const text = await response.text();
+    
+    // ОТЛАДКА - покажет что загрузилось
+    console.log('Загруженный текст:', text.substring(0, 200));
+    console.log('Есть INDIVIDUAL?', text.includes('=== INDIVIDUAL ==='));
+    console.log('Есть GROUP?', text.includes('=== GROUP ==='));
+}
+
+         
+                catch (error) {
                     console.error('❌ Ошибка загрузки:', error);
                     
                     // Fallback предсказания
