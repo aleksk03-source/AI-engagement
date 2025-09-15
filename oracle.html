@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Oracle - AI Predictions</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@100;300;500;700&display=swap');
+
+        :root {
+            --neon-cyan: #00ffff;
+            --neon-pink: #ff00ff;
+            --neon-yellow: #ffff00;
+            --neon-green: #00ff00;
+            --neon-orange: #ff8000;
+            --electric-blue: #0080ff;
+            --deep-purple: #4000ff;
+            --dark-bg: #000011;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            
+            --mode-color: var(--neon-cyan);
+            --mode-glow: rgba(0, 255, 255, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        /* Кастомный курсор */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s ease;
+            mix-blend-mode: screen;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.3s ease;
+            opacity: 0.3;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, 
+                #0a0033 0%, 
+                #1a0066 15%, 
+                #2d0099 30%, 
+                #4400cc 45%, 
+                #6600ff 60%, 
+                #8800ff 75%, 
+                #aa00ff 90%, 
+                #cc00ff 100%
+            );
+            transition: all 0.3s ease;
+        }
+
+        /* 🌌 Усиленный космический фон */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .cosmic-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(0, 50, 100, 0.8) 0%, 
+                rgba(50, 0, 100, 0.6) 30%,
+                rgba(100, 0, 50, 0.4) 60%,
+                rgba(0, 0, 50, 0.9) 100%
+            );
+        }
+
+        /* Анимированные световые волны */
+        .light-waves {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            top: 0;
+            left: -50%;
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 100px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 255, 255, 0.15), 
+                rgba(255, 0, 255, 0.15), 
+                transparent
+            );
+            animation: waveFlow 12s linear infinite;
+            filter: blur(3px);
+        }
+
+        .wave:nth-child(1) { 
+            top: 10%; 
+            animation-duration: 15s; 
+            height: 150px;
+            transform: rotate(-5deg);
+        }
+        .wave:nth-child(2) { 
+            top: 30%; 
+            animation-duration: 20s; 
+            animation-delay: -5s;
+            height: 200px;
+            transform: rotate(3deg);
+        }
+        .wave:nth-child(3) { 
+            top: 50%; 
+            animation-duration: 18s; 
+            animation-delay: -10s;
+            height: 180px;
+            transform: rotate(-2deg);
+        }
+        .wave:nth-child(4) { 
+            top: 70%; 
+            animation-duration: 22s; 
+            animation-delay: -15s;
+            height: 220px;
+            transform: rotate(4deg);
+        }
+
+        @keyframes waveFlow {
+            0% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-25%) translateY(-20px); }
+            100% { transform: translateX(-50%) translateY(0); }
+        }
+
+        /* 🌟 Цветные туманности */
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: nebulaFloat 20s ease-in-out infinite;
+            opacity: 0.3;
+        }
+
+        .nebula-1 {
+            width: 400px;
+            height: 400px;
+            top: 20%;
+            right: 10%;
+            background: radial-gradient(circle, 
+                rgba(0, 255, 255, 0.4) 0%, 
+                rgba(0, 100, 255, 0.2) 50%, 
+                transparent 100%
+            );
+            animation-duration: 25s;
+        }
+
+        .nebula-2 {
+            width: 300px;
+            height: 300px;
+            bottom: 30%;
+            left: 15%;
+            background: radial-gradient(circle, 
+                rgba(255, 0, 255, 0.4) 0%, 
+                rgba(255, 100, 0, 0.2) 50%, 
+                transparent 100%
+            );
+            animation-duration: 30s;
+            animation-delay: -10s;
+        }
+
+        @keyframes nebulaFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -40px) scale(1.1); }
+            50% { transform: translate(-20px, -60px) scale(0.9); }
+            75% { transform: translate(40px, -20px) scale(1.05); }
+        }
+
+        /* 🌟 Улучшенные звезды */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            animation: twinkle 4s ease-in-out infinite;
+        }
+
+        .star.small { 
+            width: 1px; 
+            height: 1px; 
+        }
+        .star.medium { 
+            width: 2px; 
+            height: 2px; 
+            box-shadow: 0 0 6px white;
+        }
+        .star.large { 
+            width: 3px; 
+            height: 3px; 
+            box-shadow: 0 0 10px white;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* 🌠 Падающие звезды */
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(45deg, 
+                white 0%, 
+                rgba(0, 255, 255, 0.8) 50%, 
+                transparent 100%
+            );
+            border-radius: 50%;
+        }
+
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50px;
+            height: 1px;
+            background: linear-gradient(to left, 
+                white 0%, 
+                rgba(0, 255, 255, 0.5) 30%, 
+                transparent 100%
+            );
+            transform-origin: right;
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(300px) translateY(300px);
+                opacity: 0;
+            }
+        }
+
+        .shooting-star.active {
+            animation: shootingStar 2s linear;
+        }
+
+        /* Дисклеймер */
+        .disclaimer {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            z-index: 500;
+            transition: all 0.3s ease;
+            cursor: auto !important;
+        }
+
+        .disclaimer:hover {
+            color: rgba(0, 255, 255, 0.8);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        /* 👻 Супер прозрачные кнопки */
+        .settings-btn, .language-btn {
+            position: fixed;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 10, 20, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: rgba(0, 255, 255, 0.05);
+            cursor: pointer !important;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .settings-btn {
+            right: 20px;
+        }
+
+        .language-btn {
+            right: 70px;
+            position: relative;
+        }
+
+        .settings-btn:hover, .language-btn:hover {
+            color: rgba(0, 255, 255, 0.7);
+            border-color: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* 🌍 Выпадающее меню языка */
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(0, 10, 20, 0.95);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            min-width: 120px;
+            margin-top: 5px;
+        }
+
+        .language-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-option {
+            padding: 10px 15px;
+            cursor: pointer !important;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .language-option:last-child {
+            border-bottom: none;
+        }
+
+        .language-option:hover {
+            color: var(--neon-cyan);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .language-option.active {
+            color: var(--neon-cyan);
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        /* Модальное окно настроек */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 20, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, 
+                rgba(10, 0, 40, 0.9),
+                rgba(40, 0, 80, 0.9)
+            );
+            border: 2px solid var(--neon-cyan);
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 
+                0 0 100px rgba(0, 255, 255, 0.5),
+                inset 0 0 50px rgba(0, 255, 255, 0.1);
+            animation: modalAppear 0.5s ease-out;
+        }
+
+        /* Обычный курсор в модалке */
+        .modal-content,
+        .modal-content *,
+        .settings-btn,
+        .language-btn,
+        .language-dropdown,
+        .language-dropdown * {
+            cursor: auto !important;
+        }
+
+        /* Скрыть кастомный курсор при открытом модальном */
+        body.modal-open .cursor,
+        body.modal-open .cursor-follower {
+            display: none;
+        }
+
+        @keyframes modalAppear {
+            from {
+                transform: scale(0.8) translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .modal-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        /* 🌍 Языковая секция */
+        .language-section {
+            background: rgba(0, 20, 40, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-radios {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer !important;
+        }
+
+        .radio-group input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--neon-cyan);
+            cursor: pointer !important;
+        }
+
+        .radio-group label {
+            color: white;
+            font-size: 1rem;
+            cursor: pointer !important;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            background: rgba(0, 10, 20, 0.7);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: white;
+            font-family: 'Exo 2', monospace;
+            transition: all 0.3s ease;
+            resize: none;
+            line-height: 1.3;
+        }
+
+        .modal-textarea:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            background: rgba(0, 20, 40, 0.8);
+        }
+
+        .modal-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.3;
+        }
+
+        .input-hint {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .modal-button {
+            padding: 12px 35px;
+            background: linear-gradient(45deg, var(--electric-blue), var(--deep-purple));
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin: 6px;
+        }
+
+        .modal-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 150, 255, 0.5);
+        }
+
+        .modal-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .modal-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+        }
+
+        .default-button {
+            background: linear-gradient(45deg, var(--neon-green), var(--electric-blue));
+        }
+
+        /* Главный контейнер */
+        .hologram-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        /* ⚡ Глитч-эффект */
+        .glitch-effect {
+            animation: glitch 0.5s ease-in-out;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            10% { 
+                transform: translate(-2px, 2px);
+                filter: hue-rotate(90deg);
+            }
+            20% { 
+                transform: translate(-4px, -2px);
+                filter: hue-rotate(180deg);
+            }
+            30% { 
+                transform: translate(4px, 2px);
+                filter: hue-rotate(270deg);
+            }
+            40% { 
+                transform: translate(-2px, -4px);
+                filter: hue-rotate(360deg) saturate(2);
+            }
+            50% { 
+                transform: translate(2px, 4px);
+                filter: hue-rotate(45deg) contrast(2);
+            }
+            60% { 
+                transform: translate(-4px, 2px);
+                filter: hue-rotate(135deg);
+            }
+            70% { 
+                transform: translate(4px, -2px);
+                filter: hue-rotate(225deg);
+            }
+            80% { 
+                transform: translate(-2px, 4px);
+                filter: hue-rotate(315deg);
+            }
+            90% { 
+                transform: translate(2px, -4px);
+                filter: hue-rotate(45deg);
+            }
+            100% { 
+                transform: translate(0);
+                filter: none;
+            }
+        }
+
+        /* Левая панель */
+        .data-panel {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            animation: slideInLeft 1s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .data-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+        }
+
+        .data-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--neon-cyan);
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .data-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Центральная область */
+        .central-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Заголовок с лого */
+        .main-header {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 200;
+        }
+
+        .logo-container {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(0, 10, 20, 0.7);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-container img {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+
+        .logo-placeholder {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--glass), transparent);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+        }
+
+        .main-title {
+            font-size: 2.1rem;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 0.1em;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .main-title .word1 {
+            background: linear-gradient(45deg, var(--text-primary), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-title .word2 {
+            background: linear-gradient(45deg, var(--neon-pink), var(--deep-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 30px var(--neon-cyan);
+            font-weight: 500;
+        }
+
+        /* ✨ Голографический дисплей с эффектами */
+        .hologram-display {
+            width: 800px;
+            height: 450px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: hologramFloat 6s ease-in-out infinite;
+            margin-top: 90px;
+        }
+
+        @keyframes hologramFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 🔥 Энергетические линии по периметру */
+        .hologram-display::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, 
+                var(--mode-color) 0%, 
+                transparent 50%, 
+                var(--mode-color) 100%
+            );
+            border-radius: 40px;
+            opacity: 0.3;
+            animation: energyLines 3s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes energyLines {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0.3; }
+        }
+
+        /* 🌟 Анимированные частицы */
+        .particles-container {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--mode-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--mode-color);
+        }
+
+        /* 💫 Пульсирующая рамка */
+        .hologram-frame {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(135deg, var(--glass), transparent);
+            border: 3px solid var(--mode-color);
+            border-radius: 30px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 0 50px var(--mode-glow),
+                inset 0 0 30px rgba(0, 255, 255, 0.1);
+            transition: all 0.5s ease;
+            animation: hologramPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes hologramPulse {
+            0%, 100% { 
+                box-shadow: 0 0 50px var(--mode-glow);
+                border-color: var(--mode-color);
+            }
+            50% { 
+                box-shadow: 0 0 100px var(--mode-glow);
+                border-color: var(--mode-color);
+                filter: brightness(1.2);
+            }
+        }
+
+        .hologram-frame.dimmed #video {
+            filter: brightness(0.3);
+        }
+
+        .hologram-frame.dimmed #canvas {
+            filter: brightness(0.3);
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            opacity: 0.9;
+            transition: filter 0.5s ease;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+            pointer-events: none;
+            transition: filter 0.5s ease;
+        }
+
+        /* 💡 Приглашение */
+        .camera-invitation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 300;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .camera-invitation.hidden {
+            opacity: 0;
+        }
+
+        .hologram-frame.dimmed .camera-invitation {
+            animation: inviteGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes inviteGlow {
+            0%, 100% { 
+                text-shadow: 0 0 30px var(--neon-cyan);
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                text-shadow: 0 0 50px var(--neon-cyan), 0 0 80px var(--neon-cyan);
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        .invitation-main {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px var(--neon-cyan);
+            animation: invitePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes invitePulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .invitation-sub {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 0.1em;
+        }
+
+        /* Таймер авторежима */
+        .auto-timer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 10, 20, 0.9);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-size: 0.9rem;
+            color: var(--neon-cyan);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            z-index: 250;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .auto-timer.show {
+            opacity: 1;
+        }
+
+        .auto-timer span {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--neon-pink);
+        }
+
+        /* ✨ Предсказание с искрами */
+        .prediction-display {
+            width: 800px;
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, 
+                rgba(0, 10, 20, 0.98),
+                rgba(10, 0, 20, 0.98)
+            );
+            border: 2px solid var(--mode-color);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            z-index: 300;
+            box-shadow: 0 0 50px var(--mode-glow);
+            position: relative;
+            overflow: visible;
+        }
+
+        .prediction-display.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .prediction-display.persistent {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .prediction-display.transition {
+            animation: groupTransition 0.5s ease-in-out;
+        }
+
+        @keyframes groupTransition {
+            0% { border-color: var(--neon-cyan); }
+            50% { 
+                border-color: var(--neon-pink);
+                box-shadow: 0 0 50px rgba(255, 0, 255, 0.5);
+            }
+            100% { border-color: var(--mode-color); }
+        }
+
+        /* 🎆 Система искр */
+        .spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--mode-color);
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 10px var(--mode-color);
+        }
+
+        @keyframes sparkFly {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+        }
+
+        .prediction-text {
+            font-size: 1.4rem;
+            line-height: 1.4;
+            text-align: center;
+            font-weight: 400;
+            color: #ffffff;
+            text-shadow: 0 0 20px var(--mode-glow);
+            letter-spacing: 0.02em;
+        }
+
+        /* Правая панель */
+        .status-panel {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            animation: slideInRight 1s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Радар */
+        .radar-container {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            height: 250px;
+        }
+
+        .radar {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid var(--neon-green);
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                rgba(0, 255, 0, 0.3) 45deg,
+                transparent 90deg
+            );
+            transform: translate(-50%, -50%);
+            animation: radarSweep 4s linear infinite;
+        }
+
+        @keyframes radarSweep {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Индикаторы */
+        .status-indicators {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .indicator {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .indicator-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+            margin-bottom: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .indicator-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            color: var(--mode-color);
+            transition: color 0.5s ease;
+        }
+
+        /* Countdown */
+        .countdown-huge {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 200px;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            color: var(--mode-color);
+            text-shadow: 0 0 100px currentColor;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10000;
+            transition: color 0.5s ease;
+        }
+
+        .countdown-huge.show {
+            animation: countdownZoom 1s ease-out;
+        }
+
+        @keyframes countdownZoom {
+            0% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% { 
+                opacity: 1;
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(2);
+            }
+        }
+
+        /* 🎨 Цветовые режимы */
+        .mode-individual {
+            --mode-color: #00ffff;
+            --mode-glow: rgba(0, 255, 255, 0.5);
+        }
+
+        .mode-group {
+            --mode-color: #ff00ff;
+            --mode-glow: rgba(255, 0, 255, 0.5);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1400px) {
+            .data-panel, .status-panel { flex: 0 0 250px; }
+            .hologram-display { width: 640px; height: 360px; }
+            .prediction-display { width: 640px; }
+        }
+
+        @media (max-width: 1200px) {
+            .data-panel { display: none; }
+            .status-panel { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кастомный курсор -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <!-- Дисклеймер -->
+    <div class="disclaimer" id="disclaimer">powered by Aleksandr Kananovich</div>
+
+    <!-- Кнопки управления -->
+    <div class="settings-btn" id="settingsBtn">⚙️</div>
+    
+    <div class="language-btn" id="languageBtn">
+        🌍
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option active" data-lang="ru">Русский</div>
+            <div class="language-option" data-lang="en"> English</div>
+        </div>
+    </div>
+
+    <!-- 🌌 Улучшенный космический фон -->
+    <div class="cosmic-bg">
+        <!-- Световые волны -->
+        <div class="light-waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+        
+        <!-- Цветные туманности -->
+        <div class="nebula nebula-1"></div>
+        <div class="nebula nebula-2"></div>
+        
+        <!-- Звезды -->
+        <div class="stars" id="stars"></div>
+        
+        <!-- Падающие звезды -->
+        <div class="shooting-star" id="shootingStar1"></div>
+        <div class="shooting-star" id="shootingStar2"></div>
+        <div class="shooting-star" id="shootingStar3"></div>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">Neural Oracle Settings</h2>
+            <p class="modal-subtitle" id="modalSubtitle">Configuration Panel</p>
+            
+            <!-- Языковая секция -->
+            <div class="language-section">
+                <div class="section-title">
+                    🌍 <span id="languageSectionTitle">Language / Язык</span>
+                </div>
+                <div class="language-radios">
+                    <div class="radio-group">
+                        <input type="radio" id="langRu" name="language" value="ru" checked>
+                        <label for="langRu">Русский</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="langEn" name="language" value="en">
+                        <label for="langEn">English</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Секция предсказаний -->
+            <div class="input-group">
+                <div class="section-title">
+                    📝 <span id="predictionsSectionTitle">Predictions / Предсказания</span>
+                </div>
+                <textarea 
+                    class="modal-textarea" 
+                    id="predictionsInput" 
+                    spellcheck="false"
+                    placeholder="Введите свои предсказания или используйте стандартные ниже:
+
+=== INDIVIDUAL ===
+Ваши индивидуальные предсказания...
+
+=== GROUP ===
+Ваши групповые предсказания..."
+                ></textarea>
+                <div class="input-hint" id="inputHint">
+                    Разделите индивидуальные и групповые предсказания секциями === INDIVIDUAL === и === GROUP ===
+                </div>
+            </div>
+            
+            <button class="modal-button" id="loadButton">
+                <span id="loadButtonText">Загрузить предсказания</span>
+            </button>
+            <button class="modal-button default-button" id="defaultButton">
+                <span id="defaultButtonText">Использовать стандартные</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Главный контейнер -->
+    <div class="hologram-container">
+        <!-- Левая панель -->
+        <div class="data-panel">
+            <div class="data-card">
+                <div class="data-label" id="aiPowerLabel">AI мощность</div>
+                <div class="data-value" id="aiPower">98%</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label" id="neuralNetLabel">Нейросеть</div>
+                <div class="data-value">ON</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label" id="accuracyLabel">Точность</div>
+                <div class="data-value">∞</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label" id="quantumLabel">Квантовый процессор</div>
+                <div class="data-value" id="quantumProcessor">42</div>
+            </div>
+        </div>
+
+        <!-- Центральная область -->
+        <div class="central-area">
+            <!-- Заголовок -->
+            <div class="main-header">
+                <div class="logo-container">
+                    <img src="AI Logo.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="logo-placeholder" style="display: none;">AI LOGO</div>
+                </div>
+                <h1 class="main-title">
+                    <span class="word1">NEURAL</span>
+                    <span class="word2">ORACLE</span>
+                </h1>
+                <p class="tagline" id="tagline">Предсказания из будущего</p>
+            </div>
+
+            <!-- Голографический дисплей -->
+            <div class="hologram-display">
+                <!-- Контейнер частиц -->
+                <div class="particles-container" id="particlesContainer"></div>
+                
+                <div class="hologram-frame" id="hologramFrame">
+                    <video id="video" autoplay muted playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    
+                    <div class="camera-invitation" id="cameraInvitation">
+                        <div class="invitation-main" id="invitationMain">Посмотри в камеру</div>
+                        <div class="invitation-sub" id="invitationSub">для предсказания</div>
+                    </div>
+                    
+                    <div class="auto-timer" id="autoTimer">
+                        <span id="autoTimerText">Авторежим через</span> <span id="timerCount">5</span> <span id="autoTimerSec">сек</span>
+                    </div>
+                </div>
+
+                <!-- Предсказание -->
+                <div class="prediction-display" id="predictionDisplay">
+                    <p class="prediction-text" id="predictionText"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая панель -->
+        <div class="status-panel">
+            <div class="radar-container">
+                <div class="data-label" id="scanningLabel">Сканирование</div>
+                <div class="radar">
+                    <div class="radar-grid"></div>
+                </div>
+            </div>
+
+            <div class="status-indicators">
+                <div class="indicator">
+                    <div class="indicator-label" id="statusLabel">Статус</div>
+                    <div class="indicator-value" id="status">ON</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-label" id="memoryLabel">Память</div>
+                    <div class="indicator-value" id="memory">8GB</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-label" id="energyLabel">Энергия</div>
+                    <div class="indicator-value">∞</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-label" id="connectionLabel">Связь</div>
+                    <div class="indicator-value">5G</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown-huge" id="countdown"></div>
+
+    <!-- Face-API -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
+
+    <script>
+        // 🌍 Система переводов
+        const translations = {
+            ru: {
+                // Интерфейс
+                tagline: "Предсказания из будущего",
+                invitationMain: "Посмотри в камеру",
+                invitationSub: "для предсказания",
+                autoTimerText: "Авторежим через",
+                autoTimerSec: "сек",
+                
+                // Панели
+                aiPowerLabel: "AI мощность",
+                neuralNetLabel: "Нейросеть", 
+                accuracyLabel: "Точность",
+                quantumLabel: "Квантовый процессор",
+                scanningLabel: "Сканирование",
+                statusLabel: "Статус",
+                memoryLabel: "Память",
+                energyLabel: "Энергия",
+                connectionLabel: "Связь",
+                
+                // Модальное окно
+                modalTitle: "Настройки Neural Oracle",
+                modalSubtitle: "Панель конфигурации",
+                languageSectionTitle: "Language / Язык",
+                predictionsSectionTitle: "Predictions / Предсказания",
+                inputHint: "Разделите индивидуальные и групповые предсказания секциями === INDIVIDUAL === и === GROUP ===",
+                loadButtonText: "Загрузить предсказания",
+                defaultButtonText: "Использовать стандартные",
+                
+                // Статусы
+                statusWait: "ОЖИД",
+                statusScan: "СКАН",
+                statusGroup: "ГРУППА",
+                statusSolo: "СОЛО",
+                statusAuto: "АВТО",
+                
+                // Предсказания по умолчанию
+                individual: [
+                    "Ты встретишь человека который любит тот же редкий фреймворк",
+                    "Классная идея придет не только на докладе но и у стола с печеньками 😊",
+                    "Демо запустится с первого раза",
+                    "В хакатоне баг внезапно окажется фичей",
+                    "Из чужого кейса вырастет твой следующий шаг",
+                    "Твой следующий промпт станет короче а ответы – точнее",
+                    "Кофе-брейк принесет много инсайтов",
+                    "Спикер случайно ответит на твой невысказанный вопрос",
+                    "Стикер на ноутбуке станет поводом для важного знакомства",
+                    "Твой вопрос в Q&A сессии вдохновит спикера на новый доклад",
+                    "Случайная очередь за кофе приведет к офферу",
+                    "Мерч с конференции принесет удачу важной встрече",
+                    "Твой комментарий в Slack станет началом большой дискуссии",
+                    "На афтепати узнаешь секретную фичу любимого инструмента",
+                    "Wi-Fi подключится с первого раза 🎉",
+                    "Твой пулл-реквест примут без единого комментария",
+                    "В лифте встретишь будущего ментора",
+                    "Случайный совет сэкономит неделю дебаггинга",
+                    "Презентация откроется в нужном формате",
+                    "Твой стенд посетит именно тот кого ждал",
+                    "Нетворкинг-игра подарит друга на годы",
+                    "Найдешь библиотеку которую искал месяцами",
+                    "Случайная фотка с конфы станет лучшей фото для профиля",
+                    "В свэг-паке окажется именно та футболка твоего размера",
+                    "Микрофон на Q&A будет работать идеально",
+                    "После конференции код напишется сам собой 💫"
+                ],
+                group: [
+                    "Ваш совместный дебаг превратится в мастер-класс",
+                    "Случайная беседа в коридоре станет началом крутого проекта",
+                    "Вместе найдете решение которое искали по отдельности",
+                    "Групповое селфи подарит новые знакомства",
+                    "Ваш стол на хакатоне станет местом притяжения",
+                    "Совместный обед породит стартап-идею",
+                    "Вместе выиграете квиз не зная половины ответов 🏆",
+                    "Ваши стикеры на ноутбуках идеально сложатся в паззл",
+                    "Вместе вы создадите традицию для следующих встреч",
+                    "Ваш нетворкинг перерастет в регулярные встречи",
+                    "Командная презентация сорвет овации",
+                    "Вместе откроете секретную локацию на площадке",
+                    "Ваша группа станет бета-тестерами нового продукта",
+                    "Совместное фото наберет рекордные лайки",
+                    "Вместе придумаете название для нового фреймворка",
+                    "Групповой брейншторм решит сложную задачу",
+                    "Совместный код-ревью превратится в опенсорс проект",
+                    "Вместе создадите самый полезный тред конференции 🚀"
+                ]
+            },
+            en: {
+                // Interface
+                tagline: "Predictions from the Future",
+                invitationMain: "Look into the camera",
+                invitationSub: "for prediction",
+                autoTimerText: "Auto mode in",
+                autoTimerSec: "sec",
+                
+                // Panels
+                aiPowerLabel: "AI Power",
+                neuralNetLabel: "Neural Net",
+                accuracyLabel: "Accuracy",
+                quantumLabel: "Quantum Processor",
+                scanningLabel: "Scanning",
+                statusLabel: "Status",
+                memoryLabel: "Memory",
+                energyLabel: "Energy",
+                connectionLabel: "Connection",
+                
+                // Modal window
+                modalTitle: "Neural Oracle Settings",
+                modalSubtitle: "Configuration Panel",
+                languageSectionTitle: "Language / Язык",
+                predictionsSectionTitle: "Predictions / Предсказания",
+                inputHint: "Separate individual and group predictions with === INDIVIDUAL === and === GROUP === sections",
+                loadButtonText: "Load Predictions",
+                defaultButtonText: "Use Defaults",
+                
+                // Statuses
+                statusWait: "WAIT",
+                statusScan: "SCAN",
+                statusGroup: "GROUP",
+                statusSolo: "SOLO",
+                statusAuto: "AUTO",
+                
+                // Default predictions
+                individual: [
+                    "You'll meet someone who loves the same rare framework",
+                    "A great idea will come not only at the talk but also at the cookie table 😊",
+                    "Your demo will work on the first try",
+                    "At the hackathon, a bug will suddenly become a feature",
+                    "Someone else's case will grow into your next step",
+                    "Your next prompt will be shorter and answers more precise",
+                    "Coffee break will bring many insights",
+                    "The speaker will accidentally answer your unspoken question",
+                    "A laptop sticker will lead to an important acquaintance",
+                    "Your Q&A question will inspire the speaker for a new talk",
+                    "A random coffee queue will lead to a job offer",
+                    "Conference merch will bring luck to an important meeting",
+                    "Your Slack comment will start a big discussion",
+                    "At the afterparty you'll learn a secret feature of your favorite tool",
+                    "Wi-Fi will connect on the first try 🎉",
+                    "Your pull request will be accepted without any comments",
+                    "You'll meet a future mentor in the elevator",
+                    "A random advice will save a week of debugging",
+                    "The presentation will open in the right format",
+                    "Your booth will be visited by exactly who you were waiting for",
+                    "A networking game will give you a friend for years",
+                    "You'll find the library you've been looking for months",
+                    "A random conference photo will become your best profile picture",
+                    "The swag pack will have exactly the t-shirt in your size",
+                    "The Q&A microphone will work perfectly",
+                    "After the conference, the code will write itself 💫"
+                ],
+                group: [
+                    "Your joint debug will turn into a masterclass",
+                    "A random hallway conversation will become the start of a cool project",
+                    "Together you'll find the solution you've been looking for separately",
+                    "A group selfie will bring new connections",
+                    "Your hackathon table will become a point of attraction",
+                    "A joint lunch will give birth to a startup idea",
+                    "Together you'll win the quiz without knowing half the answers 🏆",
+                    "Your laptop stickers will perfectly fit into a puzzle",
+                    "Together you'll create a tradition for future meetings",
+                    "Your networking will grow into regular meetups",
+                    "The team presentation will bring standing ovations",
+                    "Together you'll discover a secret location at the venue",
+                    "Your group will become beta testers of a new product",
+                    "The group photo will get record likes",
+                    "Together you'll come up with a name for a new framework",
+                    "Group brainstorming will solve a complex problem",
+                    "Joint code review will turn into an open source project",
+                    "Together you'll create the most useful conference thread 🚀"
+                ]
+            }
+        };
+
+        // Кастомный курсор
+        const cursor = document.getElementById('cursor');
+        const cursorFollower = document.getElementById('cursorFollower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX - 20 + 'px';
+                cursorFollower.style.top = e.clientY - 20 + 'px';
+            }, 100);
+        });
+
+        // 🌟 Создание улучшенных звезд
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const sizes = ['small', 'medium', 'large'];
+            const counts = [100, 35, 15]; // 150 всего
+            
+            sizes.forEach((size, index) => {
+                for (let i = 0; i < counts[index]; i++) {
+                    const star = document.createElement('div');
+                    star.className = `star ${size}`;
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.animationDelay = Math.random() * 4 + 's';
+                    star.style.animationDuration = (3 + Math.random() * 3) + 's';
+                    starsContainer.appendChild(star);
+                }
+            });
+        }
+        createStars();
+
+        // 🌠 Падающие звезды
+        function createShootingStars() {
+            const shootingStars = ['shootingStar1', 'shootingStar2', 'shootingStar3'];
+            
+            function animateShootingStar(id) {
+                const star = document.getElementById(id);
+                if (!star) return;
+                
+                // Случайная позиция
+                star.style.top = Math.random() * 50 + '%';
+                star.style.left = Math.random() * 50 + '%';
+                
+                // Запуск анимации
+                star.classList.add('active');
+                
+                setTimeout(() => {
+                    star.classList.remove('active');
+                    // Следующая звезда через случайный интервал
+                    setTimeout(() => animateShootingStar(id), 10000 + Math.random() * 20000);
+                }, 2000);
+            }
+            
+            // Запуск каждой звезды с задержкой
+            shootingStars.forEach((id, index) => {
+                setTimeout(() => animateShootingStar(id), index * 7000);
+            });
+        }
+        createShootingStars();
+
+        // Обновление значений
+        function updateValues() {
+            const processor = document.getElementById('quantumProcessor');
+            const aiPower = document.getElementById('aiPower');
+            const memory = document.getElementById('memory');
+            
+            setInterval(() => {
+                processor.textContent = Math.floor(20 + Math.random() * 60);
+                aiPower.textContent = Math.floor(85 + Math.random() * 15) + '%';
+            }, 2000);
+            
+            setInterval(() => {
+                const values = ['8GB', '12GB', '16GB', '32GB'];
+                memory.textContent = values[Math.floor(Math.random() * values.length)];
+            }, 5000);
+        }
+
+        // Основной класс
+        class NeuralOracle {
+            constructor() {
+                this.isLoading = true;
+                this.currentLanguage = localStorage.getItem('oracleLanguage') || 'ru';
+                
+                // Логика детекции
+                this.predictionShown = false;
+                this.currentGroupSize = 0;
+                this.stableGroupSize = 0;
+                this.groupStabilityCounter = 0;
+                this.groupStabilityThreshold = 10;
+                this.minFaceSize = 50;
+                this.previousPredictionSize = 0;
+                this.currentMode = 'individual';
+                
+                // 🎨 Цвета для лиц
+                this.faceColors = [
+                    '#00ffff', '#ff00ff', '#ffff00', '#00ff00', '#ff8000'
+                ];
+                this.faceIds = new Map();
+                this.nextFaceId = 1;
+                
+                // Предсказания
+                this.predictions = {
+                    ru: {...translations.ru},
+                    en: {...translations.en}
+                };
+                
+                this.faceApiLoaded = false;
+                this.autoTimer = null;
+                this.autoCountdown = 5;
+                this.autoInterval = null;
+                this.autoPredictionInterval = null;
+                this.faceDetected = false;
+                this.isAutoMode = false;
+                this.autoModeDelay = null;
+                this.cameraAvailable = false; // 🔧 Добавляем флаг доступности камеры
+
+                // DOM элементы
+                this.video = document.getElementById('video');
+                this.canvas = document.getElementById('canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.predictionDisplay = document.getElementById('predictionDisplay');
+                this.predictionText = document.getElementById('predictionText');
+                this.countdown = document.getElementById('countdown');
+                this.status = document.getElementById('status');
+                this.cameraInvitation = document.getElementById('cameraInvitation');
+                this.autoTimerEl = document.getElementById('autoTimer');
+                this.timerCount = document.getElementById('timerCount');
+                this.hologramFrame = document.getElementById('hologramFrame');
+                this.modalOverlay = document.getElementById('modalOverlay');
+                this.predictionsInput = document.getElementById('predictionsInput');
+                this.loadButton = document.getElementById('loadButton');
+                this.defaultButton = document.getElementById('defaultButton');
+                this.settingsBtn = document.getElementById('settingsBtn');
+                this.languageBtn = document.getElementById('languageBtn');
+                this.languageDropdown = document.getElementById('languageDropdown');
+
+                this.initLanguage();
+                this.initModal();
+                this.initEffects();
+                this.createParticles();
+                
+                console.log('🔮 Neural Oracle инициализирован');
+            }
+
+            // 🌍 Система языков
+            initLanguage() {
+                this.setLanguage(this.currentLanguage, false);
+                
+                // Выпадающее меню языка
+                this.languageBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.languageDropdown.classList.toggle('show');
+                });
+                
+                // Закрытие меню при клике вне его
+                document.addEventListener('click', () => {
+                    this.languageDropdown.classList.remove('show');
+                });
+                
+                // Выбор языка из выпадающего меню
+                this.languageDropdown.addEventListener('click', (e) => {
+                    const option = e.target.closest('.language-option');
+                    if (option) {
+                        const lang = option.dataset.lang;
+                        this.setLanguage(lang, true);
+                        this.languageDropdown.classList.remove('show');
+                    }
+                });
+                
+                // Радиокнопки в модальном окне
+                document.querySelectorAll('input[name="language"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            this.setLanguage(e.target.value, true);
+                        }
+                    });
+                });
+            }
+
+            setLanguage(lang, animate = false) {
+                if (this.currentLanguage === lang && animate) return;
+                
+                this.currentLanguage = lang;
+                localStorage.setItem('oracleLanguage', lang);
+                
+                // Обновление выпадающего меню
+                document.querySelectorAll('.language-option').forEach(option => {
+                    option.classList.toggle('active', option.dataset.lang === lang);
+                });
+                
+                // Обновление радиокнопок
+                document.getElementById(lang === 'ru' ? 'langRu' : 'langEn').checked = true;
+                
+                // Перевод интерфейса
+                this.translateInterface();
+                
+                // Обновление текста в textarea
+                this.updatePredictionsTextarea();
+            }
+
+            translateInterface() {
+                const t = translations[this.currentLanguage];
+                
+                // Основной интерфейс
+                document.getElementById('tagline').textContent = t.tagline;
+                document.getElementById('invitationMain').textContent = t.invitationMain;
+                document.getElementById('invitationSub').textContent = t.invitationSub;
+                document.getElementById('autoTimerText').textContent = t.autoTimerText;
+                document.getElementById('autoTimerSec').textContent = t.autoTimerSec;
+                
+                // Панели
+                document.getElementById('aiPowerLabel').textContent = t.aiPowerLabel;
+                document.getElementById('neuralNetLabel').textContent = t.neuralNetLabel;
+                document.getElementById('accuracyLabel').textContent = t.accuracyLabel;
+                document.getElementById('quantumLabel').textContent = t.quantumLabel;
+                document.getElementById('scanningLabel').textContent = t.scanningLabel;
+                document.getElementById('statusLabel').textContent = t.statusLabel;
+                document.getElementById('memoryLabel').textContent = t.memoryLabel;
+                document.getElementById('energyLabel').textContent = t.energyLabel;
+                document.getElementById('connectionLabel').textContent = t.connectionLabel;
+                
+                // Модальное окно
+                document.getElementById('modalTitle').textContent = t.modalTitle;
+                document.getElementById('modalSubtitle').textContent = t.modalSubtitle;
+                document.getElementById('languageSectionTitle').textContent = t.languageSectionTitle;
+                document.getElementById('predictionsSectionTitle').textContent = t.predictionsSectionTitle;
+                document.getElementById('inputHint').textContent = t.inputHint;
+                document.getElementById('loadButtonText').textContent = t.loadButtonText;
+                document.getElementById('defaultButtonText').textContent = t.defaultButtonText;
+            }
+
+            updatePredictionsTextarea() {
+                const savedText = localStorage.getItem(`predictionsText_${this.currentLanguage}`);
+                if (savedText) {
+                    this.predictionsInput.value = savedText;
+                } else {
+                    // Оставляем поле пустым, только placeholder показывает формат
+                    this.predictionsInput.value = '';
+                    
+                    // Обновляем placeholder в зависимости от языка
+                    if (this.currentLanguage === 'ru') {
+                        this.predictionsInput.placeholder = `Введите свои предсказания или используйте стандартные ниже:
+
+=== INDIVIDUAL ===
+${translations.ru.individual.slice(0, 3).join('\n')}
+...
+
+=== GROUP ===
+${translations.ru.group.slice(0, 3).join('\n')}
+...`;
+                    } else {
+                        this.predictionsInput.placeholder = `Enter your predictions or use defaults below:
+
+=== INDIVIDUAL ===
+${translations.en.individual.slice(0, 3).join('\n')}
+...
+
+=== GROUP ===
+${translations.en.group.slice(0, 3).join('\n')}
+...`;
+                    }
+                }
+            }
+
+            // 🌟 Система частиц
+            createParticles() {
+                const container = document.getElementById('particlesContainer');
+                const particleCount = 12;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // Позиция по окружности
+                    const angle = (i / particleCount) * Math.PI * 2;
+                    const radius = 400; // Радиус орбиты
+                    
+                    particle.style.left = '50%';
+                    particle.style.top = '50%';
+                    particle.style.transform = `translate(-50%, -50%)`;
+                    
+                    // Анимация орбиты
+                    particle.style.animation = `particleOrbit 8s linear infinite`;
+                    particle.style.animationDelay = `${(i / particleCount) * 8}s`;
+                    
+                    container.appendChild(particle);
+                }
+                
+                // CSS анимация орбиты
+                if (!document.getElementById('particleStyle')) {
+                    const style = document.createElement('style');
+                    style.id = 'particleStyle';
+                    style.textContent = `
+                        @keyframes particleOrbit {
+                            0% { transform: translate(-50%, -50%) rotate(0deg) translateX(400px) rotate(0deg); }
+                            100% { transform: translate(-50%, -50%) rotate(360deg) translateX(400px) rotate(-360deg); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+
+            // ✨ Система искр
+            createSparks() {
+                const container = this.predictionDisplay;
+                const sparkCount = 15;
+                
+                for (let i = 0; i < sparkCount; i++) {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark';
+                    
+                    // Случайная позиция старта в центре
+                    const centerX = container.offsetWidth / 2;
+                    const centerY = container.offsetHeight / 2;
+                    
+                    spark.style.left = centerX + 'px';
+                    spark.style.top = centerY + 'px';
+                    
+                    // Случайное направление
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 100 + Math.random() * 200;
+                    const duration = 1 + Math.random() * 1.5;
+                    
+                    const endX = centerX + Math.cos(angle) * distance;
+                    const endY = centerY + Math.sin(angle) * distance;
+                    
+                    container.appendChild(spark);
+                    
+                    // Анимация разлета
+                    spark.animate([
+                        { 
+                            left: centerX + 'px', 
+                            top: centerY + 'px',
+                            opacity: 1,
+                            transform: 'scale(1)'
+                        },
+                        { 
+                            left: endX + 'px', 
+                            top: endY + 'px',
+                            opacity: 0,
+                            transform: 'scale(0.3)'
+                        }
+                    ], {
+                        duration: duration * 1000,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    }).onfinish = () => {
+                        spark.remove();
+                    };
+                }
+            }
+
+            initModal() {
+                document.body.classList.add('modal-open');
+
+                // Проверяем сохраненные предсказания
+                const savedPredictions = localStorage.getItem(`customPredictions_${this.currentLanguage}`);
+                if (savedPredictions) {
+                    try {
+                        const parsedPredictions = JSON.parse(savedPredictions);
+                        this.predictions[this.currentLanguage] = {...this.predictions[this.currentLanguage], ...parsedPredictions};
+                        this.updatePredictionsTextarea();
+                        this.modalOverlay.classList.add('hidden');
+                        document.body.classList.remove('modal-open');
+                        this.isLoading = false;
+                        this.init();
+                    } catch (error) {
+                        console.error('Ошибка парсинга сохраненных предсказаний:', error);
+                        localStorage.removeItem(`customPredictions_${this.currentLanguage}`);
+                        localStorage.removeItem(`predictionsText_${this.currentLanguage}`);
+                    }
+                } else {
+                    this.updatePredictionsTextarea();
+                }
+
+                // Кнопка настроек
+                this.settingsBtn.addEventListener('click', () => {
+                    this.updatePredictionsTextarea();
+                    this.modalOverlay.classList.remove('hidden');
+                    document.body.classList.add('modal-open');
+                });
+
+                // Кнопки модалки
+                this.loadButton.addEventListener('click', () => {
+                    const text = this.predictionsInput.value.trim();
+                    if (text) {
+                        try {
+                            const parsedPredictions = this.parsePredictions(text);
+                            if (parsedPredictions.individual.length === 0 && parsedPredictions.group.length === 0) {
+                                alert('Не найдено ни одного предсказания. Проверьте формат.');
+                                return;
+                            }
+                            
+                            this.predictions[this.currentLanguage] = {
+                                ...this.predictions[this.currentLanguage],
+                                ...parsedPredictions
+                            };
+                            
+                            localStorage.setItem(`customPredictions_${this.currentLanguage}`, JSON.stringify(parsedPredictions));
+                            localStorage.setItem(`predictionsText_${this.currentLanguage}`, text);
+                            this.modalOverlay.classList.add('hidden');
+                            document.body.classList.remove('modal-open');
+                            this.isLoading = false;
+                            
+                            if (!this.faceApiLoaded) {
+                                this.init();
+                            }
+                            
+                            console.log(`✓ Загружено: ${parsedPredictions.individual.length} индивидуальных, ${parsedPredictions.group.length} групповых`);
+                        } catch (error) {
+                            alert('Ошибка обработки предсказаний. Проверьте формат.');
+                            console.error('Ошибка парсинга:', error);
+                        }
+                    } else {
+                        alert('Введите предсказания для загрузки.');
+                    }
+                });
+
+                this.defaultButton.addEventListener('click', () => {
+                    this.predictions[this.currentLanguage] = {
+                        individual: [...translations[this.currentLanguage].individual],
+                        group: [...translations[this.currentLanguage].group]
+                    };
+                    localStorage.removeItem(`customPredictions_${this.currentLanguage}`);
+                    localStorage.removeItem(`predictionsText_${this.currentLanguage}`);
+                    this.modalOverlay.classList.add('hidden');
+                    document.body.classList.remove('modal-open');
+                    this.isLoading = false;
+                    
+                    if (!this.faceApiLoaded) {
+                        this.init();
+                    }
+                });
+            }
+
+            parsePredictions(text) {
+                const result = {
+                    individual: [],
+                    group: []
+                };
+
+                try {
+                    const individualMatch = text.match(/===\s*INDIVIDUAL\s*===([\s\S]*?)(?:===\s*GROUP\s*===|$)/i);
+                    const groupMatch = text.match(/===\s*GROUP\s*===([\s\S]*?)$/i);
+                    
+                    if (individualMatch) {
+                        const lines = individualMatch[1]
+                            .split('\n')
+                            .map(line => line.trim())
+                            .filter(line => line.length > 0);
+                        result.individual = lines;
+                    }
+                    
+                    if (groupMatch) {
+                        const lines = groupMatch[1]
+                            .split('\n')
+                            .map(line => line.trim())
+                            .filter(line => line.length > 0);
+                        result.group = lines;
+                    }
+
+                    if (result.individual.length === 0 && result.group.length === 0) {
+                        const lines = text
+                            .split('\n')
+                            .map(line => line.trim())
+                            .filter(line => line.length > 0 && !line.startsWith('==='));
+                        
+                        if (lines.length > 0) {
+                            result.individual = lines;
+                        }
+                    }
+
+                    return result;
+                } catch (error) {
+                    console.error('Ошибка парсинга предсказаний:', error);
+                    throw error;
+                }
+            }
+
+            setColorMode(mode) {
+                if (this.currentMode === mode) return;
+                
+                // ⚡ Глитч-эффект при смене режима
+                this.hologramFrame.classList.add('glitch-effect');
+                setTimeout(() => {
+                    this.hologramFrame.classList.remove('glitch-effect');
+                }, 500);
+                
+                this.currentMode = mode;
+                document.body.classList.remove('mode-individual', 'mode-group');
+                document.body.classList.add(`mode-${mode}`);
+            }
+
+            async init() {
+                try {
+                    await this.initCamera();
+                    this.cameraAvailable = true;
+                    console.log('✅ Камера инициализирована');
+                    
+                    await this.loadFaceAPI();
+                    this.startDetection();
+                    updateValues();
+                } catch (error) {
+                    console.error('❌ Ошибка инициализации камеры:', error);
+                    this.cameraAvailable = false;
+                    this.status.textContent = translations[this.currentLanguage].statusAuto;
+                    this.cameraInvitation.querySelector('.invitation-main').textContent = 'Камера недоступна';
+                    this.cameraInvitation.querySelector('.invitation-sub').textContent = 'автоматический режим';
+                    this.hologramFrame.classList.add('dimmed');
+                    
+                    // 🔧 Сразу запускаем авторежим если камера недоступна
+                    console.log('🤖 Камера недоступна, запускаем авторежим немедленно');
+                    setTimeout(() => this.startAutoMode(), 1000);
+                    updateValues();
+                }
+            }
+
+            async initCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: 1280, height: 720, facingMode: 'user' }
+                    });
+                    this.video.srcObject = stream;
+                    
+                    return new Promise((resolve) => {
+                        this.video.onloadedmetadata = () => {
+                            this.canvas.width = this.video.videoWidth;
+                            this.canvas.height = this.video.videoHeight;
+                            resolve();
+                        };
+                    });
+                } catch (error) {
+                    console.warn('Камера недоступна');
+                    throw error;
+                }
+            }
+
+            async loadFaceAPI() {
+                try {
+                    if (typeof faceapi === 'undefined') {
+                        console.warn('Face-API не загружен');
+                        return;
+                    }
+                    
+                    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
+                    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                    this.faceApiLoaded = true;
+                    console.log('✓ Face-API загружен');
+                } catch (error) {
+                    console.warn('Face-API недоступен:', error);
+                }
+            }
+
+            startDetection() {
+                if (!this.faceApiLoaded || !this.cameraAvailable) {
+                    console.log('🤖 Face-API или камера недоступны, запускаем авторежим');
+                    setTimeout(() => this.startAutoMode(), 2000);
+                    return;
+                }
+                
+                console.log('👁️ Запускаем детекцию лиц');
+                setInterval(() => this.detect(), 100);
+                
+                // 🔧 Запускаем таймер авторежима
+                this.scheduleAutoMode();
+            }
+
+            async detect() {
+                if (!this.faceApiLoaded || !this.video.videoWidth || !this.cameraAvailable) return;
+
+                try {
+                    const detections = await faceapi.detectAllFaces(
+                        this.video,
+                        new faceapi.TinyFaceDetectorOptions({
+                            inputSize: 416,
+                            scoreThreshold: 0.5
+                        })
+                    );
+
+                    const significantFaces = detections.filter(detection => {
+                        const faceSize = Math.min(detection.box.width, detection.box.height);
+                        return faceSize > this.minFaceSize;
+                    });
+
+                    this.drawHologram(significantFaces);
+                    this.currentGroupSize = significantFaces.length;
+
+                    if (this.currentGroupSize > 0) {
+                        if (!this.faceDetected) {
+                            console.log('👤 Лицо обнаружено, останавливаем авторежим');
+                            this.faceDetected = true;
+                            this.cameraInvitation.classList.add('hidden');
+                            this.hologramFrame.classList.remove('dimmed');
+                            this.stopAutoMode();
+                        }
+
+                        this.handleGroupLogic();
+                    } else {
+                        if (this.faceDetected) {
+                            console.log('👻 Лицо исчезло, сбрасываем детекцию');
+                            this.resetDetection();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка детекции:', error);
+                }
+            }
+
+            handleGroupLogic() {
+                if (this.currentGroupSize === this.stableGroupSize) {
+                    this.groupStabilityCounter++;
+                } else {
+                    this.groupStabilityCounter = 0;
+                    this.stableGroupSize = this.currentGroupSize;
+                }
+
+                if (this.currentGroupSize === 1) {
+                    this.setColorMode('individual');
+                    
+                    if (!this.predictionShown) {
+                        this.status.textContent = translations[this.currentLanguage].statusScan;
+                        this.triggerPrediction(false);
+                        this.predictionShown = true;
+                    }
+                    
+                    if (this.previousPredictionSize > 1) {
+                        this.status.textContent = translations[this.currentLanguage].statusSolo;
+                    }
+                } else {
+                    this.setColorMode('group');
+                    
+                    if (this.groupStabilityCounter >= this.groupStabilityThreshold) {
+                        if (!this.predictionShown || this.hasGroupChanged()) {
+                            this.status.textContent = translations[this.currentLanguage].statusGroup;
+                            this.showGroupTransition();
+                            this.triggerPrediction(true);
+                            this.predictionShown = true;
+                        }
+                    } else {
+                        const progress = Math.floor((this.groupStabilityCounter / this.groupStabilityThreshold) * 100);
+                        this.status.textContent = `${translations[this.currentLanguage].statusGroup} ${progress}%`;
+                    }
+                }
+            }
+
+            hasGroupChanged() {
+                return Math.abs(this.currentGroupSize - this.previousPredictionSize) > 0;
+            }
+
+            showGroupTransition() {
+                this.predictionDisplay.classList.add('transition');
+                setTimeout(() => {
+                    this.predictionDisplay.classList.remove('transition');
+                }, 500);
+            }
+
+            resetDetection() {
+                this.faceDetected = false;
+                this.predictionShown = false;
+                this.currentGroupSize = 0;
+                this.stableGroupSize = 0;
+                this.groupStabilityCounter = 0;
+                this.previousPredictionSize = 0;
+                this.faceIds.clear();
+                this.nextFaceId = 1;
+                
+                this.setColorMode('individual');
+                
+                this.cameraInvitation.classList.remove('hidden');
+                this.hologramFrame.classList.add('dimmed');
+                this.status.textContent = translations[this.currentLanguage].statusWait;
+                this.predictionDisplay.classList.remove('show', 'persistent');
+                
+                // 🔧 Запускаем авторежим только если камера работает
+                if (this.cameraAvailable) {
+                    console.log('⏰ Планируем авторежим после сброса детекции');
+                    this.scheduleAutoMode();
+                }
+            }
+
+            scheduleAutoMode() {
+                // Отменяем предыдущую задержку если есть
+                if (this.autoModeDelay) {
+                    clearTimeout(this.autoModeDelay);
+                    this.autoModeDelay = null;
+                }
+                
+                // 🔧 Не планируем если уже в авторежиме или лицо обнаружено
+                if (this.isAutoMode || this.faceDetected) {
+                    console.log('🚫 Не планируем авторежим: isAutoMode =', this.isAutoMode, 'faceDetected =', this.faceDetected);
+                    return;
+                }
+                
+                console.log('⏰ Планируем авторежим через 5 секунд');
+                
+                // Запускаем авторежим через 5 секунд
+                this.autoModeDelay = setTimeout(() => {
+                    console.log('⏰ Таймер сработал. Проверяем условия: faceDetected =', this.faceDetected, 'isAutoMode =', this.isAutoMode);
+                    
+                    if (!this.faceDetected && !this.isAutoMode) {
+                        console.log('🤖 Запускаем авторежим по таймеру');
+                        this.startAutoMode();
+                    } else {
+                        console.log('🚫 Не запускаем авторежим: условия не выполнены');
+                    }
+                    this.autoModeDelay = null;
+                }, 5000);
+            }
+
+            startAutoMode() {
+                if (this.isAutoMode) {
+                    console.log('🤖 Авторежим уже запущен');
+                    return;
+                }
+                
+                console.log('🤖 Запускаем авторежим');
+                this.isAutoMode = true;
+                this.autoCountdown = 5;
+                this.autoTimerEl.classList.add('show');
+                this.timerCount.textContent = this.autoCountdown;
+                
+                // 🔧 Отменяем планирование если есть
+                if (this.autoModeDelay) {
+                    clearTimeout(this.autoModeDelay);
+                    this.autoModeDelay = null;
+                }
+                
+                this.autoInterval = setInterval(() => {
+                    this.autoCountdown--;
+                    this.timerCount.textContent = this.autoCountdown;
+                    console.log('⏰ Авторежим через:', this.autoCountdown);
+                    
+                    if (this.autoCountdown <= 0) {
+                        console.log('🔮 Показываем авто-предсказание');
+                        this.showAutoPrediction();
+                        clearInterval(this.autoInterval);
+                        this.autoInterval = null;
+                        this.autoTimerEl.classList.remove('show');
+                        
+                        // 🔄 Смена предсказаний каждую минуту
+                        this.autoPredictionInterval = setInterval(() => {
+                            if (this.isAutoMode) {
+                                console.log('🔄 Смена авто-предсказания');
+                                this.showAutoPrediction();
+                            }
+                        }, 60000);
+                    }
+                }, 1000);
+            }
+
+            stopAutoMode() {
+                console.log('🛑 Останавливаем авторежим');
+                this.isAutoMode = false;
+                
+                // Отменяем задержку запуска
+                if (this.autoModeDelay) {
+                    clearTimeout(this.autoModeDelay);
+                    this.autoModeDelay = null;
+                }
+                
+                if (this.autoInterval) {
+                    clearInterval(this.autoInterval);
+                    this.autoInterval = null;
+                }
+                
+                if (this.autoPredictionInterval) {
+                    clearInterval(this.autoPredictionInterval);
+                    this.autoPredictionInterval = null;
+                }
+                
+                this.autoTimerEl.classList.remove('show');
+                this.predictionDisplay.classList.remove('persistent');
+                this.autoCountdown = 5;
+                this.timerCount.textContent = '5';
+            }
+
+            showAutoPrediction() {
+                const predictionsArray = this.predictions[this.currentLanguage].individual.length > 0 ? 
+                    this.predictions[this.currentLanguage].individual : 
+                    translations[this.currentLanguage].individual;
+                
+                const prediction = predictionsArray[Math.floor(Math.random() * predictionsArray.length)];
+                
+                this.predictionText.textContent = prediction;
+                this.predictionDisplay.classList.add('show', 'persistent');
+                this.status.textContent = translations[this.currentLanguage].statusAuto;
+                this.setColorMode('individual');
+                
+                this.createSparks();
+                
+                console.log('🔮 Показано авто-предсказание:', prediction);
+            }
+
+            // 🎨 Улучшенная отрисовка лиц с цветами
+            drawHologram(detections) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (detections.length === 0) return;
+
+                detections.forEach((detection, index) => {
+                    const { x, y, width, height } = detection.box;
+                    
+                    // Генерируем или получаем ID лица
+                    const faceKey = `${Math.floor(x)}_${Math.floor(y)}_${Math.floor(width)}`;
+                    let faceId, color;
+                    
+                    if (this.faceIds.has(faceKey)) {
+                        faceId = this.faceIds.get(faceKey);
+                    } else {
+                        faceId = `ID-${this.nextFaceId.toString().padStart(3, '0')}`;
+                        this.faceIds.set(faceKey, faceId);
+                        this.nextFaceId++;
+                    }
+                    
+                    // Назначаем цвет по индексу
+                    color = this.faceColors[index % this.faceColors.length];
+                    
+                    // Настройки отрисовки
+                    this.ctx.strokeStyle = color;
+                    this.ctx.fillStyle = color;
+                    this.ctx.lineWidth = 3;
+                    this.ctx.shadowColor = color;
+                    this.ctx.shadowBlur = 20;
+                    
+                    // Рамка лица
+                    this.ctx.strokeRect(x, y, width, height);
+                    
+                    // ID лица
+                    this.ctx.font = 'bold 14px Orbitron';
+                    this.ctx.fillText(faceId, x, y - 10);
+                    
+                    // Дополнительные декоративные элементы
+                    const cornerSize = 15;
+                    this.ctx.lineWidth = 2;
+                    
+                    // Углы
+                    // Верхний левый
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, y + cornerSize);
+                    this.ctx.lineTo(x, y);
+                    this.ctx.lineTo(x + cornerSize, y);
+                    this.ctx.stroke();
+                    
+                    // Верхний правый
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x + width - cornerSize, y);
+                    this.ctx.lineTo(x + width, y);
+                    this.ctx.lineTo(x + width, y + cornerSize);
+                    this.ctx.stroke();
+                    
+                    // Нижний левый
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, y + height - cornerSize);
+                    this.ctx.lineTo(x, y + height);
+                    this.ctx.lineTo(x + cornerSize, y + height);
+                    this.ctx.stroke();
+                    
+                    // Нижний правый
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x + width - cornerSize, y + height);
+                    this.ctx.lineTo(x + width, y + height);
+                    this.ctx.lineTo(x + width, y + height - cornerSize);
+                    this.ctx.stroke();
+                });
+                
+                this.ctx.shadowBlur = 0;
+            }
+
+            triggerPrediction(isGroup = false) {
+                if (this.isLoading) return;
+                
+                this.previousPredictionSize = this.currentGroupSize;
+                
+                let count = 3;
+                const showCount = () => {
+                    if (count > 0) {
+                        this.countdown.textContent = count;
+                        this.countdown.classList.add('show');
+                        
+                        setTimeout(() => {
+                            this.countdown.classList.remove('show');
+                            count--;
+                            if (count > 0) {
+                                setTimeout(showCount, 300);
+                            } else {
+                                this.showPrediction(isGroup);
+                            }
+                        }, 700);
+                    }
+                };
+                showCount();
+            }
+
+            showPrediction(isGroup = false) {
+                const currentLang = this.predictions[this.currentLanguage];
+                const fallbackLang = translations[this.currentLanguage];
+                
+                const predictionsArray = isGroup ? 
+                    (currentLang.group && currentLang.group.length > 0 ? currentLang.group : currentLang.individual) :
+                    (currentLang.individual && currentLang.individual.length > 0 ? currentLang.individual : fallbackLang.individual);
+                
+                const prediction = predictionsArray[Math.floor(Math.random() * predictionsArray.length)];
+                
+                this.predictionText.textContent = prediction;
+                this.predictionDisplay.classList.add('show');
+                
+                this.status.textContent = isGroup ? 
+                    translations[this.currentLanguage].statusGroup : 
+                    translations[this.currentLanguage].statusSolo;
+                
+                this.createSparks();
+            }
+
+            initEffects() {
+                // Горячие клавиши
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        this.showPrediction(false);
+                    } else if (e.key.toLowerCase() === 'g') {
+                        e.preventDefault();
+                        this.showPrediction(true);
+                    } else if (e.key.toLowerCase() === 'l') {
+                        e.preventDefault();
+                        this.setLanguage(this.currentLanguage === 'ru' ? 'en' : 'ru', true);
+                    }
+                });
+            }
+        }
+
+        // Запуск приложения
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                window.oracle = new NeuralOracle();
+            });
+        } else {
+            window.oracle = new NeuralOracle();
+        }
+    </script>
+</body>
+</html>
