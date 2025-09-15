@@ -942,6 +942,17 @@
                 this.init();
             }
 
+            async loadPredictions(url) {
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+    const response = await fetch(proxyUrl);
+    const text = await response.text();
+    
+    // ОТЛАДКА - покажет что загрузилось
+    console.log('Загруженный текст:', text.substring(0, 200));
+    console.log('Есть INDIVIDUAL?', text.includes('=== INDIVIDUAL ==='));
+    console.log('Есть GROUP?', text.includes('=== GROUP ==='));
+}
+
             async init() {
                 // Проверка URL параметров
                 const urlParams = new URLSearchParams(window.location.search);
