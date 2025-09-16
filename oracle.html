@@ -2086,8 +2086,8 @@ ${translations.en.group.slice(0, 3).join('\n')}
                     console.error('❌ Ошибка инициализации камеры:', error);
                     this.cameraAvailable = false;
                     this.status.textContent = translations[this.currentLanguage].statusAuto;
-                    this.cameraInvitation.querySelector('.invitation-main').textContent = 'Камера недоступна';
-                    this.cameraInvitation.querySelector('.invitation-sub').textContent = 'автоматический режим';
+                    this.cameraInvitation.querySelector('.invitation-main').textContent = 'Камера недоступна/Camera is unavailable';
+                    this.cameraInvitation.querySelector('.invitation-sub').textContent = 'Автоматический режим/Automode';
                     this.hologramFrame.classList.add('dimmed');
                     
                     // 🔧 Сразу запускаем авторежим если камера недоступна
