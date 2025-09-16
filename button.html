@@ -101,11 +101,49 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
+
+        /* Логотип */
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .logo {
+            max-width: 200px;
+            max-height: 60px;
+            width: auto;
+            height: auto;
+            filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.3));
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-placeholder {
+            width: 200px;
+            height: 60px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
         
         /* Заголовок и подпись */
         .header {
             position: absolute;
-            top: 40px;
+            top: 100px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -130,7 +168,7 @@
         /* Счетчики */
         .stats {
             position: absolute;
-            top: 160px;
+            top: 220px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -160,6 +198,97 @@
             margin-top: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        /* Зона трофеев */
+        .trophy-zone {
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            z-index: 30;
+        }
+
+        .trophy-zone-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .trophy-collection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-start;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .trophy-glass {
+            width: 35px;
+            height: 45px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .trophy-glass .glass-body {
+            width: 100%;
+            height: 85%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px 8px 12px 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .trophy-glass .glass-rim {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: 12px;
+            background: linear-gradient(135deg, #3B82F6, #A855F7, #EC4899);
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .trophy-glass .liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #3B82F6 0%, #A855F7 50%, #EC4899 100%);
+            border-radius: 0 0 10px 10px;
+        }
+
+        .counter-glass {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            width: 50px;
+            height: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-right: 10px;
         }
         
         /* Активная колба */
@@ -194,34 +323,6 @@
         .active-glass:hover {
             transform: scale(1.05);
         }
-
-         .logo-container {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: rgba(0, 10, 20, 0.7);
-            border: 1px solid var(--neon-cyan);
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-
-        .logo-container img {
-            height: 60px;
-            width: auto;
-            display: block;
-        }
-
-        .logo-placeholder {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, var(--glass), transparent);
-            border: 1px solid var(--glass-border);
-            border-radius: 10px;
-            font-size: 0.8rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--neon-cyan);
-        }
-
         
         .glass-body {
             position: relative;
@@ -316,22 +417,16 @@
         .stress-button:active {
             transform: translateX(-50%) translateY(-1px);
         }
-        
-        /* Коллекция трофеев */
-        .trophy-collection {
+
+        /* Дисклеймер */
+        .disclaimer {
             position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 30;
-        }
-        
-        .trophy-glass {
-            width: 60px;
-            height: 80px;
-            position: relative;
+            bottom: 15px;
+            left: 20px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            z-index: 100;
+            font-weight: 500;
         }
         
         /* Инструкция */
@@ -345,14 +440,33 @@
             text-align: center;
             z-index: 100;
         }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .trophy-zone {
+                left: 10px;
+                width: 150px;
+            }
+            
+            .stats {
+                gap: 40px;
+            }
+            
+            .stat-item {
+                padding: 10px 15px;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-        <div class="logo-container">
-                    <img src="AI Logo.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div class="logo-placeholder" style="display: none;">AI LOGO</div>
-                </div>
-    
     <!-- Кнопка настроек -->
     <button class="settings-button" id="settingsButton">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -372,6 +486,14 @@
         </div>
     </div>
 
+    <!-- Логотип -->
+    <div class="logo-container">
+        <img id="logo" class="logo" src="/AI Logo.png" alt="Logo" style="display: none;" onerror="this.style.display='none'; document.getElementById('logoPlaceholder').style.display='flex';">
+        <div id="logoPlaceholder" class="logo-placeholder">
+            Место для логотипа
+        </div>
+    </div>
+
     <div class="header">
         <div class="title">АНТИСТРЕСС ЗОНА</div>
         <div class="subtitle">Нажми на кнопку - сними стресс</div>
@@ -387,6 +509,14 @@
             <div class="stat-label">Кликов</div>
         </div>
     </div>
+
+    <!-- Зона трофеев -->
+    <div class="trophy-zone">
+        <div class="trophy-zone-title" id="trophyZoneTitle">Коллекция</div>
+        <div class="trophy-collection" id="trophyCollection">
+            <!-- Трофеи будут добавляться сюда -->
+        </div>
+    </div>
     
     <div class="active-glass-container">
         <div class="active-glass" id="activeGlass">
@@ -400,7 +530,8 @@
     
     <button class="stress-button" id="stressButton">Снять стресс</button>
     
-    <div class="trophy-collection" id="trophyCollection"></div>
+    <!-- Дисклеймер -->
+    <div class="disclaimer">powered by Aleksandr Kananovich</div>
     
     <div class="instruction">
         Используйте ENTER или кнопку мыши
@@ -415,7 +546,8 @@
                 completed: "Completed",
                 clicks: "Clicks",
                 button: "Relieve Stress",
-                instruction: "Use ENTER or mouse button"
+                instruction: "Use ENTER or mouse button",
+                collection: "Collection"
             },
             ru: {
                 title: "АНТИСТРЕСС ЗОНА",
@@ -423,9 +555,22 @@
                 completed: "Завершено",
                 clicks: "Кликов",
                 button: "Снять стресс",
-                instruction: "Используйте ENTER или кнопку мыши"
+                instruction: "Используйте ENTER или кнопку мыши",
+                collection: "Коллекция"
             }
         };
+
+        // Функция для установки логотипа
+        function setLogo(imagePath) {
+            const logoImg = document.getElementById('logo');
+            const logoPlaceholder = document.getElementById('logoPlaceholder');
+            
+            logoImg.src = imagePath;
+            logoImg.onload = function() {
+                logoPlaceholder.style.display = 'none';
+                logoImg.style.display = 'block';
+            };
+        }
 
         // Функция установки языка
         function setLanguage(lang) {
@@ -435,6 +580,7 @@
             document.querySelectorAll('.stat-label')[1].textContent = translations[lang].clicks;
             document.querySelector('.stress-button').textContent = translations[lang].button;
             document.querySelector('.instruction').textContent = translations[lang].instruction;
+            document.getElementById('trophyZoneTitle').textContent = translations[lang].collection;
             
             // Сохраняем выбранный язык
             localStorage.setItem('selectedLanguage', lang);
@@ -554,14 +700,8 @@
             
             createCounterGlass(count, isNew = false) {
                 const counterGlass = document.createElement('div');
-                counterGlass.className = 'trophy-glass counter';
-                counterGlass.innerHTML = `
-                    <div class="counter-number">${count}</div>
-                    <div class="glass-rim"></div>
-                    <div class="glass-body">
-                        <div class="liquid"></div>
-                    </div>
-                `;
+                counterGlass.className = 'counter-glass';
+                counterGlass.textContent = count;
                 
                 if (isNew) {
                     counterGlass.classList.add('new');
@@ -614,6 +754,10 @@
                 setLanguage(selectedLanguage);
                 document.getElementById('languageModal').style.display = 'none';
             }
+            
+            // Пример установки логотипа (раскомментируйте и укажите путь к вашему PNG файлу):
+            // setLogo('path/to/your/logo.png');
+            
             new StressReliefZone();
         });
     </script>
