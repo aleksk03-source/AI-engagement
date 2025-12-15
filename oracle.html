@@ -2925,13 +2925,13 @@ ${translations.en.group.slice(0, 3).join('\n')}
 
             initEffects() {
                 document.addEventListener('keydown', (e) => {
-                    if (e.code === 'Space') {
+                    if (e.code === '!') {
                         e.preventDefault();
                         this.showPrediction(false);
-                    } else if (e.key.toLowerCase() === 'g') {
+                    } else if (e.key.toLowerCase() === '@') {
                         e.preventDefault();
                         this.showPrediction(true);
-                    } else if (e.key.toLowerCase() === 'l') {
+                    } else if (e.key.toLowerCase() === '#') {
                         e.preventDefault();
                         this.setLanguage(this.currentLanguage === 'ru' ? 'en' : 'ru', true);
                     }
