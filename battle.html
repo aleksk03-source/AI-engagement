@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI Battle - Test your prompt engineering skills in a multiplayer quiz game with OpenAI">
+    <meta name="description" content="AI Battle - Multiplayer Quiz Game with Prompt Engineering">
     <meta name="theme-color" content="#6c63ff">
     <title>AI Battle - Prompt Engineering Quiz Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.5.3/qrcode.min.js"></script>
+    
     <style>
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           DESIGN TOKENS & VARIABLES
+           DESIGN TOKENS
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         :root {
             --bg: #0a0a0f;
@@ -23,9 +24,6 @@
             --warning: #ffa502;
             --text: #e8e8f0;
             --muted: #666680;
-            --gold: #ffd700;
-            --silver: #c0c0c0;
-            --bronze: #cd7f32;
 
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
@@ -67,7 +65,7 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           LAYOUT & SCREENS
+           LAYOUT
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .screen {
             display: none;
@@ -92,90 +90,14 @@
             }
         }
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           NAVIGATION BAR
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .navbar {
-            background: var(--surface);
-            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
-            padding: var(--space-md) var(--space-lg);
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-lg);
+            flex: 1;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-md);
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-
-        .navbar-brand:hover {
-            color: var(--accent);
-        }
-
-        .navbar-links {
-            display: flex;
-            gap: var(--space-lg);
-            align-items: center;
-        }
-
-        .nav-link {
-            color: var(--text);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-md);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .nav-link:hover {
-            background: var(--card);
-            color: var(--accent);
-        }
-
-        .nav-link.active {
-            color: var(--accent);
-            box-shadow: var(--glow-accent);
-        }
-
-        .nav-mode-switcher {
-            display: flex;
-            gap: var(--space-sm);
-            background: var(--card);
-            padding: var(--space-sm);
-            border-radius: var(--radius-full);
-        }
-
-        .mode-btn {
-            padding: var(--space-sm) var(--space-lg);
-            border: none;
-            background: transparent;
-            color: var(--text);
-            cursor: pointer;
-            border-radius: var(--radius-full);
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .mode-btn.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: var(--glow-primary);
+            flex-direction: column;
+            justify-content: center;
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -205,11 +127,6 @@
             margin-bottom: var(--space-md);
         }
 
-        h4 {
-            font-size: 1.25rem;
-            margin-bottom: var(--space-sm);
-        }
-
         p {
             font-size: 1rem;
             color: var(--text);
@@ -219,13 +136,6 @@
         .muted {
             color: var(--muted);
             font-size: 0.875rem;
-        }
-
-        .mono {
-            font-family: 'Courier New', monospace;
-            background: rgba(0, 0, 0, 0.3);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-sm);
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -242,8 +152,6 @@
             transition: all 0.3s ease;
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
         }
 
         .btn-primary {
@@ -279,12 +187,6 @@
         .btn-success:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger) 0%, #ff6b7a 100%);
-            color: white;
-            box-shadow: var(--glow-danger);
         }
 
         button:disabled, .btn:disabled {
@@ -326,18 +228,8 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           CARDS & CONTAINERS
+           CARDS
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--space-lg);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
         .card {
             background: var(--card);
             border-radius: var(--radius-lg);
@@ -353,45 +245,13 @@
             transform: translateY(-2px);
         }
 
-        .card.glowing {
-            box-shadow: var(--glow-primary);
-            border-color: var(--primary);
-        }
-
-        .card.success {
-            box-shadow: var(--glow-success);
-            border-color: var(--success);
-        }
-
-        .card.danger {
-            box-shadow: var(--glow-danger);
-            border-color: var(--danger);
-        }
-
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            SETUP SCREEN
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .setup-screen {
-            align-items: center;
-            justify-content: center;
-            background: radial-gradient(circle at 50% 50%, rgba(108, 99, 255, 0.1) 0%, transparent 70%);
-        }
-
         .setup-container {
             width: 100%;
-            max-width: 500px;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .setup-logo {
@@ -424,18 +284,19 @@
             letter-spacing: 0.1em;
         }
 
-        .player-input-group {
+        .input-group {
             display: flex;
             gap: var(--space-md);
             margin-bottom: var(--space-lg);
         }
 
-        .player-input-group input {
+        .input-group input {
             flex: 1;
         }
 
-        .player-input-group button {
+        .input-group button {
             padding: var(--space-md) var(--space-lg);
+            white-space: nowrap;
         }
 
         .players-list {
@@ -476,6 +337,8 @@
             cursor: pointer;
             opacity: 0.7;
             transition: opacity 0.2s;
+            font-size: 1.2rem;
+            line-height: 1;
         }
 
         .player-chip .remove:hover {
@@ -501,6 +364,20 @@
             min-width: 150px;
         }
 
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: var(--accent);
+        }
+
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            HOST SCREEN
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -517,6 +394,7 @@
             flex-direction: column;
             justify-content: center;
             overflow-y: auto;
+            max-height: 100vh;
         }
 
         .host-sidebar {
@@ -527,6 +405,9 @@
             border: 1px solid rgba(108, 99, 255, 0.2);
             overflow-y: auto;
             max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
         }
 
         .host-header {
@@ -587,9 +468,9 @@
         }
 
         .question-text {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            line-height: 1.2;
+            line-height: 1.3;
             margin-bottom: var(--space-2xl);
             text-shadow: 0 0 30px rgba(108, 99, 255, 0.2);
         }
@@ -602,45 +483,16 @@
             gap: var(--space-xl);
         }
 
-        .timer-circle {
-            position: relative;
-            width: 200px;
-            height: 200px;
-        }
-
-        .timer-svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-
-        .timer-circle-bg {
-            fill: none;
-            stroke: var(--card);
-            stroke-width: 8;
-        }
-
-        .timer-circle-progress {
-            fill: none;
-            stroke: url(#timerGradient);
-            stroke-width: 8;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.1s linear;
-        }
-
-        .timer-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .timer-display {
             text-align: center;
         }
 
         .timer-time {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 700;
             color: var(--accent);
             line-height: 1;
+            font-variant-numeric: tabular-nums;
         }
 
         .timer-label {
@@ -651,31 +503,35 @@
             margin-top: var(--space-sm);
         }
 
-        .timer-circle.pulse .timer-time {
+        .timer-time.pulse {
             animation: pulse 0.5s ease-in-out infinite;
         }
 
         @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
-        .submission-status {
+        .submission-count {
+            background: var(--card);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
             text-align: center;
-            font-size: 1.2rem;
-            color: var(--success);
-            font-weight: 600;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: var(--glow-success);
         }
 
-        .submission-status .count {
-            font-size: 2.5rem;
-            display: block;
-            color: var(--accent);
-            margin: var(--space-md) 0;
+        .submission-count .label {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .submission-count .number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--success);
+            font-variant-numeric: tabular-nums;
         }
 
         .host-responses {
@@ -699,7 +555,6 @@
             margin-bottom: var(--space-md);
             border-left: 4px solid var(--primary);
             animation: rowSlideIn 0.4s ease-out;
-            animation-fill-mode: both;
         }
 
         @keyframes rowSlideIn {
@@ -722,13 +577,6 @@
         .response-row.wrong {
             border-left-color: var(--danger);
             background: rgba(255, 71, 87, 0.1);
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
         }
 
         .response-header {
@@ -768,7 +616,10 @@
             margin-bottom: var(--space-sm);
             font-size: 0.95rem;
             line-height: 1.6;
-            word-break: break-word;
+        }
+
+        .response-text strong {
+            color: var(--accent);
         }
 
         .response-ai {
@@ -780,7 +631,7 @@
             border-left: 3px solid var(--accent);
             color: var(--accent);
             margin-top: var(--space-md);
-            word-break: break-word;
+            line-height: 1.5;
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -792,6 +643,9 @@
             border: 1px solid rgba(108, 99, 255, 0.2);
             overflow: hidden;
             box-shadow: var(--glow-primary);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .leaderboard-title {
@@ -805,8 +659,8 @@
         }
 
         .leaderboard-rows {
-            max-height: 400px;
             overflow-y: auto;
+            flex: 1;
         }
 
         .leaderboard-row {
@@ -833,11 +687,6 @@
             background: rgba(108, 99, 255, 0.1);
         }
 
-        .leaderboard-row.highlight {
-            background: rgba(108, 99, 255, 0.2);
-            box-shadow: inset 0 0 20px rgba(108, 99, 255, 0.1);
-        }
-
         .leaderboard-rank {
             width: 40px;
             height: 40px;
@@ -850,19 +699,20 @@
             border-radius: 50%;
             background: var(--surface);
             color: var(--primary);
+            flex-shrink: 0;
         }
 
-        .leaderboard-rank.gold {
+        .leaderboard-rank.first {
             background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
             color: #000;
         }
 
-        .leaderboard-rank.silver {
+        .leaderboard-rank.second {
             background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
             color: #000;
         }
 
-        .leaderboard-rank.bronze {
+        .leaderboard-rank.third {
             background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
             color: #fff;
         }
@@ -870,54 +720,33 @@
         .leaderboard-name {
             flex: 1;
             font-weight: 600;
-        }
-
-        .leaderboard-change {
-            color: var(--muted);
-            font-size: 0.9rem;
-            margin-right: var(--space-md);
-            width: 30px;
-            text-align: right;
-        }
-
-        .leaderboard-change.up {
-            color: var(--success);
-        }
-
-        .leaderboard-change.down {
-            color: var(--danger);
+            font-size: 0.95rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .leaderboard-score {
             font-weight: 700;
             color: var(--accent);
-            font-size: 1.1rem;
-            min-width: 60px;
+            font-size: 1rem;
+            min-width: 50px;
             text-align: right;
+            font-variant-numeric: tabular-nums;
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PLAYER SCREEN - FIXED
+           PLAYER SCREEN
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .player-screen {
             align-items: center;
             justify-content: center;
-            padding: var(--space-lg);
             background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
         }
 
         .player-wrapper {
             width: 100%;
             max-width: 500px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .player-container {
-            width: 100%;
-            animation: slideUp 0.6s ease-out;
-            display: flex;
-            flex-direction: column;
         }
 
         .player-header {
@@ -933,7 +762,7 @@
         .player-name {
             color: var(--accent);
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: var(--space-md);
         }
 
@@ -986,6 +815,7 @@
             color: var(--accent);
             line-height: 1;
             margin-bottom: var(--space-sm);
+            font-variant-numeric: tabular-nums;
         }
 
         .player-timer .label {
@@ -1030,7 +860,6 @@
         .player-actions {
             display: flex;
             gap: var(--space-md);
-            margin-top: var(--space-lg);
         }
 
         .player-actions button {
@@ -1066,7 +895,6 @@
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
             border: 1px solid rgba(108, 99, 255, 0.2);
-            margin-bottom: var(--space-lg);
             animation: slideUp 0.6s ease-out;
         }
 
@@ -1086,7 +914,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             margin-bottom: var(--space-md);
         }
 
@@ -1098,45 +926,27 @@
             color: var(--danger);
         }
 
-        .result-prompt {
+        .result-section {
             margin-bottom: var(--space-md);
         }
 
-        .result-prompt-label {
+        .result-section-label {
             color: var(--muted);
             font-size: 0.85rem;
             margin-bottom: var(--space-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .result-prompt-text {
+        .result-section-text {
             background: rgba(0, 0, 0, 0.3);
             padding: var(--space-md);
             border-radius: var(--radius-md);
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             border-left: 3px solid var(--accent);
-            word-break: break-word;
-        }
-
-        .result-ai {
-            margin-bottom: var(--space-md);
-        }
-
-        .result-ai-label {
-            color: var(--muted);
-            font-size: 0.85rem;
-            margin-bottom: var(--space-sm);
-        }
-
-        .result-ai-text {
-            background: rgba(0, 212, 255, 0.1);
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            border-left: 3px solid var(--accent);
-            color: var(--accent);
-            word-break: break-word;
+            line-height: 1.5;
         }
 
         .result-points {
@@ -1148,6 +958,8 @@
             font-weight: 700;
             font-size: 1.3rem;
             color: var(--success);
+            margin-top: var(--space-md);
+            font-variant-numeric: tabular-nums;
         }
 
         .result-points.zero {
@@ -1184,18 +996,12 @@
             text-shadow: 0 0 30px rgba(108, 99, 255, 0.3);
         }
 
-        .results-title p {
-            color: var(--muted);
-            font-size: 1.1rem;
-        }
-
         .podium-container {
             display: flex;
             align-items: flex-end;
             justify-content: center;
             gap: var(--space-lg);
             margin-bottom: var(--space-2xl);
-            perspective: 1000px;
         }
 
         .podium-position {
@@ -1281,6 +1087,7 @@
             font-size: 1.2rem;
             font-weight: 700;
             margin-top: var(--space-sm);
+            font-variant-numeric: tabular-nums;
         }
 
         .best-prompt-award {
@@ -1290,7 +1097,7 @@
             padding: var(--space-lg);
             margin-bottom: var(--space-2xl);
             text-align: center;
-            box-shadow: var(--glow-warning);
+            box-shadow: 0 0 20px rgba(255, 165, 2, 0.4);
             animation: slideUp 0.6s ease-out 0.2s both;
         }
 
@@ -1357,6 +1164,7 @@
             border-radius: 50%;
             background: var(--surface);
             color: var(--primary);
+            flex-shrink: 0;
         }
 
         .final-rank.first {
@@ -1383,6 +1191,7 @@
             font-weight: 700;
             color: var(--accent);
             font-size: 1.2rem;
+            font-variant-numeric: tabular-nums;
         }
 
         .results-actions {
@@ -1398,7 +1207,7 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           NOTIFICATIONS & TOAST
+           TOAST NOTIFICATIONS
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .toast {
             position: fixed;
@@ -1442,98 +1251,12 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           MODAL
+           RESPONSIVE
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--card);
-            border-radius: var(--radius-lg);
-            padding: var(--space-2xl);
-            border: 1px solid rgba(108, 99, 255, 0.2);
-            box-shadow: var(--glow-primary);
-            max-width: 400px;
-            width: 100%;
-            animation: slideUp 0.3s ease-out;
-            text-align: center;
-            position: relative;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--surface);
-            border: none;
-            color: var(--text);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        #qrcode {
-            margin: var(--space-lg) 0;
-        }
-
-        #qrcode canvas {
-            border-radius: var(--radius-md);
-            border: 2px solid var(--primary);
-        }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           RESPONSIVE DESIGN
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        @media (max-width: 1200px) {
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 2rem; }
-            .question-text { font-size: 2rem; }
-            .host-sidebar { width: 300px; }
-        }
-
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: var(--space-md);
-            }
-
-            .navbar-brand {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .navbar-links {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .question-text { font-size: 1.5rem; }
 
             .host-screen {
                 flex-direction: column;
@@ -1542,32 +1265,10 @@
             .host-sidebar {
                 width: 100%;
                 max-height: 300px;
-                order: 2;
-            }
-
-            .host-main {
-                order: 1;
-            }
-
-            h1 { font-size: 2rem; }
-            h2 { font-size: 1.5rem; }
-            .question-text { font-size: 1.5rem; }
-
-            .timer-circle {
-                width: 150px;
-                height: 150px;
             }
 
             .timer-time {
-                font-size: 2.5rem;
-            }
-
-            .podium-container {
-                gap: var(--space-md);
-            }
-
-            .podium-step {
-                width: 100px;
+                font-size: 3rem;
             }
 
             .podium-position.first .podium-step {
@@ -1581,76 +1282,18 @@
             .podium-position.third .podium-step {
                 height: 80px;
             }
-
-            .leaderboard-row {
-                padding: var(--space-md);
-            }
-
-            .response-row {
-                padding: var(--space-md);
-            }
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: var(--space-md);
-            }
-
             h1 { font-size: 1.5rem; }
-            h2 { font-size: 1.2rem; }
-            h3 { font-size: 1rem; }
+            button { font-size: 0.9rem; }
 
-            button, .btn {
-                padding: var(--space-md) var(--space-md);
-                font-size: 0.9rem;
-            }
-
-            .setup-logo h1 {
-                font-size: 2.5rem;
-            }
-
-            .question-text {
-                font-size: 1.2rem;
-            }
-
-            .timer-circle {
-                width: 120px;
-                height: 120px;
-            }
-
-            .timer-time {
-                font-size: 2rem;
-            }
-
-            .toast {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-            }
-
-            .player-input-group {
-                flex-direction: column;
-            }
-
-            .player-chip {
-                font-size: 0.8rem;
-                padding: var(--space-sm) var(--space-md);
-            }
-
-            .nav-mode-switcher {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .mode-btn {
-                width: 100%;
-            }
+            .question-text { font-size: 1.2rem; }
+            .timer-time { font-size: 2rem; }
+            .input-group { flex-direction: column; }
+            .toast { left: 10px; right: 10px; }
         }
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           SCROLLBAR STYLING
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -1667,217 +1310,599 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
         }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           GLOW WARNING
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        --glow-warning: 0 0 20px rgba(255, 165, 2, 0.4);
     </style>
+</head>
+
+<body>
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         SETUP SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="setup-screen screen active">
+        <div class="container">
+            <div class="setup-container">
+                <div class="setup-logo">
+                    <h1>⚔️ AI Battle</h1>
+                    <p>Multiplayer Prompt Engineering Quiz Game</p>
+                </div>
+
+                <div class="info-box">
+                    <strong>🚀 How it works:</strong><br/>
+                    1. Set your OpenAI API key<br/>
+                    2. Add player names<br/>
+                    3. Share room link or code<br/>
+                    4. Play on any device!
+                </div>
+
+                <div class="form-group">
+                    <label>🔑 OpenAI API Key</label>
+                    <input type="password" id="apiKeyInput" placeholder="sk-..." />
+                    <button class="btn btn-primary" onclick="app.handleSetApiKey()" style="margin-top: var(--space-md); width: 100%;">
+                        Set API Key
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>👥 Add Players (Max 12)</label>
+                    <div class="input-group">
+                        <input type="text" id="playerNameInput" placeholder="Player name..." />
+                        <button class="btn btn-secondary" onclick="app.handleAddPlayer()">Add</button>
+                    </div>
+                </div>
+
+                <div class="player-count" id="playerCount">0/12 players</div>
+                <div class="players-list" id="playersList"></div>
+
+                <div class="setup-actions">
+                    <button class="btn btn-primary" onclick="app.handleStartGame()" id="startBtn" disabled>
+                        🎮 Start Game
+                    </button>
+                    <button class="btn btn-secondary" onclick="app.handleGenerateRoomCode()">
+                        🔗 Copy Room Link
+                    </button>
+                </div>
+
+                <div class="info-box" style="margin-top: var(--space-lg); background: rgba(0, 212, 255, 0.05);">
+                    <strong>📱 For Players:</strong><br/>
+                    Open this URL on your phone:<br/>
+                    <code style="color: var(--accent); background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 8px;">
+                        <span id="roomLink">Loading...</span>
+                    </code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         HOST SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="host-screen screen">
+        <div class="host-main">
+            <div class="container">
+                <div class="host-header">
+                    <div class="host-progress">
+                        <div class="host-progress round-label">Round</div>
+                        <div class="host-progress round-number">1/10</div>
+                    </div>
+                    <h1 style="margin: 0; flex: 1; text-align: center;">🎯 AI Battle</h1>
+                    <button class="btn btn-secondary" onclick="app.handleBackToSetup()" style="width: auto; padding: var(--space-md) var(--space-lg);">
+                        Exit
+                    </button>
+                </div>
+
+                <div class="question-area">
+                    <div class="question-topic"></div>
+                    <div class="question-text"></div>
+                </div>
+
+                <div class="timer-container">
+                    <div class="timer-display">
+                        <div class="timer-time">60</div>
+                        <div class="timer-label">seconds</div>
+                    </div>
+
+                    <div class="submission-count">
+                        <div class="label">Submissions</div>
+                        <div class="number">0</div>
+                    </div>
+                </div>
+
+                <div class="host-responses"></div>
+            </div>
+        </div>
+
+        <div class="host-sidebar">
+            <div class="leaderboard">
+                <div class="leaderboard-title">📊 Leaderboard</div>
+                <div class="leaderboard-rows"></div>
+            </div>
+
+            <div style="display: flex; gap: var(--space-md);">
+                <button class="btn btn-success" onclick="app.handleNextRound()" style="flex: 1;">
+                    Next Round
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         PLAYER SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="player-screen screen">
+        <div class="container">
+            <div class="player-wrapper">
+                <div class="player-header">
+                    <h1>⚔️ AI Battle</h1>
+                    <div class="player-name"></div>
+                </div>
+
+                <div class="round-badge"></div>
+
+                <div class="player-timer">
+                    <div class="time">60</div>
+                    <div class="label">Time remaining</div>
+                </div>
+
+                <div class="player-question">
+                    <h3>Question</h3>
+                    <p></p>
+                </div>
+
+                <div class="prompt-input-wrapper">
+                    <textarea id="promptTextarea" placeholder="Write your AI prompt here... (max 300 characters)" maxlength="300"></textarea>
+                    <div class="char-counter">0/300</div>
+                </div>
+
+                <div class="player-actions">
+                    <button class="btn btn-primary" id="submitPromptBtn" onclick="app.handleSubmitPrompt()">
+                        Submit Prompt
+                    </button>
+                </div>
+
+                <div class="player-waiting" id="waitingContainer" style="display: none;">
+                    <div class="waiting-spinner"></div>
+                    <div class="waiting-text">Waiting for results...</div>
+                </div>
+
+                <div class="player-result-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         RESULTS SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="results-screen screen">
+        <div class="container">
+            <div class="results-container">
+                <div class="results-title">
+                    <h1>🎉 Game Over!</h1>
+                    <p>Final Results</p>
+                </div>
+
+                <div class="podium-container"></div>
+
+                <div class="best-prompt-award"></div>
+
+                <div class="final-leaderboard">
+                    <div class="final-leaderboard-title">📊 Final Leaderboard</div>
+                    <div class="final-leaderboard-rows"></div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn btn-primary" onclick="app.handlePlayAgain()">
+                        🔄 Play Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           QUIZ QUESTIONS DATABASE
+           QUIZ QUESTIONS
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         const QUIZ_QUESTIONS = [
             {
                 id: 1,
                 question: "What is the capital of Australia?",
-                correctAnswer: "Canberra",
                 keywords: ["canberra"],
-                type: "fact",
                 topic: "🌍 Geography"
             },
             {
                 id: 2,
                 question: "What is the chemical symbol for Gold?",
-                correctAnswer: "Au",
                 keywords: ["au", "gold"],
-                type: "science",
                 topic: "⚗️ Chemistry"
             },
             {
                 id: 3,
                 question: "In what year did the Titanic sink?",
-                correctAnswer: "1912",
                 keywords: ["1912", "titanic"],
-                type: "history",
                 topic: "📚 History"
             },
             {
                 id: 4,
                 question: "Who directed the movie 'Inception'?",
-                correctAnswer: "Christopher Nolan",
                 keywords: ["christopher nolan", "nolan"],
-                type: "movies",
                 topic: "🎬 Movies"
             },
             {
                 id: 5,
                 question: "What is the largest planet in our solar system?",
-                correctAnswer: "Jupiter",
                 keywords: ["jupiter"],
-                type: "science",
                 topic: "🔭 Astronomy"
             },
             {
                 id: 6,
                 question: "Which artist painted the Mona Lisa?",
-                correctAnswer: "Leonardo da Vinci",
-                keywords: ["leonardo", "da vinci", "vinci"],
-                type: "history",
+                keywords: ["leonardo", "da vinci"],
                 topic: "🎨 Art"
             },
             {
                 id: 7,
-                question: "Who wrote 'Harry Potter and the Philosopher's Stone'?",
-                correctAnswer: "J.K. Rowling",
-                keywords: ["j.k. rowling", "rowling", "joanne"],
-                type: "literature",
+                question: "Who wrote 'Harry Potter'?",
+                keywords: ["j.k. rowling", "rowling"],
                 topic: "📖 Literature"
             },
             {
                 id: 8,
                 question: "What is the speed of light in vacuum?",
-                correctAnswer: "299,792,458 meters per second",
                 keywords: ["299792458", "300000", "light speed"],
-                type: "science",
                 topic: "🔬 Physics"
             },
             {
                 id: 9,
                 question: "Which country is home to the Great Wall?",
-                correctAnswer: "China",
                 keywords: ["china"],
-                type: "geography",
                 topic: "🌍 Geography"
             },
             {
                 id: 10,
                 question: "What is the smallest country in the world?",
-                correctAnswer: "Vatican City",
-                keywords: ["vatican", "vatican city"],
-                type: "geography",
+                keywords: ["vatican"],
                 topic: "🌍 Geography"
             }
         ];
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           GLOBAL STATE
+           APPLICATION STATE
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        const State = {
-            apiKey: localStorage.getItem('aibc_apiKey') || '',
-            players: [],
-            currentRound: 0,
-            gameStatus: 'setup', // setup | lobby | playing | reviewing | finished
-            submissions: {},
-            roundResults: [],
-            timerValue: 60,
-            gameStartTime: null,
-            playerName: null,
-            playerSubmitted: false,
-            leaderboard: [],
-            mode: 'host' // host | player
-        };
+        const app = {
+            // Config
+            ROOM_ID: null,
+            POLL_INTERVAL: 500,
+            TIMER_INTERVAL: null,
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           UTILITY FUNCTIONS
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+            // State
+            state: {
+                apiKey: localStorage.getItem('aibc_apiKey') || '',
+                roomId: localStorage.getItem('aibc_roomId') || app.generateRoomId(),
+                players: [],
+                currentRound: 0,
+                gameStatus: 'setup', // setup | playing | reviewing | finished
+                submissions: {},
+                roundResults: [],
+                timerValue: 60,
+                gameStartTime: null,
+                playerName: null,
+                playerSubmitted: false,
+                leaderboard: []
+            },
 
-        function maskApiKey(key) {
-            if (!key) return '';
-            return key.substring(0, 5) + '...' + key.substring(key.length - 5);
-        }
+            // Initialization
+            init() {
+                this.ROOM_ID = this.state.roomId;
+                this.loadState();
+                this.setupEventListeners();
+                this.updateUI();
+                this.startPolling();
+                this.handleRouting();
+            },
 
-        function getQueryParam(name) {
-            const url = new URL(window.location.href);
-            return url.searchParams.get(name);
-        }
+            // Generate Room ID
+            generateRoomId() {
+                return 'GAME-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            },
 
-        function navigateTo(screen) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const screenEl = document.querySelector(`.${screen}-screen`);
-            if (screenEl) screenEl.classList.add('active');
+            // Load state from localStorage
+            loadState() {
+                const saved = localStorage.getItem(`aibc_game_${this.ROOM_ID}`);
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        this.state = { ...this.state, ...parsed };
+                    } catch (e) {
+                        console.error('Failed to load state:', e);
+                    }
+                }
+            },
 
-            if (screen === 'setup') {
-                window.location.hash = '';
-            } else if (screen === 'player') {
-                if (State.playerName) {
-                    window.location.hash = `player?name=${encodeURIComponent(State.playerName)}`;
+            // Save state to localStorage
+            saveState() {
+                localStorage.setItem(`aibc_game_${this.ROOM_ID}`, JSON.stringify(this.state));
+                localStorage.setItem('aibc_roomId', this.ROOM_ID);
+            },
+
+            // Setup event listeners
+            setupEventListeners() {
+                document.getElementById('playerNameInput')?.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleAddPlayer();
+                });
+
+                document.getElementById('promptTextarea')?.addEventListener('input', (e) => {
+                    const len = e.target.value.length;
+                    const counter = document.querySelector('.char-counter');
+                    if (counter) {
+                        counter.textContent = `${len}/300`;
+                        counter.classList.remove('warning', 'danger');
+                        if (len > 250) counter.classList.add('danger');
+                        else if (len > 200) counter.classList.add('warning');
+                    }
+                });
+            },
+
+            // Routing
+            handleRouting() {
+                const hash = window.location.hash.substring(1).split('?')[0];
+                const playerName = new URLSearchParams(window.location.hash).get('name');
+
+                if (hash === 'player' && playerName) {
+                    this.state.playerName = decodeURIComponent(playerName);
+                    this.goToPlayer();
+                } else if (hash === 'host') {
+                    this.goToHost();
+                } else if (hash === 'results') {
+                    this.goToResults();
                 } else {
-                    window.location.hash = 'player';
+                    this.goToSetup();
                 }
-            } else {
-                window.location.hash = screen;
-            }
+            },
 
-            updateNavbarActiveLink();
-        }
+            // Navigation
+            goToSetup() {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelector('.setup-screen').classList.add('active');
+                window.location.hash = '';
+                this.updateSetupScreen();
+            },
 
-        function updateNavbarActiveLink() {
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            const hash = window.location.hash.substring(1).split('?')[0] || 'setup';
-            const activeLink = document.querySelector(`[data-screen="${hash || 'setup'}"]`);
-            if (activeLink) activeLink.classList.add('active');
-        }
+            goToHost() {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelector('.host-screen').classList.add('active');
+                window.location.hash = 'host';
+            },
 
-        function saveState() {
-            localStorage.setItem('aibc_state', JSON.stringify(State));
-            window.dispatchEvent(new Event('stateChanged'));
-        }
+            goToPlayer() {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelector('.player-screen').classList.add('active');
+                window.location.hash = `player?name=${encodeURIComponent(this.state.playerName)}`;
+            },
 
-        function showToast(message, type = 'info', duration = 3000) {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'slideInRight 0.3s ease-out reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
-        }
+            goToResults() {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelector('.results-screen').classList.add('active');
+                window.location.hash = 'results';
+            },
 
-        function playSound(type = 'success') {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
+            // Setup Screen
+            handleSetApiKey() {
+                const input = document.getElementById('apiKeyInput');
+                const key = input.value.trim();
 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-
-                if (type === 'success') {
-                    oscillator.frequency.value = 800;
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
-                } else if (type === 'error') {
-                    oscillator.frequency.value = 400;
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.3);
+                if (!key) {
+                    this.showToast('Enter API key', 'error');
+                    return;
                 }
-            } catch (e) {
-                // Audio not available
-            }
-        }
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           OPENAI API
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+                if (!key.startsWith('sk-')) {
+                    this.showToast('Invalid API key format', 'error');
+                    return;
+                }
 
-        async function callOpenAI(playerPrompt, questionText) {
-            if (!State.apiKey) {
-                throw new Error('API key not set');
-            }
+                this.state.apiKey = key;
+                localStorage.setItem('aibc_apiKey', key);
+                this.saveState();
+                this.showToast(`API key saved: ${key.substring(0, 10)}...`, 'success');
+                this.updateSetupScreen();
+            },
 
-            try {
+            handleAddPlayer() {
+                const input = document.getElementById('playerNameInput');
+                const name = input.value.trim();
+
+                if (!name) {
+                    this.showToast('Enter player name', 'error');
+                    return;
+                }
+
+                if (this.state.players.length >= 12) {
+                    this.showToast('Max 12 players', 'error');
+                    return;
+                }
+
+                if (this.state.players.includes(name)) {
+                    this.showToast('Player already added', 'error');
+                    return;
+                }
+
+                this.state.players.push(name);
+                this.saveState();
+                input.value = '';
+                this.updatePlayersList();
+                this.updateSetupScreen();
+            },
+
+            updatePlayersList() {
+                const list = document.getElementById('playersList');
+                const count = document.getElementById('playerCount');
+
+                if (list) {
+                    list.innerHTML = this.state.players.map(name => `
+                        <div class="player-chip">
+                            <span>${name}</span>
+                            <span class="remove" onclick="app.removePlayer('${name}')">✕</span>
+                        </div>
+                    `).join('');
+                }
+
+                if (count) {
+                    count.textContent = `${this.state.players.length}/12 players`;
+                }
+            },
+
+            removePlayer(name) {
+                this.state.players = this.state.players.filter(p => p !== name);
+                this.saveState();
+                this.updatePlayersList();
+                this.updateSetupScreen();
+            },
+
+            updateSetupScreen() {
+                const apiKeyInput = document.getElementById('apiKeyInput');
+                const startBtn = document.getElementById('startBtn');
+
+                if (apiKeyInput) {
+                    apiKeyInput.value = this.state.apiKey;
+                }
+
+                if (startBtn) {
+                    startBtn.disabled = this.state.players.length === 0 || !this.state.apiKey;
+                }
+
+                this.updateRoomLink();
+            },
+
+            handleGenerateRoomCode() {
+                const link = document.getElementById('roomLink').textContent;
+                navigator.clipboard.writeText(link).then(() => {
+                    this.showToast('Link copied to clipboard!', 'success');
+                }).catch(() => {
+                    this.showToast('Failed to copy link', 'error');
+                });
+            },
+
+            updateRoomLink() {
+                const link = document.getElementById('roomLink');
+                if (link) {
+                    const url = `${window.location.origin}${window.location.pathname}#player?name=Player&room=${this.ROOM_ID}`;
+                    link.textContent = url;
+                }
+            },
+
+            // Game Control
+            handleStartGame() {
+                if (this.state.players.length === 0) {
+                    this.showToast('Add players first', 'error');
+                    return;
+                }
+
+                if (!this.state.apiKey) {
+                    this.showToast('Set API key first', 'error');
+                    return;
+                }
+
+                this.state.currentRound = 0;
+                this.state.gameStatus = 'playing';
+                this.state.leaderboard = this.state.players.map(p => ({
+                    name: p,
+                    score: 0
+                }));
+                this.saveState();
+                this.startRound();
+                this.goToHost();
+            },
+
+            startRound() {
+                this.state.currentRound++;
+                this.state.gameStatus = 'playing';
+                this.state.submissions = {};
+                this.state.playerSubmitted = false;
+                this.state.timerValue = 60;
+                this.state.gameStartTime = Date.now();
+                this.saveState();
+                this.updateUI();
+                this.startTimer();
+            },
+
+            startTimer() {
+                if (this.TIMER_INTERVAL) clearInterval(this.TIMER_INTERVAL);
+
+                this.TIMER_INTERVAL = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - this.state.gameStartTime) / 1000);
+                    this.state.timerValue = Math.max(0, 60 - elapsed);
+                    this.updateTimerDisplay();
+
+                    if (this.state.timerValue <= 0) {
+                        clearInterval(this.TIMER_INTERVAL);
+                        this.endRound();
+                    }
+                }, 100);
+            },
+
+            updateTimerDisplay() {
+                document.querySelectorAll('.timer-time').forEach(el => {
+                    el.textContent = String(this.state.timerValue).padStart(2, '0');
+                });
+
+                const playerTimer = document.querySelector('.player-timer');
+                if (playerTimer) {
+                    playerTimer.classList.remove('warning', 'danger');
+                    if (this.state.timerValue <= 10) playerTimer.classList.add('danger');
+                    else if (this.state.timerValue <= 20) playerTimer.classList.add('warning');
+                }
+            },
+
+            async endRound() {
+                this.state.gameStatus = 'reviewing';
+                this.saveState();
+
+                const question = QUIZ_QUESTIONS[this.state.currentRound - 1];
+                const results = [];
+
+                for (const [playerName, submission] of Object.entries(this.state.submissions)) {
+                    try {
+                        const aiResponse = await this.callOpenAI(submission.prompt, question.question);
+                        const isCorrect = this.checkAnswer(aiResponse, question.keywords);
+                        let points = isCorrect ? 3 : 0;
+
+                        if (isCorrect && results.filter(r => r.correct).length === 0) {
+                            points += 5;
+                        }
+
+                        results.push({
+                            playerName,
+                            prompt: submission.prompt,
+                            aiResponse,
+                            correct: isCorrect,
+                            points
+                        });
+
+                        const lb = this.state.leaderboard.find(l => l.name === playerName);
+                        if (lb) lb.score += points;
+                    } catch (error) {
+                        console.error(`Error for ${playerName}:`, error);
+                        results.push({
+                            playerName,
+                            prompt: submission.prompt,
+                            aiResponse: 'Error: ' + error.message,
+                            correct: false,
+                            points: 0
+                        });
+                    }
+                }
+
+                this.state.leaderboard.sort((a, b) => b.score - a.score);
+                this.state.roundResults = results;
+                this.saveState();
+                this.updateUI();
+            },
+
+            async callOpenAI(userPrompt, question) {
                 const response = await fetch('https://api.openai.com/v1/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${State.apiKey}`
+                        'Authorization': `Bearer ${this.state.apiKey}`
                     },
                     body: JSON.stringify({
                         model: 'gpt-4o-mini',
@@ -1888,7 +1913,7 @@
                             },
                             {
                                 role: 'user',
-                                content: `${playerPrompt}\n\nQuestion: ${questionText}`
+                                content: `${userPrompt}\n\nQuestion: ${question}`
                             }
                         ],
                         max_tokens: 100,
@@ -1903,828 +1928,282 @@
 
                 const data = await response.json();
                 return data.choices[0].message.content.trim();
-            } catch (error) {
-                console.error('OpenAI API error:', error);
-                throw error;
-            }
-        }
+            },
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           GAME LOGIC
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+            checkAnswer(response, keywords) {
+                const lower = response.toLowerCase();
+                return keywords.some(kw => lower.includes(kw.toLowerCase()));
+            },
 
-        function initializeGame() {
-            State.currentRound = 0;
-            State.gameStatus = 'playing';
-            State.roundResults = [];
-            State.submissions = {};
-            State.leaderboard = State.players.map(p => ({
-                name: p,
-                score: 0,
-                previousRank: 0
-            }));
-            saveState();
-            startRound();
-        }
-
-        function startRound() {
-            State.currentRound++;
-            State.gameStatus = 'playing';
-            State.submissions = {};
-            State.playerSubmitted = false;
-            State.timerValue = 60;
-            State.gameStartTime = Date.now();
-            saveState();
-            updateAllScreens();
-            startTimer();
-        }
-
-        function startTimer() {
-            const timerInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - State.gameStartTime) / 1000);
-                State.timerValue = Math.max(0, 60 - elapsed);
-                updateTimerDisplay();
-
-                if (State.timerValue <= 0) {
-                    clearInterval(timerInterval);
-                    endRound();
-                }
-            }, 100);
-        }
-
-        function updateTimerDisplay() {
-            document.querySelectorAll('.timer-time').forEach(el => {
-                el.textContent = String(State.timerValue).padStart(2, '0');
-            });
-
-            document.querySelectorAll('.player-timer .time').forEach(el => {
-                el.textContent = String(State.timerValue).padStart(2, '0');
-            });
-
-            const timerCircle = document.querySelector('.timer-circle');
-            if (timerCircle) {
-                if (State.timerValue <= 10) {
-                    timerCircle.classList.add('pulse');
+            handleNextRound() {
+                if (this.state.currentRound >= QUIZ_QUESTIONS.length) {
+                    this.state.gameStatus = 'finished';
+                    this.saveState();
+                    this.goToResults();
+                    this.updateResultsScreen();
                 } else {
-                    timerCircle.classList.remove('pulse');
+                    this.startRound();
                 }
-            }
+            },
 
-            const playerTimer = document.querySelector('.player-timer');
-            if (playerTimer) {
-                playerTimer.classList.remove('warning', 'danger');
-                if (State.timerValue <= 10) playerTimer.classList.add('danger');
-                else if (State.timerValue <= 20) playerTimer.classList.add('warning');
-            }
-        }
+            // Player Screen
+            handleSubmitPrompt() {
+                const textarea = document.getElementById('promptTextarea');
+                const prompt = textarea.value.trim();
 
-        async function endRound() {
-            State.gameStatus = 'reviewing';
-            saveState();
-
-            const question = QUIZ_QUESTIONS[State.currentRound - 1];
-            const results = [];
-
-            for (const [playerName, submission] of Object.entries(State.submissions)) {
-                try {
-                    const aiResponse = await callOpenAI(
-                        submission.prompt,
-                        question.question
-                    );
-
-                    const aiResponseLower = aiResponse.toLowerCase();
-                    let isCorrect = false;
-                    for (const keyword of question.keywords) {
-                        if (aiResponseLower.includes(keyword.toLowerCase())) {
-                            isCorrect = true;
-                            break;
-                        }
-                    }
-
-                    let points = isCorrect ? 3 : 0;
-                    if (isCorrect && results.filter(r => r.correct).length === 0) {
-                        points += 5;
-                    }
-
-                    results.push({
-                        playerName,
-                        prompt: submission.prompt,
-                        aiResponse,
-                        correct: isCorrect,
-                        points
-                    });
-
-                    const leaderboardEntry = State.leaderboard.find(l => l.name === playerName);
-                    if (leaderboardEntry) {
-                        leaderboardEntry.score += points;
-                    }
-                } catch (error) {
-                    console.error(`Error processing ${playerName}:`, error);
-                    results.push({
-                        playerName,
-                        prompt: submission.prompt,
-                        aiResponse: 'Error: ' + error.message,
-                        correct: false,
-                        points: 0
-                    });
+                if (!prompt) {
+                    this.showToast('Write a prompt', 'error');
+                    return;
                 }
-            }
 
-            State.leaderboard.sort((a, b) => b.score - a.score);
-            State.roundResults = results;
-            saveState();
-            updateAllScreens();
-        }
+                this.state.submissions[this.state.playerName] = {
+                    prompt,
+                    timestamp: Date.now()
+                };
+                this.state.playerSubmitted = true;
+                this.saveState();
+                this.updatePlayerScreen();
+                this.showToast('Prompt submitted!', 'success');
+            },
 
-        function nextRound() {
-            if (State.currentRound >= QUIZ_QUESTIONS.length) {
-                finishGame();
-            } else {
-                startRound();
-            }
-        }
+            // Results Screen
+            handlePlayAgain() {
+                this.state.currentRound = 0;
+                this.state.gameStatus = 'setup';
+                this.state.players = [];
+                this.state.submissions = {};
+                this.state.leaderboard = [];
+                this.state.playerName = null;
+                this.state.playerSubmitted = false;
+                localStorage.removeItem(`aibc_game_${this.ROOM_ID}`);
+                this.goToSetup();
+            },
 
-        function finishGame() {
-            State.gameStatus = 'finished';
-            saveState();
-            navigateTo('results');
-            updateResultsScreen();
-        }
+            handleBackToSetup() {
+                if (confirm('End game?')) {
+                    this.handlePlayAgain();
+                }
+            },
 
-        function resetGame() {
-            State.currentRound = 0;
-            State.gameStatus = 'setup';
-            State.players = [];
-            State.submissions = {};
-            State.leaderboard = [];
-            State.playerName = null;
-            State.playerSubmitted = false;
-            localStorage.removeItem('aibc_state');
-            navigateTo('setup');
-            updateSetupScreen();
-        }
+            // Polling
+            startPolling() {
+                setInterval(() => {
+                    this.loadState();
+                    this.updateUI();
+                }, this.POLL_INTERVAL);
+            },
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           UI UPDATE FUNCTIONS
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+            // UI Updates
+            updateUI() {
+                if (window.location.hash.includes('host')) {
+                    this.updateHostScreen();
+                } else if (window.location.hash.includes('player')) {
+                    this.updatePlayerScreen();
+                }
+            },
 
-        function updateSetupScreen() {
-            const apiKeyInput = document.getElementById('apiKeyInput');
-            if (apiKeyInput) {
-                apiKeyInput.value = State.apiKey;
-            }
-            updatePlayersList();
-        }
+            updateHostScreen() {
+                const roundNum = document.querySelector('.round-number');
+                if (roundNum) roundNum.textContent = `${this.state.currentRound}/10`;
 
-        function updatePlayersList() {
-            const playersList = document.getElementById('playersList');
-            const playerCount = document.getElementById('playerCount');
+                const question = QUIZ_QUESTIONS[this.state.currentRound - 1];
+                if (question) {
+                    const qText = document.querySelector('.question-text');
+                    const qTopic = document.querySelector('.question-topic');
+                    if (qText) qText.textContent = question.question;
+                    if (qTopic) qTopic.textContent = question.topic;
+                }
 
-            if (playersList) {
-                playersList.innerHTML = State.players.map(name => `
-                    <div class="player-chip">
-                        <span>${name}</span>
-                        <span class="remove" onclick="removePlayer('${name}')">✕</span>
-                    </div>
-                `).join('');
-            }
+                const submissionNum = document.querySelector('.submission-count .number');
+                if (submissionNum) {
+                    submissionNum.textContent = Object.keys(this.state.submissions).length;
+                }
 
-            if (playerCount) {
-                playerCount.textContent = `${State.players.length}/12 players`;
-            }
-        }
-
-        function addPlayer(name) {
-            if (!name.trim()) {
-                showToast('Enter a player name', 'error');
-                return;
-            }
-
-            if (State.players.length >= 12) {
-                showToast('Maximum 12 players', 'error');
-                return;
-            }
-
-            if (State.players.includes(name)) {
-                showToast('Player already added', 'error');
-                return;
-            }
-
-            State.players.push(name);
-            saveState();
-            updatePlayersList();
-            document.getElementById('playerNameInput').value = '';
-            playSound('success');
-        }
-
-        function removePlayer(name) {
-            State.players = State.players.filter(p => p !== name);
-            saveState();
-            updatePlayersList();
-            playSound('error');
-        }
-
-        function updateAllScreens() {
-            updateHostScreen();
-            updatePlayerScreen();
-        }
-
-        function updateHostScreen() {
-            const roundLabel = document.querySelector('.host-progress .round-number');
-            if (roundLabel) {
-                roundLabel.textContent = `${State.currentRound}/${QUIZ_QUESTIONS.length}`;
-            }
-
-            const question = QUIZ_QUESTIONS[State.currentRound - 1];
-            if (question) {
-                const questionText = document.querySelector('.question-text');
-                const questionTopic = document.querySelector('.question-topic');
-
-                if (questionText) questionText.textContent = question.question;
-                if (questionTopic) questionTopic.textContent = question.topic;
-            }
-
-            const submissionCount = Object.keys(State.submissions).length;
-            const statusEl = document.querySelector('.submission-status .count');
-            if (statusEl) {
-                statusEl.textContent = submissionCount;
-            }
-
-            if (State.gameStatus === 'reviewing' && State.roundResults.length > 0) {
-                const responsesContainer = document.querySelector('.host-responses');
-                if (responsesContainer) {
-                    responsesContainer.innerHTML = State.roundResults.map((result, idx) => `
-                        <div class="response-row ${result.correct ? 'correct' : 'wrong'}">
-                            <div class="response-header">
-                                <span class="response-player">${result.playerName}</span>
-                                <span class="response-points ${result.correct ? 'correct' : (result.points === 0 ? 'zero' : '')}">
-                                    ${result.points > 0 ? '+' : ''}${result.points}
-                                </span>
+                if (this.state.gameStatus === 'reviewing' && this.state.roundResults.length > 0) {
+                    const container = document.querySelector('.host-responses');
+                    if (container) {
+                        container.innerHTML = this.state.roundResults.map(result => `
+                            <div class="response-row ${result.correct ? 'correct' : 'wrong'}">
+                                <div class="response-header">
+                                    <span class="response-player">${result.playerName}</span>
+                                    <span class="response-points ${result.correct ? 'correct' : 'zero'}">
+                                        ${result.points > 0 ? '+' : ''}${result.points}
+                                    </span>
+                                </div>
+                                <div class="response-text"><strong>Prompt:</strong> ${result.prompt}</div>
+                                <div class="response-ai"><strong>AI:</strong> ${result.aiResponse}</div>
                             </div>
-                            <div class="response-text"><strong>Prompt:</strong> ${result.prompt}</div>
-                            <div class="response-ai"><strong>AI:</strong> ${result.aiResponse}</div>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            updateLeaderboardDisplay();
-        }
-
-        function updateLeaderboardDisplay() {
-            const leaderboardRows = document.querySelector('.leaderboard-rows');
-            if (leaderboardRows && State.leaderboard.length > 0) {
-                leaderboardRows.innerHTML = State.leaderboard.map((entry, idx) => {
-                    let rankClass = '';
-                    if (idx === 0) rankClass = 'gold';
-                    else if (idx === 1) rankClass = 'silver';
-                    else if (idx === 2) rankClass = 'bronze';
-
-                    const changeArrow = entry.previousRank > idx ? '▲' : (entry.previousRank < idx ? '▼' : '');
-                    const changeClass = changeArrow === '▲' ? 'up' : (changeArrow === '▼' ? 'down' : '');
-
-                    return `
-                        <div class="leaderboard-row">
-                            <div class="leaderboard-rank ${rankClass}">${idx + 1}</div>
-                            <div class="leaderboard-name">${entry.name}</div>
-                            <div class="leaderboard-change ${changeClass}">${changeArrow}</div>
-                            <div class="leaderboard-score">${entry.score}</div>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
-
-        function updatePlayerScreen() {
-            if (State.gameStatus === 'setup') return;
-
-            const nameEl = document.querySelector('.player-name');
-            if (nameEl) nameEl.textContent = State.playerName;
-
-            const roundBadge = document.querySelector('.round-badge');
-            if (roundBadge) {
-                roundBadge.textContent = `Round ${State.currentRound}/${QUIZ_QUESTIONS.length}`;
-            }
-
-            const question = QUIZ_QUESTIONS[State.currentRound - 1];
-            if (question) {
-                const questionEl = document.querySelector('.player-question p');
-                if (questionEl) questionEl.textContent = question.question;
-            }
-
-            const promptTextarea = document.getElementById('promptTextarea');
-            if (promptTextarea) {
-                promptTextarea.disabled = State.playerSubmitted;
-            }
-
-            const submitBtn = document.querySelector('#submitPromptBtn');
-            if (submitBtn) {
-                submitBtn.disabled = State.playerSubmitted;
-            }
-
-            const waitingContainer = document.getElementById('waitingContainer');
-            const resultContainer = document.querySelector('.player-result-container');
-
-            if (State.playerSubmitted && State.gameStatus === 'reviewing') {
-                if (waitingContainer) waitingContainer.style.display = 'none';
-                if (resultContainer) {
-                    const playerResult = State.roundResults.find(r => r.playerName === State.playerName);
-                    if (playerResult) {
-                        resultContainer.innerHTML = `
-                            <div class="player-result ${playerResult.correct ? 'correct' : 'incorrect'}">
-                                <div class="result-label ${playerResult.correct ? 'correct' : 'incorrect'}">
-                                    ${playerResult.correct ? '✓ Correct!' : '✗ Incorrect'}
-                                </div>
-                                <div class="result-prompt">
-                                    <div class="result-prompt-label">Your Prompt:</div>
-                                    <div class="result-prompt-text">${playerResult.prompt}</div>
-                                </div>
-                                <div class="result-ai">
-                                    <div class="result-ai-label">AI Response:</div>
-                                    <div class="result-ai-text">${playerResult.aiResponse}</div>
-                                </div>
-                                <div class="result-points ${playerResult.points === 0 ? 'zero' : ''}">
-                                    Points: ${playerResult.points > 0 ? '+' : ''}${playerResult.points}
-                                </div>
-                            </div>
-                        `;
+                        `).join('');
                     }
                 }
-            } else if (State.playerSubmitted) {
-                if (waitingContainer) waitingContainer.style.display = 'block';
-                if (resultContainer) resultContainer.innerHTML = '';
-            }
-        }
 
-        function updateResultsScreen() {
-            const podiumContainer = document.querySelector('.podium-container');
-            if (podiumContainer && State.leaderboard.length >= 1) {
-                const first = State.leaderboard[0];
-                const second = State.leaderboard[1];
-                const third = State.leaderboard[2];
+                this.updateLeaderboard();
+            },
 
-                let podiumHTML = '';
-                if (second) {
-                    podiumHTML += `
-                        <div class="podium-position second">
-                            <div class="podium-step">
-                                <div class="podium-rank">2</div>
-                            </div>
-                            <div class="podium-info">
-                                <div class="podium-name">${second.name}</div>
-                                <div class="podium-score">${second.score}</div>
-                            </div>
-                        </div>
-                    `;
-                }
+            updateLeaderboard() {
+                const container = document.querySelector('.leaderboard-rows');
+                if (!container || this.state.leaderboard.length === 0) return;
 
-                podiumHTML += `
-                    <div class="podium-position first">
-                        <div class="podium-step">
-                            <div class="podium-rank">🏆</div>
-                        </div>
-                        <div class="podium-info">
-                            <div class="podium-name">${first.name}</div>
-                            <div class="podium-score">${first.score}</div>
-                        </div>
-                    </div>
-                `;
-
-                if (third) {
-                    podiumHTML += `
-                        <div class="podium-position third">
-                            <div class="podium-step">
-                                <div class="podium-rank">3</div>
-                            </div>
-                            <div class="podium-info">
-                                <div class="podium-name">${third.name}</div>
-                                <div class="podium-score">${third.score}</div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                podiumContainer.innerHTML = podiumHTML;
-            }
-
-            if (State.roundResults.length > 0) {
-                const bestPromptAward = document.querySelector('.best-prompt-award');
-                if (bestPromptAward) {
-                    const longestPrompt = State.roundResults.reduce((max, r) =>
-                        r.prompt.length > max.prompt.length ? r : max
-                    );
-                    bestPromptAward.innerHTML = `
-                        <div class="emoji">✨</div>
-                        <h3>Best Prompt Award</h3>
-                        <p><strong>${longestPrompt.playerName}</strong></p>
-                        <p class="muted">"${longestPrompt.prompt}"</p>
-                    `;
-                }
-            }
-
-            const finalRows = document.querySelector('.final-leaderboard-rows');
-            if (finalRows) {
-                finalRows.innerHTML = State.leaderboard.map((entry, idx) => {
+                container.innerHTML = this.state.leaderboard.map((entry, idx) => {
                     let rankClass = '';
                     if (idx === 0) rankClass = 'first';
                     else if (idx === 1) rankClass = 'second';
                     else if (idx === 2) rankClass = 'third';
 
                     return `
-                        <div class="final-leaderboard-row">
-                            <div class="final-rank ${rankClass}">${idx + 1}</div>
-                            <div class="final-name">${entry.name}</div>
-                            <div class="final-score">${entry.score}</div>
+                        <div class="leaderboard-row">
+                            <div class="leaderboard-rank ${rankClass}">${idx + 1}</div>
+                            <div class="leaderboard-name">${entry.name}</div>
+                            <div class="leaderboard-score">${entry.score}</div>
                         </div>
                     `;
                 }).join('');
-            }
-        }
+            },
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           EVENT HANDLERS
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+            updatePlayerScreen() {
+                const nameEl = document.querySelector('.player-name');
+                if (nameEl) nameEl.textContent = this.state.playerName || 'Player';
 
-        function handleSetApiKey() {
-            const input = document.getElementById('apiKeyInput');
-            const key = input.value.trim();
+                const roundBadge = document.querySelector('.round-badge');
+                if (roundBadge) {
+                    roundBadge.textContent = `Round ${this.state.currentRound}/10`;
+                }
 
-            if (!key) {
-                showToast('Enter API key', 'error');
-                return;
-            }
+                const question = QUIZ_QUESTIONS[this.state.currentRound - 1];
+                if (question) {
+                    const qEl = document.querySelector('.player-question p');
+                    if (qEl) qEl.textContent = question.question;
+                }
 
-            State.apiKey = key;
-            localStorage.setItem('aibc_apiKey', key);
-            saveState();
-            showToast(`API key set: ${maskApiKey(key)}`, 'success');
-        }
+                const textarea = document.getElementById('promptTextarea');
+                if (textarea) {
+                    textarea.disabled = this.state.playerSubmitted;
+                }
 
-        function handleStartGame() {
-            if (State.players.length === 0) {
-                showToast('Add at least one player', 'error');
-                return;
-            }
+                const submitBtn = document.getElementById('submitPromptBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = this.state.playerSubmitted;
+                }
 
-            if (!State.apiKey) {
-                showToast('Set API key first', 'error');
-                return;
-            }
+                const waitingContainer = document.getElementById('waitingContainer');
+                const resultContainer = document.querySelector('.player-result-container');
 
-            initializeGame();
-            navigateTo('host');
-        }
-
-        function handlePlayerJoin() {
-            const playerName = getQueryParam('name');
-            if (playerName) {
-                State.playerName = playerName;
-            }
-            updatePlayerScreen();
-        }
-
-        function handlePromptChange() {
-            const textarea = document.getElementById('promptTextarea');
-            const counter = document.querySelector('.char-counter');
-            const length = textarea.value.length;
-
-            if (counter) {
-                counter.textContent = `${length}/300`;
-                counter.classList.remove('warning', 'danger');
-                if (length > 250) counter.classList.add('danger');
-                else if (length > 200) counter.classList.add('warning');
-            }
-        }
-
-        function handleSubmitPrompt() {
-            const textarea = document.getElementById('promptTextarea');
-            const prompt = textarea.value.trim();
-
-            if (!prompt) {
-                showToast('Write a prompt', 'error');
-                return;
-            }
-
-            State.submissions[State.playerName] = {
-                prompt,
-                timestamp: Date.now()
-            };
-            State.playerSubmitted = true;
-            saveState();
-            updatePlayerScreen();
-            showToast('Prompt submitted!', 'success');
-            playSound('success');
-        }
-
-        function handleNextRound() {
-            nextRound();
-        }
-
-        function handlePlayAgain() {
-            resetGame();
-        }
-
-        function switchMode(mode) {
-            State.mode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-
-            if (mode === 'player') {
-                navigateTo('player');
-            } else {
-                navigateTo('host');
-            }
-        }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           INITIALIZATION
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-        window.addEventListener('load', () => {
-            const hash = window.location.hash.substring(1).split('?')[0];
-            const savedState = localStorage.getItem('aibc_state');
-
-            if (savedState) {
-                Object.assign(State, JSON.parse(savedState));
-            }
-
-            if (hash === 'player') {
-                const playerName = getQueryParam('name');
-                if (playerName) {
-                    State.playerName = playerName;
-                    State.mode = 'player';
-                    navigateTo('player');
-                    updatePlayerScreen();
-                    setInterval(() => {
-                        const newState = localStorage.getItem('aibc_state');
-                        if (newState) {
-                            const parsed = JSON.parse(newState);
-                            State.gameStatus = parsed.gameStatus;
-                            State.timerValue = parsed.timerValue;
-                            State.roundResults = parsed.roundResults;
-                            State.currentRound = parsed.currentRound;
-                            State.leaderboard = parsed.leaderboard;
-                            State.submissions = parsed.submissions;
-                            updatePlayerScreen();
+                if (this.state.playerSubmitted && this.state.gameStatus === 'reviewing') {
+                    if (waitingContainer) waitingContainer.style.display = 'none';
+                    if (resultContainer) {
+                        const result = this.state.roundResults.find(r => r.playerName === this.state.playerName);
+                        if (result) {
+                            resultContainer.innerHTML = `
+                                <div class="player-result ${result.correct ? 'correct' : 'incorrect'}">
+                                    <div class="result-label ${result.correct ? 'correct' : 'incorrect'}">
+                                        ${result.correct ? '✓ Correct!' : '✗ Incorrect'}
+                                    </div>
+                                    <div class="result-section">
+                                        <div class="result-section-label">Your Prompt:</div>
+                                        <div class="result-section-text">${result.prompt}</div>
+                                    </div>
+                                    <div class="result-section">
+                                        <div class="result-section-label">AI Response:</div>
+                                        <div class="result-section-text">${result.aiResponse}</div>
+                                    </div>
+                                    <div class="result-points ${result.points === 0 ? 'zero' : ''}">
+                                        ${result.points > 0 ? '+' : ''}${result.points} Points
+                                    </div>
+                                </div>
+                            `;
                         }
-                    }, 500);
-                } else {
-                    navigateTo('setup');
-                }
-            } else if (hash === 'host') {
-                State.mode = 'host';
-                navigateTo('host');
-                setInterval(() => {
-                    const newState = localStorage.getItem('aibc_state');
-                    if (newState) {
-                        const parsed = JSON.parse(newState);
-                        State.gameStatus = parsed.gameStatus;
-                        State.timerValue = parsed.timerValue;
-                        State.submissions = parsed.submissions;
-                        State.roundResults = parsed.roundResults;
-                        State.leaderboard = parsed.leaderboard;
-                        updateHostScreen();
                     }
-                }, 500);
-            } else if (hash === 'results') {
-                navigateTo('results');
-                updateResultsScreen();
-            } else {
-                navigateTo('setup');
-                updateSetupScreen();
-            }
-
-            updateNavbarActiveLink();
-        });
-
-        window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.substring(1).split('?')[0];
-            if (hash === '') navigateTo('setup');
-            else if (hash === 'player') {
-                const playerName = getQueryParam('name');
-                if (playerName) {
-                    State.playerName = playerName;
-                    State.mode = 'player';
-                    navigateTo('player');
+                } else if (this.state.playerSubmitted) {
+                    if (waitingContainer) waitingContainer.style.display = 'block';
+                    if (resultContainer) resultContainer.innerHTML = '';
                 }
-            } else if (hash === 'host') {
-                State.mode = 'host';
-                navigateTo('host');
-            } else if (hash === 'results') navigateTo('results');
-            updateNavbarActiveLink();
-        });
+            },
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const promptTextarea = document.getElementById('promptTextarea');
-            if (promptTextarea) {
-                promptTextarea.addEventListener('input', handlePromptChange);
+            updateResultsScreen() {
+                const podium = document.querySelector('.podium-container');
+                if (podium && this.state.leaderboard.length >= 1) {
+                    const [first, second, third] = this.state.leaderboard;
+
+                    let html = '';
+                    if (second) {
+                        html += `
+                            <div class="podium-position second">
+                                <div class="podium-step">
+                                    <div class="podium-rank">2</div>
+                                </div>
+                                <div class="podium-info">
+                                    <div class="podium-name">${second.name}</div>
+                                    <div class="podium-score">${second.score}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div class="podium-position first">
+                            <div class="podium-step">
+                                <div class="podium-rank">🏆</div>
+                            </div>
+                            <div class="podium-info">
+                                <div class="podium-name">${first.name}</div>
+                                <div class="podium-score">${first.score}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (third) {
+                        html += `
+                            <div class="podium-position third">
+                                <div class="podium-step">
+                                    <div class="podium-rank">3</div>
+                                </div>
+                                <div class="podium-info">
+                                    <div class="podium-name">${third.name}</div>
+                                    <div class="podium-score">${third.score}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    podium.innerHTML = html;
+                }
+
+                const finalRows = document.querySelector('.final-leaderboard-rows');
+                if (finalRows) {
+                    finalRows.innerHTML = this.state.leaderboard.map((entry, idx) => {
+                        let rankClass = '';
+                        if (idx === 0) rankClass = 'first';
+                        else if (idx === 1) rankClass = 'second';
+                        else if (idx === 2) rankClass = 'third';
+
+                        return `
+                            <div class="final-leaderboard-row">
+                                <div class="final-rank ${rankClass}">${idx + 1}</div>
+                                <div class="final-name">${entry.name}</div>
+                                <div class="final-score">${entry.score}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            },
+
+            // Utilities
+            showToast(message, type = 'info', duration = 3000) {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
             }
+        };
 
-            handlePlayerJoin();
-        });
-
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'aibc_state') {
-                const newState = JSON.parse(e.newValue);
-                State.gameStatus = newState.gameStatus;
-                State.timerValue = newState.timerValue;
-                State.submissions = newState.submissions;
-                State.roundResults = newState.roundResults;
-                State.leaderboard = newState.leaderboard;
-                State.currentRound = newState.currentRound;
-                updateAllScreens();
-            }
-        });
+        // Start app
+        window.addEventListener('load', () => app.init());
+        window.addEventListener('hashchange', () => app.handleRouting());
     </script>
-</head>
-
-<body>
-    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-         NAVIGATION BAR
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-    <nav class="navbar">
-        <a href="#" class="navbar-brand" onclick="window.location.hash = ''; return false;">
-            ⚔️ AI Battle
-        </a>
-        <div class="navbar-links">
-            <a href="#" class="nav-link" data-screen="setup" onclick="navigateTo('setup'); return false;">Setup</a>
-            <a href="#host" class="nav-link" data-screen="host" onclick="navigateTo('host'); return false;">Host</a>
-            <a href="#player" class="nav-link" data-screen="player" onclick="navigateTo('player'); return false;">Player</a>
-        </div>
-        <div class="nav-mode-switcher">
-            <button class="mode-btn active" data-mode="host" onclick="switchMode('host')">🎥 Host</button>
-            <button class="mode-btn" data-mode="player" onclick="switchMode('player')">📱 Player</button>
-        </div>
-    </nav>
-
-    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-         SETUP SCREEN
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-    <div class="setup-screen screen active">
-        <div class="container">
-            <div class="setup-container">
-                <div class="setup-logo">
-                    <h1>⚔️ AI Battle</h1>
-                    <p>Test your prompt engineering skills against AI</p>
-                </div>
-
-                <div class="form-group">
-                    <label>OpenAI API Key</label>
-                    <input type="password" id="apiKeyInput" placeholder="sk-..." />
-                    <button class="btn btn-primary" onclick="handleSetApiKey()" style="margin-top: var(--space-md); width: 100%;">Set API Key</button>
-                </div>
-
-                <div class="form-group">
-                    <label>Add Players (Max 12)</label>
-                    <div class="player-input-group">
-                        <input type="text" id="playerNameInput" placeholder="Enter player name..." />
-                        <button class="btn btn-secondary" onclick="addPlayer(document.getElementById('playerNameInput').value)">Add</button>
-                    </div>
-                </div>
-
-                <div class="player-count" id="playerCount">0/12 players</div>
-                <div class="players-list" id="playersList"></div>
-
-                <div class="setup-actions">
-                    <button class="btn btn-primary" onclick="handleStartGame()">Start Game</button>
-                    <button class="btn btn-secondary" onclick="navigateTo('setup')" style="display: none;">Help</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-         HOST SCREEN
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-    <div class="host-screen screen">
-        <div class="host-main">
-            <div class="container">
-                <div class="host-header">
-                    <div class="host-progress">
-                        <div class="round-label">Round</div>
-                        <div class="round-number">1/10</div>
-                    </div>
-                    <h1 style="margin: 0; flex: 1; text-align: center;">🎯 AI Battle</h1>
-                    <div style="width: 120px;"></div>
-                </div>
-
-                <div class="question-area">
-                    <div class="question-topic"></div>
-                    <div class="question-text"></div>
-                </div>
-
-                <div class="timer-container">
-                    <div class="timer-circle">
-                        <svg class="timer-svg" viewBox="0 0 200 200">
-                            <defs>
-                                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#6c63ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle class="timer-circle-bg" cx="100" cy="100" r="95"></circle>
-                            <circle class="timer-circle-progress" cx="100" cy="100" r="95" style="stroke-dasharray: 597; stroke-dashoffset: 0;"></circle>
-                        </svg>
-                        <div class="timer-text">
-                            <div class="timer-time">60</div>
-                            <div class="timer-label">seconds</div>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center;">
-                        <div class="submission-status">
-                            Submissions<br/>
-                            <span class="count">0</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="host-responses"></div>
-            </div>
-        </div>
-
-        <div class="host-sidebar">
-            <div class="leaderboard">
-                <div class="leaderboard-title">📊 Leaderboard</div>
-                <div class="leaderboard-rows"></div>
-            </div>
-
-            <div style="margin-top: var(--space-xl); display: flex; gap: var(--space-md);">
-                <button class="btn btn-success" onclick="handleNextRound()" style="flex: 1;">Next</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-         PLAYER SCREEN
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-    <div class="player-screen screen">
-        <div class="container">
-            <div class="player-wrapper">
-                <div class="player-container">
-                    <div class="player-header">
-                        <h1>⚔️ AI Battle</h1>
-                        <div class="player-name"></div>
-                    </div>
-
-                    <div class="round-badge"></div>
-
-                    <div class="player-timer">
-                        <div class="time">60</div>
-                        <div class="label">Time remaining</div>
-                    </div>
-
-                    <div class="player-question">
-                        <h3>Question</h3>
-                        <p></p>
-                    </div>
-
-                    <div class="prompt-input-wrapper">
-                        <textarea id="promptTextarea" placeholder="Write your AI prompt here... (max 300 characters)" maxlength="300"></textarea>
-                        <div class="char-counter">0/300</div>
-                    </div>
-
-                    <div class="player-actions">
-                        <button class="btn btn-primary" id="submitPromptBtn" onclick="handleSubmitPrompt()">Submit Prompt</button>
-                    </div>
-
-                    <div class="player-waiting" id="waitingContainer" style="display: none;">
-                        <div class="waiting-spinner"></div>
-                        <div class="waiting-text">Waiting for AI responses...</div>
-                    </div>
-
-                    <div class="player-result-container"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-         RESULTS SCREEN
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-    <div class="results-screen screen">
-        <div class="container">
-            <div class="results-container">
-                <div class="results-title">
-                    <h1>🎉 Game Over</h1>
-                    <p>Final Results</p>
-                </div>
-
-                <div class="podium-container"></div>
-
-                <div class="best-prompt-award"></div>
-
-                <div class="final-leaderboard">
-                    <div class="final-leaderboard-title">📊 Final Leaderboard</div>
-                    <div class="final-leaderboard-rows"></div>
-                </div>
-
-                <div class="results-actions">
-                    <button class="btn btn-primary" onclick="handlePlayAgain()">Play Again</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
