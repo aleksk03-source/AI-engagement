@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Battle – Quiz Game</title>
+    <meta name="description" content="AI Battle - Test your prompt engineering skills in a multiplayer quiz game with OpenAI">
+    <meta name="theme-color" content="#6c63ff">
+    <title>AI Battle - Prompt Engineering Quiz Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.5.3/qrcode.min.js"></script>
     <style>
@@ -25,7 +27,6 @@
             --silver: #c0c0c0;
             --bronze: #cd7f32;
 
-            /* Spacing scale */
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
             --space-md: 1rem;
@@ -33,13 +34,11 @@
             --space-xl: 2rem;
             --space-2xl: 3rem;
 
-            /* Radii */
             --radius-sm: 0.375rem;
             --radius-md: 0.5rem;
             --radius-lg: 1rem;
             --radius-full: 9999px;
 
-            /* Shadows */
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.5);
@@ -49,9 +48,6 @@
             --glow-danger: 0 0 20px rgba(255, 71, 87, 0.4);
         }
 
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           GLOBAL STYLES
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         * {
             margin: 0;
             padding: 0;
@@ -71,12 +67,13 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           LAYOUT STRUCTURE
+           LAYOUT & SCREENS
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .screen {
             display: none;
             width: 100%;
             min-height: 100vh;
+            flex-direction: column;
             animation: fadeIn 0.4s ease-out;
         }
 
@@ -93,6 +90,92 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           NAVIGATION BAR
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .navbar-brand:hover {
+            color: var(--accent);
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: var(--space-lg);
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-link:hover {
+            background: var(--card);
+            color: var(--accent);
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+            box-shadow: var(--glow-accent);
+        }
+
+        .nav-mode-switcher {
+            display: flex;
+            gap: var(--space-sm);
+            background: var(--card);
+            padding: var(--space-sm);
+            border-radius: var(--radius-full);
+        }
+
+        .mode-btn {
+            padding: var(--space-sm) var(--space-lg);
+            border: none;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--glow-primary);
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -174,10 +257,6 @@
             box-shadow: 0 0 30px rgba(108, 99, 255, 0.6);
         }
 
-        .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
         .btn-secondary {
             background: var(--surface);
             color: var(--accent);
@@ -253,6 +332,10 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: var(--space-lg);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .card {
@@ -289,10 +372,8 @@
            SETUP SCREEN
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .setup-screen {
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: var(--space-xl);
             background: radial-gradient(circle at 50% 50%, rgba(108, 99, 255, 0.1) 0%, transparent 70%);
         }
 
@@ -362,6 +443,8 @@
             flex-wrap: wrap;
             gap: var(--space-md);
             margin-bottom: var(--space-lg);
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .player-chip {
@@ -389,21 +472,6 @@
             }
         }
 
-        .player-chip.rank-gold {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            color: #000;
-        }
-
-        .player-chip.rank-silver {
-            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-            color: #000;
-        }
-
-        .player-chip.rank-bronze {
-            background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
-            color: #fff;
-        }
-
         .player-chip .remove {
             cursor: pointer;
             opacity: 0.7;
@@ -425,10 +493,12 @@
             display: flex;
             gap: var(--space-md);
             margin-top: var(--space-2xl);
+            flex-wrap: wrap;
         }
 
         .setup-actions button {
             flex: 1;
+            min-width: 150px;
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -446,6 +516,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow-y: auto;
         }
 
         .host-sidebar {
@@ -697,6 +768,7 @@
             margin-bottom: var(--space-sm);
             font-size: 0.95rem;
             line-height: 1.6;
+            word-break: break-word;
         }
 
         .response-ai {
@@ -708,6 +780,7 @@
             border-left: 3px solid var(--accent);
             color: var(--accent);
             margin-top: var(--space-md);
+            word-break: break-word;
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -824,20 +897,27 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PLAYER SCREEN
+           PLAYER SCREEN - FIXED
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .player-screen {
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: var(--space-lg);
             background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
         }
 
-        .player-container {
+        .player-wrapper {
             width: 100%;
             max-width: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-container {
+            width: 100%;
             animation: slideUp 0.6s ease-out;
+            display: flex;
+            flex-direction: column;
         }
 
         .player-header {
@@ -866,7 +946,7 @@
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            margin-bottom: var(--space-lg);
+            margin: 0 auto var(--space-lg);
             box-shadow: var(--glow-primary);
         }
 
@@ -888,6 +968,41 @@
             font-size: 1.2rem;
             font-weight: 600;
             line-height: 1.4;
+            margin: 0;
+        }
+
+        .player-timer {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .player-timer .time {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: var(--space-sm);
+        }
+
+        .player-timer .label {
+            color: var(--muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .player-timer.warning .time {
+            color: var(--warning);
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        .player-timer.danger .time {
+            color: var(--danger);
+            animation: pulse 0.3s ease-in-out infinite;
         }
 
         .prompt-input-wrapper {
@@ -946,40 +1061,6 @@
             font-size: 1.1rem;
         }
 
-        .player-timer {
-            background: var(--card);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            text-align: center;
-            margin-bottom: var(--space-lg);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .player-timer .time {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: var(--space-sm);
-        }
-
-        .player-timer .label {
-            color: var(--muted);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .player-timer.warning .time {
-            color: var(--warning);
-            animation: pulse 0.5s ease-in-out infinite;
-        }
-
-        .player-timer.danger .time {
-            color: var(--danger);
-            animation: pulse 0.3s ease-in-out infinite;
-        }
-
         .player-result {
             background: var(--card);
             border-radius: var(--radius-lg);
@@ -1034,6 +1115,7 @@
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             border-left: 3px solid var(--accent);
+            word-break: break-word;
         }
 
         .result-ai {
@@ -1054,6 +1136,7 @@
             font-size: 0.9rem;
             border-left: 3px solid var(--accent);
             color: var(--accent);
+            word-break: break-word;
         }
 
         .result-points {
@@ -1077,7 +1160,6 @@
            RESULTS SCREEN
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .results-screen {
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: var(--space-lg);
@@ -1212,17 +1294,6 @@
             animation: slideUp 0.6s ease-out 0.2s both;
         }
 
-        @keyframes slideUpDelay {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .best-prompt-award .emoji {
             font-size: 3rem;
             margin-bottom: var(--space-md);
@@ -1319,6 +1390,7 @@
             gap: var(--space-md);
             justify-content: center;
             margin-top: var(--space-2xl);
+            flex-wrap: wrap;
         }
 
         .results-actions button {
@@ -1370,40 +1442,7 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           SCORE POPUP
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .score-popup {
-            position: fixed;
-            font-size: 2rem;
-            font-weight: 700;
-            pointer-events: none;
-            animation: scoreFloat 1s ease-out forwards;
-            z-index: 900;
-        }
-
-        @keyframes scoreFloat {
-            from {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-60px) scale(1.5);
-            }
-        }
-
-        .score-popup.positive {
-            color: var(--success);
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-
-        .score-popup.negative {
-            color: var(--danger);
-            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
-        }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           QR CODE MODAL
+           MODAL
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .modal {
             display: none;
@@ -1434,6 +1473,7 @@
             width: 100%;
             animation: slideUp 0.3s ease-out;
             text-align: center;
+            position: relative;
         }
 
         .modal-close {
@@ -1479,6 +1519,22 @@
         }
 
         @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+
+            .navbar-brand {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .navbar-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
             .host-screen {
                 flex-direction: column;
             }
@@ -1581,6 +1637,15 @@
                 font-size: 0.8rem;
                 padding: var(--space-sm) var(--space-md);
             }
+
+            .nav-mode-switcher {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .mode-btn {
+                width: 100%;
+            }
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1602,11 +1667,16 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
         }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           GLOW WARNING
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        --glow-warning: 0 0 20px rgba(255, 165, 2, 0.4);
     </style>
 
     <script>
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           STATE MANAGEMENT
+           QUIZ QUESTIONS DATABASE
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         const QUIZ_QUESTIONS = [
             {
@@ -1615,7 +1685,7 @@
                 correctAnswer: "Canberra",
                 keywords: ["canberra"],
                 type: "fact",
-                topic: "Geography"
+                topic: "🌍 Geography"
             },
             {
                 id: 2,
@@ -1623,7 +1693,7 @@
                 correctAnswer: "Au",
                 keywords: ["au", "gold"],
                 type: "science",
-                topic: "Chemistry"
+                topic: "⚗️ Chemistry"
             },
             {
                 id: 3,
@@ -1631,7 +1701,7 @@
                 correctAnswer: "1912",
                 keywords: ["1912", "titanic"],
                 type: "history",
-                topic: "History"
+                topic: "📚 History"
             },
             {
                 id: 4,
@@ -1639,7 +1709,7 @@
                 correctAnswer: "Christopher Nolan",
                 keywords: ["christopher nolan", "nolan"],
                 type: "movies",
-                topic: "Movies"
+                topic: "🎬 Movies"
             },
             {
                 id: 5,
@@ -1647,7 +1717,7 @@
                 correctAnswer: "Jupiter",
                 keywords: ["jupiter"],
                 type: "science",
-                topic: "Science"
+                topic: "🔭 Astronomy"
             },
             {
                 id: 6,
@@ -1655,15 +1725,15 @@
                 correctAnswer: "Leonardo da Vinci",
                 keywords: ["leonardo", "da vinci", "vinci"],
                 type: "history",
-                topic: "Art"
+                topic: "🎨 Art"
             },
             {
                 id: 7,
                 question: "Who wrote 'Harry Potter and the Philosopher's Stone'?",
                 correctAnswer: "J.K. Rowling",
                 keywords: ["j.k. rowling", "rowling", "joanne"],
-                type: "movies",
-                topic: "Literature"
+                type: "literature",
+                topic: "📖 Literature"
             },
             {
                 id: 8,
@@ -1671,7 +1741,7 @@
                 correctAnswer: "299,792,458 meters per second",
                 keywords: ["299792458", "300000", "light speed"],
                 type: "science",
-                topic: "Physics"
+                topic: "🔬 Physics"
             },
             {
                 id: 9,
@@ -1679,7 +1749,7 @@
                 correctAnswer: "China",
                 keywords: ["china"],
                 type: "geography",
-                topic: "Geography"
+                topic: "🌍 Geography"
             },
             {
                 id: 10,
@@ -1687,10 +1757,13 @@
                 correctAnswer: "Vatican City",
                 keywords: ["vatican", "vatican city"],
                 type: "geography",
-                topic: "Geography"
+                topic: "🌍 Geography"
             }
         ];
 
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           GLOBAL STATE
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         const State = {
             apiKey: localStorage.getItem('aibc_apiKey') || '',
             players: [],
@@ -1702,32 +1775,29 @@
             gameStartTime: null,
             playerName: null,
             playerSubmitted: false,
-            leaderboard: []
+            leaderboard: [],
+            mode: 'host' // host | player
         };
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            UTILITY FUNCTIONS
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-        // Format API key display (mask most of it)
         function maskApiKey(key) {
             if (!key) return '';
             return key.substring(0, 5) + '...' + key.substring(key.length - 5);
         }
 
-        // URL query params
         function getQueryParam(name) {
             const url = new URL(window.location.href);
             return url.searchParams.get(name);
         }
 
-        // Route logic
         function navigateTo(screen) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const screenEl = document.querySelector(`.${screen}-screen`);
             if (screenEl) screenEl.classList.add('active');
 
-            // Update hash
             if (screen === 'setup') {
                 window.location.hash = '';
             } else if (screen === 'player') {
@@ -1739,15 +1809,22 @@
             } else {
                 window.location.hash = screen;
             }
+
+            updateNavbarActiveLink();
         }
 
-        // Save to localStorage and broadcast
+        function updateNavbarActiveLink() {
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const hash = window.location.hash.substring(1).split('?')[0] || 'setup';
+            const activeLink = document.querySelector(`[data-screen="${hash || 'setup'}"]`);
+            if (activeLink) activeLink.classList.add('active');
+        }
+
         function saveState() {
             localStorage.setItem('aibc_state', JSON.stringify(State));
             window.dispatchEvent(new Event('stateChanged'));
         }
 
-        // Toast notification
         function showToast(message, type = 'info', duration = 3000) {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
@@ -1759,18 +1836,6 @@
             }, duration);
         }
 
-        // Score popup animation
-        function showScorePopup(points, x, y) {
-            const popup = document.createElement('div');
-            popup.className = `score-popup ${points > 0 ? 'positive' : 'negative'}`;
-            popup.textContent = (points > 0 ? '+' : '') + points;
-            popup.style.left = x + 'px';
-            popup.style.top = y + 'px';
-            document.body.appendChild(popup);
-            setTimeout(() => popup.remove(), 1000);
-        }
-
-        // Web Audio API: Generate simple beep
         function playSound(type = 'success') {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1799,7 +1864,7 @@
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           OPENAI API CALLS
+           OPENAI API
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
         async function callOpenAI(playerPrompt, questionText) {
@@ -1819,11 +1884,11 @@
                         messages: [
                             {
                                 role: 'system',
-                                content: 'You are a quiz assistant. Answer the question concisely and accurately in 1-2 sentences.'
+                                content: 'You are a quiz assistant. Answer concisely (1-2 sentences max). Focus on accuracy.'
                             },
                             {
                                 role: 'user',
-                                content: `${playerPrompt}\n\nQuestion context: ${questionText}`
+                                content: `${playerPrompt}\n\nQuestion: ${questionText}`
                             }
                         ],
                         max_tokens: 100,
@@ -1917,20 +1982,16 @@
             State.gameStatus = 'reviewing';
             saveState();
 
-            // Get current question
             const question = QUIZ_QUESTIONS[State.currentRound - 1];
-            
-            // Process all submissions
             const results = [];
+
             for (const [playerName, submission] of Object.entries(State.submissions)) {
                 try {
-                    // Call OpenAI
                     const aiResponse = await callOpenAI(
                         submission.prompt,
                         question.question
                     );
 
-                    // Check if correct
                     const aiResponseLower = aiResponse.toLowerCase();
                     let isCorrect = false;
                     for (const keyword of question.keywords) {
@@ -1940,10 +2001,9 @@
                         }
                     }
 
-                    // Calculate points
                     let points = isCorrect ? 3 : 0;
                     if (isCorrect && results.filter(r => r.correct).length === 0) {
-                        points += 5; // First correct bonus
+                        points += 5;
                     }
 
                     results.push({
@@ -1954,7 +2014,6 @@
                         points
                     });
 
-                    // Update leaderboard
                     const leaderboardEntry = State.leaderboard.find(l => l.name === playerName);
                     if (leaderboardEntry) {
                         leaderboardEntry.score += points;
@@ -1971,22 +2030,10 @@
                 }
             }
 
-            // Sort leaderboard
             State.leaderboard.sort((a, b) => b.score - a.score);
             State.roundResults = results;
             saveState();
             updateAllScreens();
-        }
-
-        function calculatePlayerPoints(result) {
-            if (!result) return 0;
-            
-            // Check if player submitted
-            if (!State.submissions[State.playerName]) return -1;
-            
-            // Find result for this player
-            const playerResult = State.roundResults.find(r => r.playerName === State.playerName);
-            return playerResult ? playerResult.points : 0;
         }
 
         function nextRound() {
@@ -2022,13 +2069,10 @@
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
         function updateSetupScreen() {
-            // API Key
             const apiKeyInput = document.getElementById('apiKeyInput');
             if (apiKeyInput) {
                 apiKeyInput.value = State.apiKey;
             }
-
-            // Players list
             updatePlayersList();
         }
 
@@ -2086,30 +2130,26 @@
         }
 
         function updateHostScreen() {
-            // Round progress
             const roundLabel = document.querySelector('.host-progress .round-number');
             if (roundLabel) {
                 roundLabel.textContent = `${State.currentRound}/${QUIZ_QUESTIONS.length}`;
             }
 
-            // Question
             const question = QUIZ_QUESTIONS[State.currentRound - 1];
             if (question) {
                 const questionText = document.querySelector('.question-text');
                 const questionTopic = document.querySelector('.question-topic');
-                
+
                 if (questionText) questionText.textContent = question.question;
                 if (questionTopic) questionTopic.textContent = question.topic;
             }
 
-            // Submission status
             const submissionCount = Object.keys(State.submissions).length;
             const statusEl = document.querySelector('.submission-status .count');
             if (statusEl) {
                 statusEl.textContent = submissionCount;
             }
 
-            // Results
             if (State.gameStatus === 'reviewing' && State.roundResults.length > 0) {
                 const responsesContainer = document.querySelector('.host-responses');
                 if (responsesContainer) {
@@ -2128,7 +2168,6 @@
                 }
             }
 
-            // Leaderboard
             updateLeaderboardDisplay();
         }
 
@@ -2159,38 +2198,35 @@
         function updatePlayerScreen() {
             if (State.gameStatus === 'setup') return;
 
-            // Player name
             const nameEl = document.querySelector('.player-name');
             if (nameEl) nameEl.textContent = State.playerName;
 
-            // Round badge
             const roundBadge = document.querySelector('.round-badge');
             if (roundBadge) {
                 roundBadge.textContent = `Round ${State.currentRound}/${QUIZ_QUESTIONS.length}`;
             }
 
-            // Question
             const question = QUIZ_QUESTIONS[State.currentRound - 1];
             if (question) {
                 const questionEl = document.querySelector('.player-question p');
                 if (questionEl) questionEl.textContent = question.question;
             }
 
-            // Prompt textarea
-            const promptTextarea = document.querySelector('#promptTextarea');
+            const promptTextarea = document.getElementById('promptTextarea');
             if (promptTextarea) {
                 promptTextarea.disabled = State.playerSubmitted;
             }
 
-            // Submit button
             const submitBtn = document.querySelector('#submitPromptBtn');
             if (submitBtn) {
                 submitBtn.disabled = State.playerSubmitted;
             }
 
-            // If player has submitted and round is reviewing, show their result
+            const waitingContainer = document.getElementById('waitingContainer');
+            const resultContainer = document.querySelector('.player-result-container');
+
             if (State.playerSubmitted && State.gameStatus === 'reviewing') {
-                const resultContainer = document.querySelector('.player-result-container');
+                if (waitingContainer) waitingContainer.style.display = 'none';
                 if (resultContainer) {
                     const playerResult = State.roundResults.find(r => r.playerName === State.playerName);
                     if (playerResult) {
@@ -2214,11 +2250,13 @@
                         `;
                     }
                 }
+            } else if (State.playerSubmitted) {
+                if (waitingContainer) waitingContainer.style.display = 'block';
+                if (resultContainer) resultContainer.innerHTML = '';
             }
         }
 
         function updateResultsScreen() {
-            // Podium
             const podiumContainer = document.querySelector('.podium-container');
             if (podiumContainer && State.leaderboard.length >= 1) {
                 const first = State.leaderboard[0];
@@ -2269,11 +2307,10 @@
                 podiumContainer.innerHTML = podiumHTML;
             }
 
-            // Best prompt
             if (State.roundResults.length > 0) {
                 const bestPromptAward = document.querySelector('.best-prompt-award');
                 if (bestPromptAward) {
-                    const longestPrompt = State.roundResults.reduce((max, r) => 
+                    const longestPrompt = State.roundResults.reduce((max, r) =>
                         r.prompt.length > max.prompt.length ? r : max
                     );
                     bestPromptAward.innerHTML = `
@@ -2285,7 +2322,6 @@
                 }
             }
 
-            // Final leaderboard
             const finalRows = document.querySelector('.final-leaderboard-rows');
             if (finalRows) {
                 finalRows.innerHTML = State.leaderboard.map((entry, idx) => {
@@ -2388,31 +2424,20 @@
             resetGame();
         }
 
-        function handleShowQR() {
-            const modal = document.getElementById('qrModal');
-            if (modal) {
-                modal.classList.add('active');
-                setTimeout(() => {
-                    const qrcodeDiv = document.getElementById('qrcode');
-                    qrcodeDiv.innerHTML = '';
-                    const playerUrl = `${window.location.origin}${window.location.pathname}#player?name=${encodeURIComponent(State.players[0] || 'Player')}`;
-                    new QRCode(qrcodeDiv, {
-                        text: playerUrl,
-                        width: 300,
-                        height: 300,
-                        colorDark: '#6c63ff',
-                        colorLight: '#0a0a0f'
-                    });
-                }, 100);
+        function switchMode(mode) {
+            State.mode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+            if (mode === 'player') {
+                navigateTo('player');
+            } else {
+                navigateTo('host');
             }
         }
 
-        function handleCloseModal() {
-            document.getElementById('qrModal').classList.remove('active');
-        }
-
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           INITIALIZATION & ROUTING
+           INITIALIZATION
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
         window.addEventListener('load', () => {
@@ -2427,6 +2452,7 @@
                 const playerName = getQueryParam('name');
                 if (playerName) {
                     State.playerName = playerName;
+                    State.mode = 'player';
                     navigateTo('player');
                     updatePlayerScreen();
                     setInterval(() => {
@@ -2438,6 +2464,7 @@
                             State.roundResults = parsed.roundResults;
                             State.currentRound = parsed.currentRound;
                             State.leaderboard = parsed.leaderboard;
+                            State.submissions = parsed.submissions;
                             updatePlayerScreen();
                         }
                     }, 500);
@@ -2445,6 +2472,7 @@
                     navigateTo('setup');
                 }
             } else if (hash === 'host') {
+                State.mode = 'host';
                 navigateTo('host');
                 setInterval(() => {
                     const newState = localStorage.getItem('aibc_state');
@@ -2465,9 +2493,10 @@
                 navigateTo('setup');
                 updateSetupScreen();
             }
+
+            updateNavbarActiveLink();
         });
 
-        // Listen for hash changes
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.substring(1).split('?')[0];
             if (hash === '') navigateTo('setup');
@@ -2475,48 +2504,91 @@
                 const playerName = getQueryParam('name');
                 if (playerName) {
                     State.playerName = playerName;
+                    State.mode = 'player';
                     navigateTo('player');
                 }
-            } else if (hash === 'host') navigateTo('host');
-            else if (hash === 'results') navigateTo('results');
+            } else if (hash === 'host') {
+                State.mode = 'host';
+                navigateTo('host');
+            } else if (hash === 'results') navigateTo('results');
+            updateNavbarActiveLink();
         });
 
-        // Timer circle SVG circumference
-        const SVG_RADIUS = 95;
-        const SVG_CIRCUMFERENCE = 2 * Math.PI * SVG_RADIUS;
+        document.addEventListener('DOMContentLoaded', () => {
+            const promptTextarea = document.getElementById('promptTextarea');
+            if (promptTextarea) {
+                promptTextarea.addEventListener('input', handlePromptChange);
+            }
+
+            handlePlayerJoin();
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'aibc_state') {
+                const newState = JSON.parse(e.newValue);
+                State.gameStatus = newState.gameStatus;
+                State.timerValue = newState.timerValue;
+                State.submissions = newState.submissions;
+                State.roundResults = newState.roundResults;
+                State.leaderboard = newState.leaderboard;
+                State.currentRound = newState.currentRound;
+                updateAllScreens();
+            }
+        });
     </script>
 </head>
 
 <body>
     <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         NAVIGATION BAR
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand" onclick="window.location.hash = ''; return false;">
+            ⚔️ AI Battle
+        </a>
+        <div class="navbar-links">
+            <a href="#" class="nav-link" data-screen="setup" onclick="navigateTo('setup'); return false;">Setup</a>
+            <a href="#host" class="nav-link" data-screen="host" onclick="navigateTo('host'); return false;">Host</a>
+            <a href="#player" class="nav-link" data-screen="player" onclick="navigateTo('player'); return false;">Player</a>
+        </div>
+        <div class="nav-mode-switcher">
+            <button class="mode-btn active" data-mode="host" onclick="switchMode('host')">🎥 Host</button>
+            <button class="mode-btn" data-mode="player" onclick="switchMode('player')">📱 Player</button>
+        </div>
+    </nav>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
          SETUP SCREEN
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
     <div class="setup-screen screen active">
-        <div class="setup-container">
-            <div class="setup-logo">
-                <h1>⚔️ AI Battle</h1>
-                <p>Test your prompt engineering skills against AI</p>
-            </div>
-
-            <div class="form-group">
-                <label>OpenAI API Key</label>
-                <input type="password" id="apiKeyInput" placeholder="sk-..." />
-                <button class="btn btn-primary" onclick="handleSetApiKey()" style="margin-top: var(--space-md); width: 100%;">Set API Key</button>
-            </div>
-
-            <div class="form-group">
-                <label>Add Players (Max 12)</label>
-                <div class="player-input-group">
-                    <input type="text" id="playerNameInput" placeholder="Enter player name..." />
-                    <button class="btn btn-secondary" onclick="addPlayer(document.getElementById('playerNameInput').value)">Add</button>
+        <div class="container">
+            <div class="setup-container">
+                <div class="setup-logo">
+                    <h1>⚔️ AI Battle</h1>
+                    <p>Test your prompt engineering skills against AI</p>
                 </div>
-            </div>
 
-            <div class="player-count" id="playerCount">0/12 players</div>
-            <div class="players-list" id="playersList"></div>
+                <div class="form-group">
+                    <label>OpenAI API Key</label>
+                    <input type="password" id="apiKeyInput" placeholder="sk-..." />
+                    <button class="btn btn-primary" onclick="handleSetApiKey()" style="margin-top: var(--space-md); width: 100%;">Set API Key</button>
+                </div>
 
-            <div class="setup-actions">
-                <button class="btn btn-primary" onclick="handleStartGame()">Start Game</button>
+                <div class="form-group">
+                    <label>Add Players (Max 12)</label>
+                    <div class="player-input-group">
+                        <input type="text" id="playerNameInput" placeholder="Enter player name..." />
+                        <button class="btn btn-secondary" onclick="addPlayer(document.getElementById('playerNameInput').value)">Add</button>
+                    </div>
+                </div>
+
+                <div class="player-count" id="playerCount">0/12 players</div>
+                <div class="players-list" id="playersList"></div>
+
+                <div class="setup-actions">
+                    <button class="btn btn-primary" onclick="handleStartGame()">Start Game</button>
+                    <button class="btn btn-secondary" onclick="navigateTo('setup')" style="display: none;">Help</button>
+                </div>
             </div>
         </div>
     </div>
@@ -2526,52 +2598,54 @@
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
     <div class="host-screen screen">
         <div class="host-main">
-            <div class="host-header">
-                <div class="host-progress">
-                    <div class="round-label">Round</div>
-                    <div class="round-number">1/10</div>
+            <div class="container">
+                <div class="host-header">
+                    <div class="host-progress">
+                        <div class="round-label">Round</div>
+                        <div class="round-number">1/10</div>
+                    </div>
+                    <h1 style="margin: 0; flex: 1; text-align: center;">🎯 AI Battle</h1>
+                    <div style="width: 120px;"></div>
                 </div>
-                <h1 style="margin: 0;">AI Battle</h1>
-                <div style="width: 120px;"></div>
-            </div>
 
-            <div class="question-area">
-                <div class="question-topic"></div>
-                <div class="question-text"></div>
-            </div>
+                <div class="question-area">
+                    <div class="question-topic"></div>
+                    <div class="question-text"></div>
+                </div>
 
-            <div class="timer-container">
-                <div class="timer-circle">
-                    <svg class="timer-svg" viewBox="0 0 200 200">
-                        <defs>
-                            <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#6c63ff;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <circle class="timer-circle-bg" cx="100" cy="100" r="95"></circle>
-                        <circle class="timer-circle-progress" cx="100" cy="100" r="95" style="stroke-dasharray: 597; stroke-dashoffset: 0;"></circle>
-                    </svg>
-                    <div class="timer-text">
-                        <div class="timer-time">60</div>
-                        <div class="timer-label">seconds</div>
+                <div class="timer-container">
+                    <div class="timer-circle">
+                        <svg class="timer-svg" viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#6c63ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="timer-circle-bg" cx="100" cy="100" r="95"></circle>
+                            <circle class="timer-circle-progress" cx="100" cy="100" r="95" style="stroke-dasharray: 597; stroke-dashoffset: 0;"></circle>
+                        </svg>
+                        <div class="timer-text">
+                            <div class="timer-time">60</div>
+                            <div class="timer-label">seconds</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div class="submission-status">
+                            Submissions<br/>
+                            <span class="count">0</span>
+                        </div>
                     </div>
                 </div>
 
-                <div style="text-align: center;">
-                    <div class="submission-status">
-                        Submissions:<br/>
-                        <span class="count">0</span>
-                    </div>
-                </div>
+                <div class="host-responses"></div>
             </div>
-
-            <div class="host-responses"></div>
         </div>
 
         <div class="host-sidebar">
             <div class="leaderboard">
-                <div class="leaderboard-title">Leaderboard</div>
+                <div class="leaderboard-title">📊 Leaderboard</div>
                 <div class="leaderboard-rows"></div>
             </div>
 
@@ -2585,39 +2659,43 @@
          PLAYER SCREEN
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
     <div class="player-screen screen">
-        <div class="player-container">
-            <div class="player-header">
-                <h1>AI Battle</h1>
-                <div class="player-name"></div>
+        <div class="container">
+            <div class="player-wrapper">
+                <div class="player-container">
+                    <div class="player-header">
+                        <h1>⚔️ AI Battle</h1>
+                        <div class="player-name"></div>
+                    </div>
+
+                    <div class="round-badge"></div>
+
+                    <div class="player-timer">
+                        <div class="time">60</div>
+                        <div class="label">Time remaining</div>
+                    </div>
+
+                    <div class="player-question">
+                        <h3>Question</h3>
+                        <p></p>
+                    </div>
+
+                    <div class="prompt-input-wrapper">
+                        <textarea id="promptTextarea" placeholder="Write your AI prompt here... (max 300 characters)" maxlength="300"></textarea>
+                        <div class="char-counter">0/300</div>
+                    </div>
+
+                    <div class="player-actions">
+                        <button class="btn btn-primary" id="submitPromptBtn" onclick="handleSubmitPrompt()">Submit Prompt</button>
+                    </div>
+
+                    <div class="player-waiting" id="waitingContainer" style="display: none;">
+                        <div class="waiting-spinner"></div>
+                        <div class="waiting-text">Waiting for AI responses...</div>
+                    </div>
+
+                    <div class="player-result-container"></div>
+                </div>
             </div>
-
-            <div class="round-badge"></div>
-
-            <div class="player-timer">
-                <div class="time">60</div>
-                <div class="label">Time remaining</div>
-            </div>
-
-            <div class="player-question">
-                <h3>Question</h3>
-                <p></p>
-            </div>
-
-            <div class="prompt-input-wrapper">
-                <textarea id="promptTextarea" placeholder="Write your AI prompt here... (max 300 characters)" maxlength="300"></textarea>
-                <div class="char-counter">0/300</div>
-            </div>
-
-            <div class="player-actions">
-                <button class="btn btn-primary" id="submitPromptBtn" onclick="handleSubmitPrompt()">Submit Prompt</button>
-            </div>
-
-            <div class="player-waiting" id="waitingContainer" style="display: none;">
-                <div class="waiting-spinner"></div>
-                <div class="waiting-text">Waiting for AI responses...</div>
-            </div>
-
-            <div class="player-result-container"></div>
         </div>
     </div>
 
@@ -2625,67 +2703,28 @@
          RESULTS SCREEN
          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
     <div class="results-screen screen">
-        <div class="results-container">
-            <div class="results-title">
-                <h1>🎉 Game Over</h1>
-                <p>Final Results</p>
-            </div>
+        <div class="container">
+            <div class="results-container">
+                <div class="results-title">
+                    <h1>🎉 Game Over</h1>
+                    <p>Final Results</p>
+                </div>
 
-            <div class="podium-container"></div>
+                <div class="podium-container"></div>
 
-            <div class="best-prompt-award"></div>
+                <div class="best-prompt-award"></div>
 
-            <div class="final-leaderboard">
-                <div class="final-leaderboard-title">Final Leaderboard</div>
-                <div class="final-leaderboard-rows"></div>
-            </div>
+                <div class="final-leaderboard">
+                    <div class="final-leaderboard-title">📊 Final Leaderboard</div>
+                    <div class="final-leaderboard-rows"></div>
+                </div>
 
-            <div class="results-actions">
-                <button class="btn btn-primary" onclick="handlePlayAgain()">Play Again</button>
+                <div class="results-actions">
+                    <button class="btn btn-primary" onclick="handlePlayAgain()">Play Again</button>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-         QR CODE MODAL
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-    <div class="modal" id="qrModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="handleCloseModal()">✕</button>
-            <h3>Player Join Link</h3>
-            <div id="qrcode"></div>
-            <p class="muted">Scan to join the game</p>
-        </div>
-    </div>
-
-    <script>
-        // Handle prompt input change
-        document.addEventListener('DOMContentLoaded', () => {
-            const promptTextarea = document.getElementById('promptTextarea');
-            if (promptTextarea) {
-                promptTextarea.addEventListener('input', handlePromptChange);
-            }
-
-            // Handle player join
-            const hash = window.location.hash;
-            if (hash.includes('player')) {
-                handlePlayerJoin();
-            }
-        });
-
-        // Sync state across tabs/windows
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'aibc_state') {
-                const newState = JSON.parse(e.newValue);
-                State.gameStatus = newState.gameStatus;
-                State.timerValue = newState.timerValue;
-                State.submissions = newState.submissions;
-                State.roundResults = newState.roundResults;
-                State.leaderboard = newState.leaderboard;
-                updateAllScreens();
-            }
-        });
-    </script>
 </body>
 
 </html>
