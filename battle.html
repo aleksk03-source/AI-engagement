@@ -1,0 +1,2691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Battle – Quiz Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.5.3/qrcode.min.js"></script>
+    <style>
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           DESIGN TOKENS & VARIABLES
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --card: #1a1a2e;
+            --primary: #6c63ff;
+            --accent: #00d4ff;
+            --success: #00ff88;
+            --danger: #ff4757;
+            --warning: #ffa502;
+            --text: #e8e8f0;
+            --muted: #666680;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+
+            /* Spacing scale */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+
+            /* Radii */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-full: 9999px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.5);
+            --glow-primary: 0 0 20px rgba(108, 99, 255, 0.4);
+            --glow-accent: 0 0 20px rgba(0, 212, 255, 0.4);
+            --glow-success: 0 0 20px rgba(0, 255, 136, 0.4);
+            --glow-danger: 0 0 20px rgba(255, 71, 87, 0.4);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           GLOBAL STYLES
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           LAYOUT STRUCTURE
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .screen {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           TYPOGRAPHY
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-lg);
+        }
+
+        h3 {
+            font-size: 1.75rem;
+            margin-bottom: var(--space-md);
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        p {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: var(--space-md);
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+
+        .mono {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           BUTTONS
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        button, .btn {
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: var(--space-md) var(--space-lg);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #5a52d5 100%);
+            color: white;
+            box-shadow: var(--glow-primary);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(108, 99, 255, 0.6);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            box-shadow: var(--glow-accent);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--accent);
+            color: var(--bg);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #00d966 100%);
+            color: var(--bg);
+            box-shadow: var(--glow-success);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #ff6b7a 100%);
+            color: white;
+            box-shadow: var(--glow-danger);
+        }
+
+        button:disabled, .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           FORMS
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        input, textarea, select {
+            font-family: inherit;
+            background: var(--surface);
+            border: 2px solid var(--card);
+            color: var(--text);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--muted);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           CARDS & CONTAINERS
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-lg);
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--glow-primary);
+            border-color: rgba(108, 99, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .card.glowing {
+            box-shadow: var(--glow-primary);
+            border-color: var(--primary);
+        }
+
+        .card.success {
+            box-shadow: var(--glow-success);
+            border-color: var(--success);
+        }
+
+        .card.danger {
+            box-shadow: var(--glow-danger);
+            border-color: var(--danger);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SETUP SCREEN
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .setup-screen {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl);
+            background: radial-gradient(circle at 50% 50%, rgba(108, 99, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .setup-container {
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .setup-logo {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .setup-logo h1 {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+            text-shadow: 0 0 30px rgba(108, 99, 255, 0.3);
+        }
+
+        .setup-logo p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .player-input-group {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .player-input-group input {
+            flex: 1;
+        }
+
+        .player-input-group button {
+            padding: var(--space-md) var(--space-lg);
+        }
+
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .player-chip {
+            background: linear-gradient(135deg, var(--primary) 0%, #5a52d5 100%);
+            color: white;
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            animation: chipIn 0.3s ease-out;
+            box-shadow: var(--glow-primary);
+        }
+
+        @keyframes chipIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .player-chip.rank-gold {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+        }
+
+        .player-chip.rank-silver {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            color: #000;
+        }
+
+        .player-chip.rank-bronze {
+            background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
+            color: #fff;
+        }
+
+        .player-chip .remove {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .player-chip .remove:hover {
+            opacity: 1;
+        }
+
+        .player-count {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .setup-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+
+        .setup-actions button {
+            flex: 1;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           HOST SCREEN
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .host-screen {
+            flex-direction: row;
+            padding: var(--space-lg);
+            gap: var(--space-lg);
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.05) 0%, rgba(0, 212, 255, 0.05) 100%);
+        }
+
+        .host-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .host-sidebar {
+            width: 350px;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .host-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .host-progress {
+            text-align: center;
+        }
+
+        .host-progress .round-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-sm);
+        }
+
+        .host-progress .round-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .question-area {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+            animation: questionReveal 0.6s ease-out;
+        }
+
+        @keyframes questionReveal {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-topic {
+            display: inline-block;
+            background: var(--card);
+            color: var(--accent);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--glow-accent);
+        }
+
+        .question-text {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: var(--space-2xl);
+            text-shadow: 0 0 30px rgba(108, 99, 255, 0.2);
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: var(--space-2xl);
+            gap: var(--space-xl);
+        }
+
+        .timer-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .timer-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-circle-bg {
+            fill: none;
+            stroke: var(--card);
+            stroke-width: 8;
+        }
+
+        .timer-circle-progress {
+            fill: none;
+            stroke: url(#timerGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .timer-time {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .timer-label {
+            color: var(--muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: var(--space-sm);
+        }
+
+        .timer-circle.pulse .timer-time {
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .submission-status {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .submission-status .count {
+            font-size: 2.5rem;
+            display: block;
+            color: var(--accent);
+            margin: var(--space-md) 0;
+        }
+
+        .host-responses {
+            margin-top: var(--space-2xl);
+            animation: responsesReveal 0.6s ease-out;
+        }
+
+        @keyframes responsesReveal {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .response-row {
+            background: var(--card);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            border-left: 4px solid var(--primary);
+            animation: rowSlideIn 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes rowSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .response-row.correct {
+            border-left-color: var(--success);
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: var(--glow-success);
+        }
+
+        .response-row.wrong {
+            border-left-color: var(--danger);
+            background: rgba(255, 71, 87, 0.1);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .response-player {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .response-points {
+            background: var(--primary);
+            color: white;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .response-points.correct {
+            background: var(--success);
+        }
+
+        .response-points.zero {
+            background: var(--danger);
+        }
+
+        .response-text {
+            color: var(--text);
+            margin-bottom: var(--space-sm);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .response-ai {
+            background: rgba(0, 0, 0, 0.3);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+            color: var(--accent);
+            margin-top: var(--space-md);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           LEADERBOARD
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .leaderboard {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            overflow: hidden;
+            box-shadow: var(--glow-primary);
+        }
+
+        .leaderboard-title {
+            padding: var(--space-lg);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-rows {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+            transition: all 0.3s ease;
+            animation: rowFadeIn 0.4s ease-out;
+        }
+
+        @keyframes rowFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .leaderboard-row.highlight {
+            background: rgba(108, 99, 255, 0.2);
+            box-shadow: inset 0 0 20px rgba(108, 99, 255, 0.1);
+        }
+
+        .leaderboard-rank {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-right: var(--space-md);
+            border-radius: 50%;
+            background: var(--surface);
+            color: var(--primary);
+        }
+
+        .leaderboard-rank.gold {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+        }
+
+        .leaderboard-rank.silver {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            color: #000;
+        }
+
+        .leaderboard-rank.bronze {
+            background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
+            color: #fff;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .leaderboard-change {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-right: var(--space-md);
+            width: 30px;
+            text-align: right;
+        }
+
+        .leaderboard-change.up {
+            color: var(--success);
+        }
+
+        .leaderboard-change.down {
+            color: var(--danger);
+        }
+
+        .leaderboard-score {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.1rem;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           PLAYER SCREEN
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .player-screen {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+        }
+
+        .player-container {
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .player-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .player-header h1 {
+            font-size: 2rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .player-name {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .round-badge {
+            display: inline-block;
+            background: var(--card);
+            color: var(--primary);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--glow-primary);
+        }
+
+        .player-question {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            box-shadow: var(--glow-primary);
+        }
+
+        .player-question h3 {
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+
+        .player-question p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .prompt-input-wrapper {
+            position: relative;
+            margin-bottom: var(--space-lg);
+        }
+
+        .char-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .char-counter.warning {
+            color: var(--warning);
+        }
+
+        .char-counter.danger {
+            color: var(--danger);
+        }
+
+        .player-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .player-actions button {
+            flex: 1;
+        }
+
+        .player-waiting {
+            text-align: center;
+            padding: var(--space-2xl);
+        }
+
+        .waiting-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--card);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-lg);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .waiting-text {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .player-timer {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .player-timer .time {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: var(--space-sm);
+        }
+
+        .player-timer .label {
+            color: var(--muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .player-timer.warning .time {
+            color: var(--warning);
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        .player-timer.danger .time {
+            color: var(--danger);
+            animation: pulse 0.3s ease-in-out infinite;
+        }
+
+        .player-result {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            margin-bottom: var(--space-lg);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .player-result.correct {
+            border-color: var(--success);
+            box-shadow: var(--glow-success);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .player-result.incorrect {
+            border-color: var(--danger);
+            box-shadow: var(--glow-danger);
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .result-label {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .result-label.correct {
+            color: var(--success);
+        }
+
+        .result-label.incorrect {
+            color: var(--danger);
+        }
+
+        .result-prompt {
+            margin-bottom: var(--space-md);
+        }
+
+        .result-prompt-label {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .result-prompt-text {
+            background: rgba(0, 0, 0, 0.3);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        .result-ai {
+            margin-bottom: var(--space-md);
+        }
+
+        .result-ai-label {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .result-ai-text {
+            background: rgba(0, 212, 255, 0.1);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .result-points {
+            text-align: center;
+            padding: var(--space-lg);
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--success);
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--success);
+        }
+
+        .result-points.zero {
+            background: rgba(255, 71, 87, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           RESULTS SCREEN
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .results-screen {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.15) 0%, rgba(0, 212, 255, 0.15) 100%);
+            overflow-y: auto;
+        }
+
+        .results-container {
+            width: 100%;
+            max-width: 800px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .results-title {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .results-title h1 {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+            text-shadow: 0 0 30px rgba(108, 99, 255, 0.3);
+        }
+
+        .results-title p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .podium-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+            perspective: 1000px;
+        }
+
+        .podium-position {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .podium-position.second {
+            order: -1;
+        }
+
+        .podium-position.third {
+            order: 1;
+        }
+
+        .podium-step {
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            box-shadow: var(--shadow-lg);
+            animation: podiumGrow 0.6s ease-out;
+        }
+
+        @keyframes podiumGrow {
+            from {
+                opacity: 0;
+                transform: scaleY(0);
+            }
+            to {
+                opacity: 1;
+                transform: scaleY(1);
+            }
+        }
+
+        .podium-position.first .podium-step {
+            height: 180px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+            font-size: 2rem;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .podium-position.second .podium-step {
+            height: 140px;
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            color: #000;
+            font-size: 1.8rem;
+            box-shadow: 0 0 30px rgba(192, 192, 192, 0.4);
+        }
+
+        .podium-position.third .podium-step {
+            height: 100px;
+            background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
+            color: #fff;
+            font-size: 1.6rem;
+            box-shadow: 0 0 30px rgba(205, 127, 50, 0.4);
+        }
+
+        .podium-rank {
+            padding: var(--space-lg);
+            font-weight: 700;
+        }
+
+        .podium-info {
+            text-align: center;
+            margin-top: var(--space-lg);
+            width: 120px;
+        }
+
+        .podium-name {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        .podium-score {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: var(--space-sm);
+        }
+
+        .best-prompt-award {
+            background: var(--card);
+            border: 2px solid var(--warning);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+            text-align: center;
+            box-shadow: var(--glow-warning);
+            animation: slideUp 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes slideUpDelay {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .best-prompt-award .emoji {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .best-prompt-award h3 {
+            color: var(--warning);
+            margin-bottom: var(--space-md);
+        }
+
+        .best-prompt-award p {
+            margin: 0;
+            color: var(--text);
+        }
+
+        .final-leaderboard {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            box-shadow: var(--glow-primary);
+            overflow: hidden;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .final-leaderboard-title {
+            padding: var(--space-lg);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+        }
+
+        .final-leaderboard-rows {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .final-leaderboard-row {
+            display: flex;
+            align-items: center;
+            padding: var(--space-lg);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+            animation: rowFadeIn 0.4s ease-out;
+        }
+
+        .final-leaderboard-row:last-child {
+            border-bottom: none;
+        }
+
+        .final-rank {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-right: var(--space-lg);
+            border-radius: 50%;
+            background: var(--surface);
+            color: var(--primary);
+        }
+
+        .final-rank.first {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+        }
+
+        .final-rank.second {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            color: #000;
+        }
+
+        .final-rank.third {
+            background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
+            color: #fff;
+        }
+
+        .final-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .final-score {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            margin-top: var(--space-2xl);
+        }
+
+        .results-actions button {
+            min-width: 200px;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           NOTIFICATIONS & TOAST
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card);
+            color: var(--text);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary);
+            animation: slideInRight 0.3s ease-out;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+            background: rgba(255, 165, 2, 0.1);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SCORE POPUP
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .score-popup {
+            position: fixed;
+            font-size: 2rem;
+            font-weight: 700;
+            pointer-events: none;
+            animation: scoreFloat 1s ease-out forwards;
+            z-index: 900;
+        }
+
+        @keyframes scoreFloat {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-60px) scale(1.5);
+            }
+        }
+
+        .score-popup.positive {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .score-popup.negative {
+            color: var(--danger);
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           QR CODE MODAL
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            box-shadow: var(--glow-primary);
+            max-width: 400px;
+            width: 100%;
+            animation: slideUp 0.3s ease-out;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--surface);
+            border: none;
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        #qrcode {
+            margin: var(--space-lg) 0;
+        }
+
+        #qrcode canvas {
+            border-radius: var(--radius-md);
+            border: 2px solid var(--primary);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           RESPONSIVE DESIGN
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        @media (max-width: 1200px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .question-text { font-size: 2rem; }
+            .host-sidebar { width: 300px; }
+        }
+
+        @media (max-width: 768px) {
+            .host-screen {
+                flex-direction: column;
+            }
+
+            .host-sidebar {
+                width: 100%;
+                max-height: 300px;
+                order: 2;
+            }
+
+            .host-main {
+                order: 1;
+            }
+
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .question-text { font-size: 1.5rem; }
+
+            .timer-circle {
+                width: 150px;
+                height: 150px;
+            }
+
+            .timer-time {
+                font-size: 2.5rem;
+            }
+
+            .podium-container {
+                gap: var(--space-md);
+            }
+
+            .podium-step {
+                width: 100px;
+            }
+
+            .podium-position.first .podium-step {
+                height: 140px;
+            }
+
+            .podium-position.second .podium-step {
+                height: 110px;
+            }
+
+            .podium-position.third .podium-step {
+                height: 80px;
+            }
+
+            .leaderboard-row {
+                padding: var(--space-md);
+            }
+
+            .response-row {
+                padding: var(--space-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: var(--space-md);
+            }
+
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.2rem; }
+            h3 { font-size: 1rem; }
+
+            button, .btn {
+                padding: var(--space-md) var(--space-md);
+                font-size: 0.9rem;
+            }
+
+            .setup-logo h1 {
+                font-size: 2.5rem;
+            }
+
+            .question-text {
+                font-size: 1.2rem;
+            }
+
+            .timer-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .timer-time {
+                font-size: 2rem;
+            }
+
+            .toast {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .player-input-group {
+                flex-direction: column;
+            }
+
+            .player-chip {
+                font-size: 0.8rem;
+                padding: var(--space-sm) var(--space-md);
+            }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SCROLLBAR STYLING
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+    </style>
+
+    <script>
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           STATE MANAGEMENT
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        const QUIZ_QUESTIONS = [
+            {
+                id: 1,
+                question: "What is the capital of Australia?",
+                correctAnswer: "Canberra",
+                keywords: ["canberra"],
+                type: "fact",
+                topic: "Geography"
+            },
+            {
+                id: 2,
+                question: "What is the chemical symbol for Gold?",
+                correctAnswer: "Au",
+                keywords: ["au", "gold"],
+                type: "science",
+                topic: "Chemistry"
+            },
+            {
+                id: 3,
+                question: "In what year did the Titanic sink?",
+                correctAnswer: "1912",
+                keywords: ["1912", "titanic"],
+                type: "history",
+                topic: "History"
+            },
+            {
+                id: 4,
+                question: "Who directed the movie 'Inception'?",
+                correctAnswer: "Christopher Nolan",
+                keywords: ["christopher nolan", "nolan"],
+                type: "movies",
+                topic: "Movies"
+            },
+            {
+                id: 5,
+                question: "What is the largest planet in our solar system?",
+                correctAnswer: "Jupiter",
+                keywords: ["jupiter"],
+                type: "science",
+                topic: "Science"
+            },
+            {
+                id: 6,
+                question: "Which artist painted the Mona Lisa?",
+                correctAnswer: "Leonardo da Vinci",
+                keywords: ["leonardo", "da vinci", "vinci"],
+                type: "history",
+                topic: "Art"
+            },
+            {
+                id: 7,
+                question: "Who wrote 'Harry Potter and the Philosopher's Stone'?",
+                correctAnswer: "J.K. Rowling",
+                keywords: ["j.k. rowling", "rowling", "joanne"],
+                type: "movies",
+                topic: "Literature"
+            },
+            {
+                id: 8,
+                question: "What is the speed of light in vacuum?",
+                correctAnswer: "299,792,458 meters per second",
+                keywords: ["299792458", "300000", "light speed"],
+                type: "science",
+                topic: "Physics"
+            },
+            {
+                id: 9,
+                question: "Which country is home to the Great Wall?",
+                correctAnswer: "China",
+                keywords: ["china"],
+                type: "geography",
+                topic: "Geography"
+            },
+            {
+                id: 10,
+                question: "What is the smallest country in the world?",
+                correctAnswer: "Vatican City",
+                keywords: ["vatican", "vatican city"],
+                type: "geography",
+                topic: "Geography"
+            }
+        ];
+
+        const State = {
+            apiKey: localStorage.getItem('aibc_apiKey') || '',
+            players: [],
+            currentRound: 0,
+            gameStatus: 'setup', // setup | lobby | playing | reviewing | finished
+            submissions: {},
+            roundResults: [],
+            timerValue: 60,
+            gameStartTime: null,
+            playerName: null,
+            playerSubmitted: false,
+            leaderboard: []
+        };
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           UTILITY FUNCTIONS
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        // Format API key display (mask most of it)
+        function maskApiKey(key) {
+            if (!key) return '';
+            return key.substring(0, 5) + '...' + key.substring(key.length - 5);
+        }
+
+        // URL query params
+        function getQueryParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+
+        // Route logic
+        function navigateTo(screen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const screenEl = document.querySelector(`.${screen}-screen`);
+            if (screenEl) screenEl.classList.add('active');
+
+            // Update hash
+            if (screen === 'setup') {
+                window.location.hash = '';
+            } else if (screen === 'player') {
+                if (State.playerName) {
+                    window.location.hash = `player?name=${encodeURIComponent(State.playerName)}`;
+                } else {
+                    window.location.hash = 'player';
+                }
+            } else {
+                window.location.hash = screen;
+            }
+        }
+
+        // Save to localStorage and broadcast
+        function saveState() {
+            localStorage.setItem('aibc_state', JSON.stringify(State));
+            window.dispatchEvent(new Event('stateChanged'));
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Score popup animation
+        function showScorePopup(points, x, y) {
+            const popup = document.createElement('div');
+            popup.className = `score-popup ${points > 0 ? 'positive' : 'negative'}`;
+            popup.textContent = (points > 0 ? '+' : '') + points;
+            popup.style.left = x + 'px';
+            popup.style.top = y + 'px';
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 1000);
+        }
+
+        // Web Audio API: Generate simple beep
+        function playSound(type = 'success') {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                if (type === 'success') {
+                    oscillator.frequency.value = 800;
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                } else if (type === 'error') {
+                    oscillator.frequency.value = 400;
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }
+            } catch (e) {
+                // Audio not available
+            }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           OPENAI API CALLS
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        async function callOpenAI(playerPrompt, questionText) {
+            if (!State.apiKey) {
+                throw new Error('API key not set');
+            }
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${State.apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a quiz assistant. Answer the question concisely and accurately in 1-2 sentences.'
+                            },
+                            {
+                                role: 'user',
+                                content: `${playerPrompt}\n\nQuestion context: ${questionText}`
+                            }
+                        ],
+                        max_tokens: 100,
+                        temperature: 0.3
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error?.message || 'API request failed');
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content.trim();
+            } catch (error) {
+                console.error('OpenAI API error:', error);
+                throw error;
+            }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           GAME LOGIC
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        function initializeGame() {
+            State.currentRound = 0;
+            State.gameStatus = 'playing';
+            State.roundResults = [];
+            State.submissions = {};
+            State.leaderboard = State.players.map(p => ({
+                name: p,
+                score: 0,
+                previousRank: 0
+            }));
+            saveState();
+            startRound();
+        }
+
+        function startRound() {
+            State.currentRound++;
+            State.gameStatus = 'playing';
+            State.submissions = {};
+            State.playerSubmitted = false;
+            State.timerValue = 60;
+            State.gameStartTime = Date.now();
+            saveState();
+            updateAllScreens();
+            startTimer();
+        }
+
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - State.gameStartTime) / 1000);
+                State.timerValue = Math.max(0, 60 - elapsed);
+                updateTimerDisplay();
+
+                if (State.timerValue <= 0) {
+                    clearInterval(timerInterval);
+                    endRound();
+                }
+            }, 100);
+        }
+
+        function updateTimerDisplay() {
+            document.querySelectorAll('.timer-time').forEach(el => {
+                el.textContent = String(State.timerValue).padStart(2, '0');
+            });
+
+            document.querySelectorAll('.player-timer .time').forEach(el => {
+                el.textContent = String(State.timerValue).padStart(2, '0');
+            });
+
+            const timerCircle = document.querySelector('.timer-circle');
+            if (timerCircle) {
+                if (State.timerValue <= 10) {
+                    timerCircle.classList.add('pulse');
+                } else {
+                    timerCircle.classList.remove('pulse');
+                }
+            }
+
+            const playerTimer = document.querySelector('.player-timer');
+            if (playerTimer) {
+                playerTimer.classList.remove('warning', 'danger');
+                if (State.timerValue <= 10) playerTimer.classList.add('danger');
+                else if (State.timerValue <= 20) playerTimer.classList.add('warning');
+            }
+        }
+
+        async function endRound() {
+            State.gameStatus = 'reviewing';
+            saveState();
+
+            // Get current question
+            const question = QUIZ_QUESTIONS[State.currentRound - 1];
+            
+            // Process all submissions
+            const results = [];
+            for (const [playerName, submission] of Object.entries(State.submissions)) {
+                try {
+                    // Call OpenAI
+                    const aiResponse = await callOpenAI(
+                        submission.prompt,
+                        question.question
+                    );
+
+                    // Check if correct
+                    const aiResponseLower = aiResponse.toLowerCase();
+                    let isCorrect = false;
+                    for (const keyword of question.keywords) {
+                        if (aiResponseLower.includes(keyword.toLowerCase())) {
+                            isCorrect = true;
+                            break;
+                        }
+                    }
+
+                    // Calculate points
+                    let points = isCorrect ? 3 : 0;
+                    if (isCorrect && results.filter(r => r.correct).length === 0) {
+                        points += 5; // First correct bonus
+                    }
+
+                    results.push({
+                        playerName,
+                        prompt: submission.prompt,
+                        aiResponse,
+                        correct: isCorrect,
+                        points
+                    });
+
+                    // Update leaderboard
+                    const leaderboardEntry = State.leaderboard.find(l => l.name === playerName);
+                    if (leaderboardEntry) {
+                        leaderboardEntry.score += points;
+                    }
+                } catch (error) {
+                    console.error(`Error processing ${playerName}:`, error);
+                    results.push({
+                        playerName,
+                        prompt: submission.prompt,
+                        aiResponse: 'Error: ' + error.message,
+                        correct: false,
+                        points: 0
+                    });
+                }
+            }
+
+            // Sort leaderboard
+            State.leaderboard.sort((a, b) => b.score - a.score);
+            State.roundResults = results;
+            saveState();
+            updateAllScreens();
+        }
+
+        function calculatePlayerPoints(result) {
+            if (!result) return 0;
+            
+            // Check if player submitted
+            if (!State.submissions[State.playerName]) return -1;
+            
+            // Find result for this player
+            const playerResult = State.roundResults.find(r => r.playerName === State.playerName);
+            return playerResult ? playerResult.points : 0;
+        }
+
+        function nextRound() {
+            if (State.currentRound >= QUIZ_QUESTIONS.length) {
+                finishGame();
+            } else {
+                startRound();
+            }
+        }
+
+        function finishGame() {
+            State.gameStatus = 'finished';
+            saveState();
+            navigateTo('results');
+            updateResultsScreen();
+        }
+
+        function resetGame() {
+            State.currentRound = 0;
+            State.gameStatus = 'setup';
+            State.players = [];
+            State.submissions = {};
+            State.leaderboard = [];
+            State.playerName = null;
+            State.playerSubmitted = false;
+            localStorage.removeItem('aibc_state');
+            navigateTo('setup');
+            updateSetupScreen();
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           UI UPDATE FUNCTIONS
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        function updateSetupScreen() {
+            // API Key
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            if (apiKeyInput) {
+                apiKeyInput.value = State.apiKey;
+            }
+
+            // Players list
+            updatePlayersList();
+        }
+
+        function updatePlayersList() {
+            const playersList = document.getElementById('playersList');
+            const playerCount = document.getElementById('playerCount');
+
+            if (playersList) {
+                playersList.innerHTML = State.players.map(name => `
+                    <div class="player-chip">
+                        <span>${name}</span>
+                        <span class="remove" onclick="removePlayer('${name}')">✕</span>
+                    </div>
+                `).join('');
+            }
+
+            if (playerCount) {
+                playerCount.textContent = `${State.players.length}/12 players`;
+            }
+        }
+
+        function addPlayer(name) {
+            if (!name.trim()) {
+                showToast('Enter a player name', 'error');
+                return;
+            }
+
+            if (State.players.length >= 12) {
+                showToast('Maximum 12 players', 'error');
+                return;
+            }
+
+            if (State.players.includes(name)) {
+                showToast('Player already added', 'error');
+                return;
+            }
+
+            State.players.push(name);
+            saveState();
+            updatePlayersList();
+            document.getElementById('playerNameInput').value = '';
+            playSound('success');
+        }
+
+        function removePlayer(name) {
+            State.players = State.players.filter(p => p !== name);
+            saveState();
+            updatePlayersList();
+            playSound('error');
+        }
+
+        function updateAllScreens() {
+            updateHostScreen();
+            updatePlayerScreen();
+        }
+
+        function updateHostScreen() {
+            // Round progress
+            const roundLabel = document.querySelector('.host-progress .round-number');
+            if (roundLabel) {
+                roundLabel.textContent = `${State.currentRound}/${QUIZ_QUESTIONS.length}`;
+            }
+
+            // Question
+            const question = QUIZ_QUESTIONS[State.currentRound - 1];
+            if (question) {
+                const questionText = document.querySelector('.question-text');
+                const questionTopic = document.querySelector('.question-topic');
+                
+                if (questionText) questionText.textContent = question.question;
+                if (questionTopic) questionTopic.textContent = question.topic;
+            }
+
+            // Submission status
+            const submissionCount = Object.keys(State.submissions).length;
+            const statusEl = document.querySelector('.submission-status .count');
+            if (statusEl) {
+                statusEl.textContent = submissionCount;
+            }
+
+            // Results
+            if (State.gameStatus === 'reviewing' && State.roundResults.length > 0) {
+                const responsesContainer = document.querySelector('.host-responses');
+                if (responsesContainer) {
+                    responsesContainer.innerHTML = State.roundResults.map((result, idx) => `
+                        <div class="response-row ${result.correct ? 'correct' : 'wrong'}">
+                            <div class="response-header">
+                                <span class="response-player">${result.playerName}</span>
+                                <span class="response-points ${result.correct ? 'correct' : (result.points === 0 ? 'zero' : '')}">
+                                    ${result.points > 0 ? '+' : ''}${result.points}
+                                </span>
+                            </div>
+                            <div class="response-text"><strong>Prompt:</strong> ${result.prompt}</div>
+                            <div class="response-ai"><strong>AI:</strong> ${result.aiResponse}</div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Leaderboard
+            updateLeaderboardDisplay();
+        }
+
+        function updateLeaderboardDisplay() {
+            const leaderboardRows = document.querySelector('.leaderboard-rows');
+            if (leaderboardRows && State.leaderboard.length > 0) {
+                leaderboardRows.innerHTML = State.leaderboard.map((entry, idx) => {
+                    let rankClass = '';
+                    if (idx === 0) rankClass = 'gold';
+                    else if (idx === 1) rankClass = 'silver';
+                    else if (idx === 2) rankClass = 'bronze';
+
+                    const changeArrow = entry.previousRank > idx ? '▲' : (entry.previousRank < idx ? '▼' : '');
+                    const changeClass = changeArrow === '▲' ? 'up' : (changeArrow === '▼' ? 'down' : '');
+
+                    return `
+                        <div class="leaderboard-row">
+                            <div class="leaderboard-rank ${rankClass}">${idx + 1}</div>
+                            <div class="leaderboard-name">${entry.name}</div>
+                            <div class="leaderboard-change ${changeClass}">${changeArrow}</div>
+                            <div class="leaderboard-score">${entry.score}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function updatePlayerScreen() {
+            if (State.gameStatus === 'setup') return;
+
+            // Player name
+            const nameEl = document.querySelector('.player-name');
+            if (nameEl) nameEl.textContent = State.playerName;
+
+            // Round badge
+            const roundBadge = document.querySelector('.round-badge');
+            if (roundBadge) {
+                roundBadge.textContent = `Round ${State.currentRound}/${QUIZ_QUESTIONS.length}`;
+            }
+
+            // Question
+            const question = QUIZ_QUESTIONS[State.currentRound - 1];
+            if (question) {
+                const questionEl = document.querySelector('.player-question p');
+                if (questionEl) questionEl.textContent = question.question;
+            }
+
+            // Prompt textarea
+            const promptTextarea = document.querySelector('#promptTextarea');
+            if (promptTextarea) {
+                promptTextarea.disabled = State.playerSubmitted;
+            }
+
+            // Submit button
+            const submitBtn = document.querySelector('#submitPromptBtn');
+            if (submitBtn) {
+                submitBtn.disabled = State.playerSubmitted;
+            }
+
+            // If player has submitted and round is reviewing, show their result
+            if (State.playerSubmitted && State.gameStatus === 'reviewing') {
+                const resultContainer = document.querySelector('.player-result-container');
+                if (resultContainer) {
+                    const playerResult = State.roundResults.find(r => r.playerName === State.playerName);
+                    if (playerResult) {
+                        resultContainer.innerHTML = `
+                            <div class="player-result ${playerResult.correct ? 'correct' : 'incorrect'}">
+                                <div class="result-label ${playerResult.correct ? 'correct' : 'incorrect'}">
+                                    ${playerResult.correct ? '✓ Correct!' : '✗ Incorrect'}
+                                </div>
+                                <div class="result-prompt">
+                                    <div class="result-prompt-label">Your Prompt:</div>
+                                    <div class="result-prompt-text">${playerResult.prompt}</div>
+                                </div>
+                                <div class="result-ai">
+                                    <div class="result-ai-label">AI Response:</div>
+                                    <div class="result-ai-text">${playerResult.aiResponse}</div>
+                                </div>
+                                <div class="result-points ${playerResult.points === 0 ? 'zero' : ''}">
+                                    Points: ${playerResult.points > 0 ? '+' : ''}${playerResult.points}
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+        }
+
+        function updateResultsScreen() {
+            // Podium
+            const podiumContainer = document.querySelector('.podium-container');
+            if (podiumContainer && State.leaderboard.length >= 1) {
+                const first = State.leaderboard[0];
+                const second = State.leaderboard[1];
+                const third = State.leaderboard[2];
+
+                let podiumHTML = '';
+                if (second) {
+                    podiumHTML += `
+                        <div class="podium-position second">
+                            <div class="podium-step">
+                                <div class="podium-rank">2</div>
+                            </div>
+                            <div class="podium-info">
+                                <div class="podium-name">${second.name}</div>
+                                <div class="podium-score">${second.score}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                podiumHTML += `
+                    <div class="podium-position first">
+                        <div class="podium-step">
+                            <div class="podium-rank">🏆</div>
+                        </div>
+                        <div class="podium-info">
+                            <div class="podium-name">${first.name}</div>
+                            <div class="podium-score">${first.score}</div>
+                        </div>
+                    </div>
+                `;
+
+                if (third) {
+                    podiumHTML += `
+                        <div class="podium-position third">
+                            <div class="podium-step">
+                                <div class="podium-rank">3</div>
+                            </div>
+                            <div class="podium-info">
+                                <div class="podium-name">${third.name}</div>
+                                <div class="podium-score">${third.score}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                podiumContainer.innerHTML = podiumHTML;
+            }
+
+            // Best prompt
+            if (State.roundResults.length > 0) {
+                const bestPromptAward = document.querySelector('.best-prompt-award');
+                if (bestPromptAward) {
+                    const longestPrompt = State.roundResults.reduce((max, r) => 
+                        r.prompt.length > max.prompt.length ? r : max
+                    );
+                    bestPromptAward.innerHTML = `
+                        <div class="emoji">✨</div>
+                        <h3>Best Prompt Award</h3>
+                        <p><strong>${longestPrompt.playerName}</strong></p>
+                        <p class="muted">"${longestPrompt.prompt}"</p>
+                    `;
+                }
+            }
+
+            // Final leaderboard
+            const finalRows = document.querySelector('.final-leaderboard-rows');
+            if (finalRows) {
+                finalRows.innerHTML = State.leaderboard.map((entry, idx) => {
+                    let rankClass = '';
+                    if (idx === 0) rankClass = 'first';
+                    else if (idx === 1) rankClass = 'second';
+                    else if (idx === 2) rankClass = 'third';
+
+                    return `
+                        <div class="final-leaderboard-row">
+                            <div class="final-rank ${rankClass}">${idx + 1}</div>
+                            <div class="final-name">${entry.name}</div>
+                            <div class="final-score">${entry.score}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           EVENT HANDLERS
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        function handleSetApiKey() {
+            const input = document.getElementById('apiKeyInput');
+            const key = input.value.trim();
+
+            if (!key) {
+                showToast('Enter API key', 'error');
+                return;
+            }
+
+            State.apiKey = key;
+            localStorage.setItem('aibc_apiKey', key);
+            saveState();
+            showToast(`API key set: ${maskApiKey(key)}`, 'success');
+        }
+
+        function handleStartGame() {
+            if (State.players.length === 0) {
+                showToast('Add at least one player', 'error');
+                return;
+            }
+
+            if (!State.apiKey) {
+                showToast('Set API key first', 'error');
+                return;
+            }
+
+            initializeGame();
+            navigateTo('host');
+        }
+
+        function handlePlayerJoin() {
+            const playerName = getQueryParam('name');
+            if (playerName) {
+                State.playerName = playerName;
+            }
+            updatePlayerScreen();
+        }
+
+        function handlePromptChange() {
+            const textarea = document.getElementById('promptTextarea');
+            const counter = document.querySelector('.char-counter');
+            const length = textarea.value.length;
+
+            if (counter) {
+                counter.textContent = `${length}/300`;
+                counter.classList.remove('warning', 'danger');
+                if (length > 250) counter.classList.add('danger');
+                else if (length > 200) counter.classList.add('warning');
+            }
+        }
+
+        function handleSubmitPrompt() {
+            const textarea = document.getElementById('promptTextarea');
+            const prompt = textarea.value.trim();
+
+            if (!prompt) {
+                showToast('Write a prompt', 'error');
+                return;
+            }
+
+            State.submissions[State.playerName] = {
+                prompt,
+                timestamp: Date.now()
+            };
+            State.playerSubmitted = true;
+            saveState();
+            updatePlayerScreen();
+            showToast('Prompt submitted!', 'success');
+            playSound('success');
+        }
+
+        function handleNextRound() {
+            nextRound();
+        }
+
+        function handlePlayAgain() {
+            resetGame();
+        }
+
+        function handleShowQR() {
+            const modal = document.getElementById('qrModal');
+            if (modal) {
+                modal.classList.add('active');
+                setTimeout(() => {
+                    const qrcodeDiv = document.getElementById('qrcode');
+                    qrcodeDiv.innerHTML = '';
+                    const playerUrl = `${window.location.origin}${window.location.pathname}#player?name=${encodeURIComponent(State.players[0] || 'Player')}`;
+                    new QRCode(qrcodeDiv, {
+                        text: playerUrl,
+                        width: 300,
+                        height: 300,
+                        colorDark: '#6c63ff',
+                        colorLight: '#0a0a0f'
+                    });
+                }, 100);
+            }
+        }
+
+        function handleCloseModal() {
+            document.getElementById('qrModal').classList.remove('active');
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           INITIALIZATION & ROUTING
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.substring(1).split('?')[0];
+            const savedState = localStorage.getItem('aibc_state');
+
+            if (savedState) {
+                Object.assign(State, JSON.parse(savedState));
+            }
+
+            if (hash === 'player') {
+                const playerName = getQueryParam('name');
+                if (playerName) {
+                    State.playerName = playerName;
+                    navigateTo('player');
+                    updatePlayerScreen();
+                    setInterval(() => {
+                        const newState = localStorage.getItem('aibc_state');
+                        if (newState) {
+                            const parsed = JSON.parse(newState);
+                            State.gameStatus = parsed.gameStatus;
+                            State.timerValue = parsed.timerValue;
+                            State.roundResults = parsed.roundResults;
+                            State.currentRound = parsed.currentRound;
+                            State.leaderboard = parsed.leaderboard;
+                            updatePlayerScreen();
+                        }
+                    }, 500);
+                } else {
+                    navigateTo('setup');
+                }
+            } else if (hash === 'host') {
+                navigateTo('host');
+                setInterval(() => {
+                    const newState = localStorage.getItem('aibc_state');
+                    if (newState) {
+                        const parsed = JSON.parse(newState);
+                        State.gameStatus = parsed.gameStatus;
+                        State.timerValue = parsed.timerValue;
+                        State.submissions = parsed.submissions;
+                        State.roundResults = parsed.roundResults;
+                        State.leaderboard = parsed.leaderboard;
+                        updateHostScreen();
+                    }
+                }, 500);
+            } else if (hash === 'results') {
+                navigateTo('results');
+                updateResultsScreen();
+            } else {
+                navigateTo('setup');
+                updateSetupScreen();
+            }
+        });
+
+        // Listen for hash changes
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.substring(1).split('?')[0];
+            if (hash === '') navigateTo('setup');
+            else if (hash === 'player') {
+                const playerName = getQueryParam('name');
+                if (playerName) {
+                    State.playerName = playerName;
+                    navigateTo('player');
+                }
+            } else if (hash === 'host') navigateTo('host');
+            else if (hash === 'results') navigateTo('results');
+        });
+
+        // Timer circle SVG circumference
+        const SVG_RADIUS = 95;
+        const SVG_CIRCUMFERENCE = 2 * Math.PI * SVG_RADIUS;
+    </script>
+</head>
+
+<body>
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         SETUP SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="setup-screen screen active">
+        <div class="setup-container">
+            <div class="setup-logo">
+                <h1>⚔️ AI Battle</h1>
+                <p>Test your prompt engineering skills against AI</p>
+            </div>
+
+            <div class="form-group">
+                <label>OpenAI API Key</label>
+                <input type="password" id="apiKeyInput" placeholder="sk-..." />
+                <button class="btn btn-primary" onclick="handleSetApiKey()" style="margin-top: var(--space-md); width: 100%;">Set API Key</button>
+            </div>
+
+            <div class="form-group">
+                <label>Add Players (Max 12)</label>
+                <div class="player-input-group">
+                    <input type="text" id="playerNameInput" placeholder="Enter player name..." />
+                    <button class="btn btn-secondary" onclick="addPlayer(document.getElementById('playerNameInput').value)">Add</button>
+                </div>
+            </div>
+
+            <div class="player-count" id="playerCount">0/12 players</div>
+            <div class="players-list" id="playersList"></div>
+
+            <div class="setup-actions">
+                <button class="btn btn-primary" onclick="handleStartGame()">Start Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         HOST SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="host-screen screen">
+        <div class="host-main">
+            <div class="host-header">
+                <div class="host-progress">
+                    <div class="round-label">Round</div>
+                    <div class="round-number">1/10</div>
+                </div>
+                <h1 style="margin: 0;">AI Battle</h1>
+                <div style="width: 120px;"></div>
+            </div>
+
+            <div class="question-area">
+                <div class="question-topic"></div>
+                <div class="question-text"></div>
+            </div>
+
+            <div class="timer-container">
+                <div class="timer-circle">
+                    <svg class="timer-svg" viewBox="0 0 200 200">
+                        <defs>
+                            <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#6c63ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle class="timer-circle-bg" cx="100" cy="100" r="95"></circle>
+                        <circle class="timer-circle-progress" cx="100" cy="100" r="95" style="stroke-dasharray: 597; stroke-dashoffset: 0;"></circle>
+                    </svg>
+                    <div class="timer-text">
+                        <div class="timer-time">60</div>
+                        <div class="timer-label">seconds</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="submission-status">
+                        Submissions:<br/>
+                        <span class="count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="host-responses"></div>
+        </div>
+
+        <div class="host-sidebar">
+            <div class="leaderboard">
+                <div class="leaderboard-title">Leaderboard</div>
+                <div class="leaderboard-rows"></div>
+            </div>
+
+            <div style="margin-top: var(--space-xl); display: flex; gap: var(--space-md);">
+                <button class="btn btn-success" onclick="handleNextRound()" style="flex: 1;">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         PLAYER SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="player-screen screen">
+        <div class="player-container">
+            <div class="player-header">
+                <h1>AI Battle</h1>
+                <div class="player-name"></div>
+            </div>
+
+            <div class="round-badge"></div>
+
+            <div class="player-timer">
+                <div class="time">60</div>
+                <div class="label">Time remaining</div>
+            </div>
+
+            <div class="player-question">
+                <h3>Question</h3>
+                <p></p>
+            </div>
+
+            <div class="prompt-input-wrapper">
+                <textarea id="promptTextarea" placeholder="Write your AI prompt here... (max 300 characters)" maxlength="300"></textarea>
+                <div class="char-counter">0/300</div>
+            </div>
+
+            <div class="player-actions">
+                <button class="btn btn-primary" id="submitPromptBtn" onclick="handleSubmitPrompt()">Submit Prompt</button>
+            </div>
+
+            <div class="player-waiting" id="waitingContainer" style="display: none;">
+                <div class="waiting-spinner"></div>
+                <div class="waiting-text">Waiting for AI responses...</div>
+            </div>
+
+            <div class="player-result-container"></div>
+        </div>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         RESULTS SCREEN
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="results-screen screen">
+        <div class="results-container">
+            <div class="results-title">
+                <h1>🎉 Game Over</h1>
+                <p>Final Results</p>
+            </div>
+
+            <div class="podium-container"></div>
+
+            <div class="best-prompt-award"></div>
+
+            <div class="final-leaderboard">
+                <div class="final-leaderboard-title">Final Leaderboard</div>
+                <div class="final-leaderboard-rows"></div>
+            </div>
+
+            <div class="results-actions">
+                <button class="btn btn-primary" onclick="handlePlayAgain()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         QR CODE MODAL
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="handleCloseModal()">✕</button>
+            <h3>Player Join Link</h3>
+            <div id="qrcode"></div>
+            <p class="muted">Scan to join the game</p>
+        </div>
+    </div>
+
+    <script>
+        // Handle prompt input change
+        document.addEventListener('DOMContentLoaded', () => {
+            const promptTextarea = document.getElementById('promptTextarea');
+            if (promptTextarea) {
+                promptTextarea.addEventListener('input', handlePromptChange);
+            }
+
+            // Handle player join
+            const hash = window.location.hash;
+            if (hash.includes('player')) {
+                handlePlayerJoin();
+            }
+        });
+
+        // Sync state across tabs/windows
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'aibc_state') {
+                const newState = JSON.parse(e.newValue);
+                State.gameStatus = newState.gameStatus;
+                State.timerValue = newState.timerValue;
+                State.submissions = newState.submissions;
+                State.roundResults = newState.roundResults;
+                State.leaderboard = newState.leaderboard;
+                updateAllScreens();
+            }
+        });
+    </script>
+</body>
+
+</html>
