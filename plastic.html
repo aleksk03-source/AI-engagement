@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plastic Free July Quiz — Какой ты эко‑котик?</title>
+  <meta name="description" content="Ответь на 10 вопросов и узнай, какой ты эко‑котик. Автоподсчёт A/B/C/D на одной HTML-странице." />
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#0f1733;
+      --panel2:#0d1430;
+      --text:#eef2ff;
+      --muted:rgba(238,242,255,.72);
+      --line:rgba(238,242,255,.12);
+      --brand:#7c5cff;
+      --brand2:#22c55e;
+      --warn:#f59e0b;
+      --radius:18px;
+      --shadow:0 12px 35px rgba(0,0,0,.35);
+      --container:1100px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(900px 450px at 90% 10%, rgba(34,197,94,.16), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{color:inherit}
+    .container{width:min(var(--container), calc(100% - 2rem)); margin:0 auto;}
+    .sr-only{
+      position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+      clip:rect(0,0,0,0);white-space:nowrap;border:0;
+    }
+    .skip-link{
+      position:absolute;left:12px;top:12px;padding:.6rem .8rem;background:#fff;color:#000;border-radius:.6rem;
+      transform:translateY(-140%);transition:transform .2s ease;z-index:50;
+    }
+    .skip-link:focus{transform:translateY(0)}
+    header{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter:blur(10px);
+      background:rgba(11,16,32,.65);
+      border-bottom:1px solid var(--line);
+    }
+    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 0;}
+    .brand{display:flex;align-items:center;gap:.75rem;min-width:220px;}
+    .brand-mark{
+      width:44px;height:44px;display:grid;place-items:center;border-radius:14px;
+      background:linear-gradient(135deg, rgba(124,92,255,.35), rgba(34,197,94,.22));
+      border:1px solid var(--line); box-shadow:var(--shadow); font-size:20px;
+    }
+    .brand-kicker{margin:0;font-size:.85rem;color:var(--muted)}
+    .brand-name{margin:0;font-weight:800}
+    nav{display:flex;gap:.9rem;flex-wrap:wrap}
+    nav a{color:var(--muted);text-decoration:none;padding:.45rem .6rem;border-radius:.7rem}
+    nav a:hover{color:var(--text);background:rgba(238,242,255,.06)}
+    nav a:focus-visible{outline:2px solid rgba(124,92,255,.85);outline-offset:2px}
+
+    .hero{padding:3.2rem 0 1.4rem}
+    .hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:1.4rem;align-items:start}
+    h1{
+      margin:0 0 .7rem;
+      font-size:clamp(1.9rem, 1.3rem + 2vw, 3rem);
+      line-height:1.12;letter-spacing:-0.02em;
+    }
+    .lead{margin:0 0 1.2rem;color:var(--muted);font-size:1.05rem;max-width:60ch}
+    .hero-cta{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+      padding:.75rem 1rem;border-radius:14px;text-decoration:none;border:1px solid transparent;font-weight:800;
+      cursor:pointer;
+    }
+    .btn:focus-visible{outline:2px solid rgba(124,92,255,.85);outline-offset:2px}
+    .btn-primary{background:linear-gradient(135deg, rgba(124,92,255,1), rgba(124,92,255,.78));color:#0b1020}
+    .btn-primary:hover{filter:brightness(1.05)}
+    .btn-ghost{background:rgba(238,242,255,.04);border-color:rgba(238,242,255,.14);color:var(--text)}
+    .btn-ghost:hover{background:rgba(238,242,255,.07)}
+    .hero-bullets{margin:0;padding-left:1.15rem;color:var(--muted)}
+    .hero-card{
+      background:linear-gradient(180deg, rgba(238,242,255,.06), rgba(238,242,255,.03));
+      border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow);
+    }
+    .card-title{margin:0 0 .6rem;font-size:1.05rem}
+    .steps{margin:0;padding-left:1.15rem;color:var(--muted)}
+    .note{margin-top:.9rem;padding:.85rem;border-radius:14px;border:1px dashed rgba(238,242,255,.2);background:rgba(124,92,255,.08)}
+    .note-title{margin:0 0 .25rem;font-weight:900}
+    .note-text{margin:0;color:var(--muted)}
+    .section{padding:2.2rem 0}
+    .section-alt{background:rgba(238,242,255,.03);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .section-head{margin-bottom:1rem}
+    .section-head h2{margin:0 0 .35rem;font-size:1.55rem;letter-spacing:-0.01em}
+    .muted{color:var(--muted);margin:0}
+    .quiz{display:grid;gap:.9rem}
+    fieldset.q{
+      margin:0;padding:1rem;border-radius:var(--radius);border:1px solid var(--line);
+      background:rgba(15,23,51,.55);
+    }
+    fieldset.q legend{padding:0;margin-bottom:.75rem;font-weight:900}
+    .q-num{
+      display:inline-grid;place-items:center;width:28px;height:28px;border-radius:10px;margin-right:.5rem;
+      background:rgba(124,92,255,.18);border:1px solid rgba(124,92,255,.35);font-size:.9rem;
+    }
+    label.opt{
+      display:flex;align-items:flex-start;gap:.65rem;padding:.55rem .6rem;border-radius:14px;cursor:pointer;
+    }
+    label.opt:hover{background:rgba(238,242,255,.05)}
+    label.opt input{margin-top:.25rem;accent-color:var(--brand)}
+    .opt-key{display:inline-block;min-width:1.4rem;font-weight:1000;color:rgba(238,242,255,.88)}
+    .quiz-actions{
+      margin-top:.2rem;padding:1rem;border-radius:var(--radius);border:1px solid var(--line);
+      background:rgba(15,23,51,.35);
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    }
+    .status{color:var(--muted);font-weight:700}
+    .pill{
+      display:inline-flex;align-items:center;gap:.5rem;
+      padding:.45rem .65rem;border-radius:999px;border:1px solid rgba(238,242,255,.14);
+      background:rgba(238,242,255,.04); color:rgba(238,242,255,.85);
+      font-weight:800; font-size:.95rem;
+    }
+
+    .results-wrap{
+      margin-top:1rem;
+      padding:1rem;border-radius:var(--radius);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(34,197,94,.10), rgba(124,92,255,.07));
+      box-shadow:var(--shadow);
+    }
+    .results-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:.9rem;margin-top:.9rem}
+    .result-card{
+      padding:1.1rem;border-radius:var(--radius);border:1px solid var(--line);
+      background:rgba(15,23,51,.55);
+    }
+    .result-card h3{margin:0 0 .35rem}
+    .result-card p{margin:0;color:var(--muted)}
+    .result-a{border-color:rgba(124,92,255,.35)}
+    .result-b{border-color:rgba(34,197,94,.35)}
+    .result-c{border-color:rgba(245,158,11,.35)}
+    .result-d{border-color:rgba(238,242,255,.2)}
+    .results-top{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    }
+    .scoreboard{display:flex;gap:.5rem;flex-wrap:wrap}
+    .error{
+      margin:0;
+      padding:.75rem .9rem;
+      border-radius:14px;
+      border:1px solid rgba(245,158,11,.35);
+      background:rgba(245,158,11,.10);
+      color:rgba(255,240,210,.95);
+      font-weight:800;
+    }
+
+    .facts{display:grid;grid-template-columns:repeat(3, 1fr);gap:.9rem}
+    .card{
+      padding:1rem;border-radius:var(--radius);border:1px solid var(--line);
+      background:rgba(15,23,51,.55); box-shadow:0 10px 25px rgba(0,0,0,.22);
+    }
+    .card h3{margin:0 0 .35rem}
+    .card p{margin:0;color:var(--muted)}
+
+    footer{border-top:1px solid var(--line);padding:1.3rem 0;background:rgba(11,16,32,.55)}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .text-link{color:rgba(238,242,255,.88);text-decoration:underline;text-underline-offset:3px}
+    .text-link:hover{color:#fff}
+
+    @media (max-width: 900px){
+      .hero-grid{grid-template-columns:1fr}
+      .facts{grid-template-columns:1fr}
+      .results-grid{grid-template-columns:1fr}
+    }
+    @media (max-width: 520px){
+      nav{display:none}
+      .btn{width:100%}
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#quiz">Перейти к квизу</a>
+
+  <header>
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">🐱</div>
+        <div>
+          <p class="brand-kicker">Plastic Free July Quiz</p>
+          <p class="brand-name">Какой ты ЭКО‑КОТИК?</p>
+        </div>
+      </div>
+
+      <nav aria-label="Навигация">
+        <a href="#quiz">Квиз</a>
+        <a href="#facts">Факты</a>
+        <a href="#results">Результат</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <h1>Ответь на 10 вопросов — и узнай, какой ты эко‑котик</h1>
+          <p class="lead">
+            Выбирай A/B/C/D, нажми «Узнать результат» — мы автоматически посчитаем и покажем твоего котика.
+          </p>
+
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#quiz">Начать</a>
+            <a class="btn btn-ghost" href="#facts">Почитать факты</a>
+          </div>
+
+          <ul class="hero-bullets">
+            <li>Одна HTML‑страница: удобно для GitHub Pages</li>
+            <li>Автоподсчёт A/B/C/D (минимальный JS внутри)</li>
+            <li>Доступная разметка (fieldset/legend, фокус‑стили)</li>
+          </ul>
+        </div>
+
+        <aside class="hero-card" aria-label="Как работает подсчёт">
+          <h2 class="card-title">Как считается результат</h2>
+          <ol class="steps">
+            <li>В каждом вопросе выбираешь A/B/C/D.</li>
+            <li>Скрипт считает, какой буквы больше.</li>
+            <li>Если ничья — покажем «смешанный» результат.</li>
+          </ol>
+
+          <div class="note">
+            <p class="note-title">Можно поменять правило ничьей</p>
+            <p class="note-text">Сейчас: если есть равенство лидеров — показываем отдельный блок «ничья».</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="quiz" class="section">
+      <div class="container">
+        <header class="section-head">
+          <h2>Квиз: «Какой ты ЭКО‑КОТИК?»</h2>
+          <p class="muted">Ответь на все вопросы и нажми кнопку подсчёта.</p>
+        </header>
+
+        <form id="quiz-form" class="quiz" novalidate>
+          <!-- Q1 -->
+          <fieldset class="q">
+            <legend><span class="q-num">1</span> Ты идёшь за кофе в офисе. Что делаешь?</legend>
+            <label class="opt"><input type="radio" name="q1" value="a" required> <span class="opt-key">A</span> Беру свою кружку, которая пережила уже три офиса.</label>
+            <label class="opt"><input type="radio" name="q1" value="b"> <span class="opt-key">B</span> Если есть бумажный стаканчик — нормально.</label>
+            <label class="opt"><input type="radio" name="q1" value="c"> <span class="opt-key">C</span> Беру любой стаканчик, главное — кофе.</label>
+            <label class="opt"><input type="radio" name="q1" value="d"> <span class="opt-key">D</span> Я вообще сюда пришёл(ла) поговорить с коллегами.</label>
+          </fieldset>
+
+          <!-- Q2 -->
+          <fieldset class="q">
+            <legend><span class="q-num">2</span> В холодильнике осталась половина огурца. Ты...</legend>
+            <label class="opt"><input type="radio" name="q2" value="a" required> <span class="opt-key">A</span> Убираю в контейнер.</label>
+            <label class="opt"><input type="radio" name="q2" value="b"> <span class="opt-key">B</span> Заворачиваю во что найдётся.</label>
+            <label class="opt"><input type="radio" name="q2" value="c"> <span class="opt-key">C</span> Забываю о нём до появления новой формы жизни.</label>
+            <label class="opt"><input type="radio" name="q2" value="d"> <span class="opt-key">D</span> Огурец? Какой огурец?</label>
+          </fieldset>
+
+          <!-- Q3 -->
+          <fieldset class="q">
+            <legend><span class="q-num">3</span> Какая суперспособность была бы полезнее для планеты?</legend>
+            <label class="opt"><input type="radio" name="q3" value="a" required> <span class="opt-key">A</span> Мгновенно убирать мусор.</label>
+            <label class="opt"><input type="radio" name="q3" value="b"> <span class="opt-key">B</span> Делать любую упаковку многоразовой.</label>
+            <label class="opt"><input type="radio" name="q3" value="c"> <span class="opt-key">C</span> Телепортировать отходы в переработку.</label>
+            <label class="opt"><input type="radio" name="q3" value="d"> <span class="opt-key">D</span> Убеждать коллег не печатать письмо из двух строк.</label>
+          </fieldset>
+
+          <!-- Q4 -->
+          <fieldset class="q">
+            <legend><span class="q-num">4</span> Что, по твоему мнению, разлагается дольше?</legend>
+            <label class="opt"><input type="radio" name="q4" value="a" required> <span class="opt-key">A</span> Банановая кожура</label>
+            <label class="opt"><input type="radio" name="q4" value="b"> <span class="opt-key">B</span> Алюминиевая банка</label>
+            <label class="opt"><input type="radio" name="q4" value="c"> <span class="opt-key">C</span> Пластиковая бутылка</label>
+            <label class="opt"><input type="radio" name="q4" value="d"> <span class="opt-key">D</span> Пакет с пакетами под раковиной</label>
+          </fieldset>
+
+          <!-- Q5 -->
+          <fieldset class="q">
+            <legend><span class="q-num">5</span> Что страшнее?</legend>
+            <label class="opt"><input type="radio" name="q5" value="a" required> <span class="opt-key">A</span> Остаться без воды.</label>
+            <label class="opt"><input type="radio" name="q5" value="b"> <span class="opt-key">B</span> Остаться без Wi‑Fi.</label>
+            <label class="opt"><input type="radio" name="q5" value="c"> <span class="opt-key">C</span> Остаться без кофе.</label>
+            <label class="opt"><input type="radio" name="q5" value="d"> <span class="opt-key">D</span> Найти пакет из магазина, которого уже не существует.</label>
+          </fieldset>
+
+          <!-- Q6 -->
+          <fieldset class="q">
+            <legend><span class="q-num">6</span> Ты увидел(а), что коллега выбрасывает батарейку в обычную урну.</legend>
+            <label class="opt"><input type="radio" name="q6" value="a" required> <span class="opt-key">A</span> Вежливо подскажу, куда её можно сдать.</label>
+            <label class="opt"><input type="radio" name="q6" value="b"> <span class="opt-key">B</span> Сделаю вид экологического супергероя и спасу батарейку.</label>
+            <label class="opt"><input type="radio" name="q6" value="c"> <span class="opt-key">C</span> Расскажу об этом в семейном чате.</label>
+            <label class="opt"><input type="radio" name="q6" value="d"> <span class="opt-key">D</span> Начну внутренне страдать.</label>
+          </fieldset>
+
+          <!-- Q7 -->
+          <fieldset class="q">
+            <legend><span class="q-num">7</span> Что из этого реально существует?</legend>
+            <label class="opt"><input type="radio" name="q7" value="a" required> <span class="opt-key">A</span> Остров мусора в океане</label>
+            <label class="opt"><input type="radio" name="q7" value="b"> <span class="opt-key">B</span> Пластиковые деревья</label>
+            <label class="opt"><input type="radio" name="q7" value="c"> <span class="opt-key">C</span> Морские котики, которые сортируют отходы</label>
+            <label class="opt"><input type="radio" name="q7" value="d"> <span class="opt-key">D</span> Эколог без многоразовой бутылки</label>
+          </fieldset>
+
+          <!-- Q8 -->
+          <fieldset class="q">
+            <legend><span class="q-num">8</span> Представь, что твой пластиковый пакет получил LinkedIn‑профиль. Какой у него опыт работы?</legend>
+            <label class="opt"><input type="radio" name="q8" value="a" required> <span class="opt-key">A</span> 15 минут переносил продукты.</label>
+            <label class="opt"><input type="radio" name="q8" value="b"> <span class="opt-key">B</span> 3 года работал сумкой.</label>
+            <label class="opt"><input type="radio" name="q8" value="c"> <span class="opt-key">C</span> Руководил отделом логистики.</label>
+            <label class="opt"><input type="radio" name="q8" value="d"> <span class="opt-key">D</span> Стал арт‑объектом.</label>
+          </fieldset>
+
+          <!-- Q9 -->
+          <fieldset class="q">
+            <legend><span class="q-num">9</span> Какой экологичный поступок кажется самым реалистичным?</legend>
+            <label class="opt"><input type="radio" name="q9" value="a" required> <span class="opt-key">A</span> Использовать многоразовую бутылку.</label>
+            <label class="opt"><input type="radio" name="q9" value="b"> <span class="opt-key">B</span> Брать пакет только при необходимости.</label>
+            <label class="opt"><input type="radio" name="q9" value="c"> <span class="opt-key">C</span> Использовать кружку вместо одноразовых стаканчиков.</label>
+            <label class="opt"><input type="radio" name="q9" value="d"> <span class="opt-key">D</span> Не покупать вещи, которые не нужны.</label>
+          </fieldset>
+
+          <!-- Q10 -->
+          <fieldset class="q">
+            <legend><span class="q-num">10</span> Если бы мусор мог оставлять отзывы о людях, твой звучал бы так:</legend>
+            <label class="opt"><input type="radio" name="q10" value="a" required> <span class="opt-key">A</span> «Очень редко вижу этого человека.»</label>
+            <label class="opt"><input type="radio" name="q10" value="b"> <span class="opt-key">B</span> «Старается, молодец.»</label>
+            <label class="opt"><input type="radio" name="q10" value="c"> <span class="opt-key">C</span> «Мы встречаемся слишком часто.»</label>
+            <label class="opt"><input type="radio" name="q10" value="d"> <span class="opt-key">D</span> «Кто-нибудь объясните ему(ей), зачем нужен раздельный сбор.»</label>
+          </fieldset>
+
+          <div class="quiz-actions">
+            <div class="status" id="progress">Ответов: 0 / 10</div>
+            <div style="display:flex; gap:.6rem; flex-wrap:wrap">
+              <button class="btn btn-ghost" type="reset" id="resetBtn">Сбросить</button>
+              <button class="btn btn-primary" type="button" id="calcBtn">Узнать результат</button>
+            </div>
+          </div>
+        </form>
+
+        <section id="results" class="results-wrap" aria-live="polite" hidden>
+          <div class="results-top">
+            <div>
+              <h2 style="margin:0 0 .25rem; font-size:1.4rem;">Твой результат</h2>
+              <p class="muted" style="margin:0">Мы посчитали ответы и выбрали самый частый вариант.</p>
+            </div>
+
+            <div class="scoreboard" aria-label="Счёт">
+              <span class="pill">A: <strong id="scoreA">0</strong></span>
+              <span class="pill">B: <strong id="scoreB">0</strong></span>
+              <span class="pill">C: <strong id="scoreC">0</strong></span>
+              <span class="pill">D: <strong id="scoreD">0</strong></span>
+            </div>
+          </div>
+
+          <p id="errorMsg" class="error" hidden></p>
+
+          <div class="results-grid">
+            <article class="result-card result-a" data-result="a" hidden tabindex="-1">
+              <h3>♻️ Котик‑Переработкин</h3>
+              <p>Ты ходячая экологическая инструкция. Вероятно, у тебя есть любимый контейнер для сортировки отходов и многоразовая бутылка старше некоторых коллег.</p>
+            </article>
+
+            <article class="result-card result-b" data-result="b" hidden tabindex="-1">
+              <h3>🌿 Котик‑Осознанность</h3>
+              <p>Ты не фанат крайностей, но регулярно принимаешь разумные решения. Планета одобрительно мурчит.</p>
+            </article>
+
+            <article class="result-card result-c" data-result="c" hidden tabindex="-1">
+              <h3>☕ Котик‑«Главное кофе»</h3>
+              <p>Ты хороший человек, но экопривычки пока проигрывают дедлайнам. Plastic Free July — отличный повод начать с одного небольшого изменения.</p>
+            </article>
+
+            <article class="result-card result-d" data-result="d" hidden tabindex="-1">
+              <h3>😹 Котик‑Хаос</h3>
+              <p>Ты пришёл(ла) за весельем, а не за лекцией по экологии. Но именно такие люди иногда неожиданно становятся главным экогероем месяца.</p>
+            </article>
+
+            <article class="result-card" data-result="tie" hidden tabindex="-1">
+              <h3>😺 Смешанный котик</h3>
+              <p>У тебя ничья по лидерам. Это значит, что ты гибкий(ая): иногда эко‑герой, иногда котик‑хаос — и это нормально. Выбери одну привычку на месяц и протестируй.</p>
+            </article>
+          </div>
+
+          <div style="margin-top:1rem; display:flex; gap:.6rem; flex-wrap:wrap">
+            <a class="btn btn-ghost" href="#facts">Факты про пластик</a>
+            <a class="btn btn-ghost" href="#quiz">Вернуться к вопросам</a>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="facts" class="section section-alt">
+      <div class="container">
+        <header class="section-head">
+          <h2>Неочевидные факты об экологии и пластике</h2>
+          <p class="muted">Короткий блок из документа (можешь расширить или убрать).</p>
+        </header>
+
+        <div class="facts">
+          <article class="card">
+            <h3>Самый частый мусор на пляжах</h3>
+            <p><strong>Сигаретные окурки.</strong> Фильтры обычно состоят из пластика (ацетат целлюлозы) и разлагаются годами.</p>
+          </article>
+
+          <article class="card">
+            <h3>Где часто находят микропластик</h3>
+            <p><strong>В морской соли.</strong> Исследования регулярно находят частицы микропластика в соли из разных регионов мира.</p>
+          </article>
+
+          <article class="card">
+            <h3>Значок переработки ≠ переработают</h3>
+            <p><strong>Треугольник часто указывает тип пластика</strong>, а не гарантию переработки в вашем регионе.</p>
+          </article>
+        </div>
+
+        <div class="card" style="margin-top:.9rem">
+          <h3>🏆 Финальная миссия Plastic Free July</h3>
+          <p class="muted" style="margin:0">
+            Выберите один одноразовый предмет, от которого сможете отказаться хотя бы на месяц:
+            стаканчики / пакеты / бутылки воды / плёнка для продуктов / что‑то другое.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <p class="muted">© [Ваш проект] — одна HTML‑страница для GitHub Pages.</p>
+      <a class="text-link" href="#quiz">Наверх к квизу</a>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('quiz-form');
+    const calcBtn = document.getElementById('calcBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const resultsWrap = document.getElementById('results');
+    const resultBlocks = Array.from(document.querySelectorAll('[data-result]'));
+    const progress = document.getElementById('progress');
+
+    const scoreA = document.getElementById('scoreA');
+    const scoreB = document.getElementById('scoreB');
+    const scoreC = document.getElementById('scoreC');
+    const scoreD = document.getElementById('scoreD');
+
+    const errorMsg = document.getElementById('errorMsg');
+
+    function getTotalQuestions(){
+      return form.querySelectorAll('fieldset.q').length;
+    }
+
+    function getAnsweredCount(){
+      // Считаем, сколько групп radio имеют выбранный вариант
+      const names = Array.from(new Set(Array.from(form.querySelectorAll('input[type="radio"]')).map(i => i.name)));
+      let count = 0;
+      for (const name of names) {
+        if (form.querySelector(`input[name="${CSS.escape(name)}"]:checked`)) count += 1;
+      }
+      return count;
+    }
+
+    function updateProgress(){
+      const total = getTotalQuestions();
+      const answered = getAnsweredCount();
+      progress.textContent = `Ответов: ${answered} / ${total}`;
+    }
+
+    function calcResult(){
+      const total = getTotalQuestions();
+      const answered = getAnsweredCount();
+
+      // Сброс ошибок
+      errorMsg.hidden = true;
+      errorMsg.textContent = '';
+
+      if (answered < total) {
+        const left = total - answered;
+        errorMsg.textContent = `Ответьте на все вопросы: осталось ${left}.`;
+        errorMsg.hidden = false;
+        resultsWrap.hidden = false;
+        resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const data = new FormData(form);
+      const counts = { a: 0, b: 0, c: 0, d: 0 };
+
+      for (const [, value] of data.entries()) {
+        if (counts[value] !== undefined) counts[value] += 1;
+      }
+
+      scoreA.textContent = counts.a;
+      scoreB.textContent = counts.b;
+      scoreC.textContent = counts.c;
+      scoreD.textContent = counts.d;
+
+      // Найдём максимум и проверим ничью
+      const entries = Object.entries(counts);
+      const max = Math.max(...entries.map(([,v]) => v));
+      const leaders = entries.filter(([,v]) => v === max).map(([k]) => k);
+
+      let winner = leaders.length === 1 ? leaders[0] : 'tie';
+
+      // Показ результата
+      resultBlocks.forEach(el => {
+        el.hidden = (el.dataset.result !== winner);
+      });
+
+      resultsWrap.hidden = false;
+      resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Фокус на карточку результата (удобно для клавиатуры/скринридеров)
+      const activeCard = document.querySelector(`[data-result="${winner}"]`);
+      if (activeCard) activeCard.focus({ preventScroll: true });
+    }
+
+    form.addEventListener('change', updateProgress);
+    resetBtn.addEventListener('click', () => {
+      // reset сработает после клика, поэтому обновим прогресс чуть позже
+      setTimeout(() => {
+        resultsWrap.hidden = true;
+        errorMsg.hidden = true;
+        scoreA.textContent = scoreB.textContent = scoreC.textContent = scoreD.textContent = '0';
+        resultBlocks.forEach(el => el.hidden = true);
+        updateProgress();
+      }, 0);
+    });
+    calcBtn.addEventListener('click', calcResult);
+
+    // init
+    updateProgress();
+  </script>
+</body>
+</html>
