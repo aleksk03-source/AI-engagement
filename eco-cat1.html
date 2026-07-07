@@ -49,7 +49,6 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--pink); border-radius: 999px; border: 2px solid var(--bg); }
 
-    /* ─── HEADER ──────────────────────────────── */
     header {
       position: sticky; top: 0; z-index: 200;
       background: rgba(241,229,204,.9);
@@ -76,10 +75,7 @@
       background: var(--cream);
       border: 2px solid rgba(31,26,23,.1);
     }
-    .brand-logo img {
-      width: 100%; height: 100%;
-      object-fit: contain; display: block;
-    }
+    .brand-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .brand-text small  { display: block; font-size: .78rem; font-weight: 700; color: var(--brown); text-transform: uppercase; letter-spacing: .02em; }
     .brand-text strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ink); font-weight: 900; letter-spacing: -.01em; }
 
@@ -97,7 +93,6 @@
     }
     .nav-cta:hover { transform: translate(-1px,-2px); box-shadow: 4px 5px 0 rgba(31,26,23,.22); }
 
-    /* ─── HERO ────────────────────────────────── */
     .hero { padding: 2.4rem 0 2rem; }
     .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 2rem; align-items: center; min-height: 460px; }
     .hero-left { position: relative; }
@@ -116,7 +111,6 @@
     h1 .underline-green::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 4px; border-radius: 2px; background: var(--moss); opacity: .5; transform: rotate(-.5deg); }
 
     .hero-desc { font-size: 1rem; font-weight: 700; color: rgba(31,26,23,.72); line-height: 1.75; max-width: 46ch; margin-bottom: 1.4rem; }
-
     .ink-divider { width: 120px; height: 8px; margin-bottom: 1.2rem; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8'%3E%3Cpath d='M2 5 Q 30 2 60 5 Q 90 8 118 4' fill='none' stroke='%23B63A23' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain; }
 
     .btn { display: inline-flex; align-items: center; gap: .5rem; font-family: 'Nunito', sans-serif; font-size: .95rem; font-weight: 800; padding: .68rem 1.4rem; border-radius: 999px; border: 2px solid rgba(31,26,23,.2); cursor: pointer; text-decoration: none; transition: all .18s; line-height: 1; letter-spacing: .01em; }
@@ -133,7 +127,6 @@
     .how-list li { font-size: .93rem; font-weight: 700; color: rgba(31,26,23,.78); display: flex; align-items: flex-start; gap: .5rem; line-height: 1.55; }
     .how-list li::before { content: '—'; color: var(--red); font-weight: 800; flex-shrink: 0; margin-top: .05em; }
 
-    /* ─── HERO RIGHT ──────────────────────────── */
     .hero-right { position: relative; display: flex; align-items: center; justify-content: center; height: 480px; }
     .cat-wash { position: absolute; border-radius: 50%; width: 320px; height: 320px; background: radial-gradient(circle at 40% 35%, rgba(215,165,168,.35) 0%, rgba(155,188,200,.25) 45%, transparent 72%); top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-8deg); }
 
@@ -174,7 +167,6 @@
     .note-card.pink  { background: #f5e4e5; border-color: rgba(215,165,168,.5); }
     .note-card.green { background: #e8edda; border-color: rgba(125,138,75,.4); }
 
-    /* ─── SECTIONS ────────────────────────────── */
     .section { padding: 1.6rem 0 2.4rem; }
     .section-head { margin-bottom: 1.4rem; }
     .section-label { display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; font-weight: 800; color: var(--brown); background: rgba(154,98,53,.1); border: 1.5px solid rgba(154,98,53,.25); padding: .28rem .75rem; border-radius: 999px; margin-bottom: .55rem; box-shadow: 2px 2px 0 rgba(154,98,53,.1); text-transform: uppercase; letter-spacing: .03em; }
@@ -183,7 +175,6 @@
     .scrap-divider { display: flex; align-items: center; gap: .8rem; margin: .5rem 0 1.3rem; color: var(--pink); font-size: .85rem; }
     .scrap-divider::before,.scrap-divider::after { content:''; flex:1; height:1.5px; background:repeating-linear-gradient(90deg,var(--pink) 0,var(--pink) 6px,transparent 6px,transparent 12px); opacity:.6; }
 
-    /* ─── QUIZ ────────────────────────────────── */
     form.quiz { display: grid; gap: 1.1rem; }
 
     fieldset.q { margin: 0; border: 2px solid rgba(31,26,23,.14); border-radius: 8px 28px 12px 22px / 22px 8px 26px 10px; background: var(--cream); box-shadow: 4px 4px 0 rgba(31,26,23,.08), 0 2px 12px rgba(31,26,23,.06); padding: 1.1rem 1rem 1rem; transition: box-shadow .2s, transform .15s; position: relative; overflow: visible; }
@@ -210,7 +201,6 @@
     .opt-text { font-family:'Nunito',sans-serif; font-weight:700; color:rgba(31,26,23,.85); font-size:.97rem; line-height:1.45; }
     label.opt:has(input:checked) .opt-text { color:var(--ink); font-weight:800; }
 
-    /* ─── ACTIONS ─────────────────────────────── */
     .actions { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; padding:1rem 1.2rem; border-radius:12px 24px 14px 20px / 20px 12px 22px 14px; border:2px dashed rgba(31,26,23,.18); background:rgba(248,241,230,.85); box-shadow:3px 4px 0 rgba(31,26,23,.08); }
     .progress { font-size:.92rem; font-weight:700; color:rgba(31,26,23,.72); display:flex; align-items:center; gap:.6rem; }
     .progress-bar-wrap { width:110px; height:8px; border-radius:999px; background:rgba(31,26,23,.1); overflow:hidden; }
@@ -221,7 +211,6 @@
     .inline-msg::before { content:'🐱'; font-size:1.1rem; }
     .inline-msg[hidden] { display:none !important; }
 
-    /* ─── RESULTS ─────────────────────────────── */
     .results { margin-top:1.5rem; border-radius:10px 30px 14px 26px / 26px 10px 28px 12px; border:2px solid rgba(31,26,23,.15); background:var(--cream); box-shadow:5px 6px 0 rgba(31,26,23,.1),0 8px 28px rgba(31,26,23,.08); padding:1.5rem; position:relative; overflow:hidden; }
     .results[hidden] { display:none !important; }
     .results::before { content:''; position:absolute; top:0; left:0; right:0; height:5px; background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 14px,var(--pink) 14px,var(--pink) 24px,var(--moss) 24px,var(--moss) 34px,var(--blue) 34px,var(--blue) 44px); }
@@ -235,7 +224,6 @@
     .final-text h3 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:900; color:var(--ink); letter-spacing:-.02em; margin-bottom:.45rem; }
     .final-text p  { font-size:.95rem; color:rgba(31,26,23,.72); font-weight:700; line-height:1.65; }
 
-    /* Картинка результата 1:1 */
     .final-result-img-wrap { display:flex; justify-content:center; }
     .final-result-img {
       width: 100%; max-width: 360px;
@@ -253,7 +241,6 @@
     .result-placeholder-icon { font-size:3rem; opacity:.28; }
     .result-placeholder-hint { font-size:.85rem; font-weight:700; color:rgba(31,26,23,.35); text-align:center; line-height:1.6; padding:0 1.2rem; }
 
-    /* ─── FACTS ───────────────────────────────── */
     .facts-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.1rem; }
     .fact-card { border-radius:8px 24px 10px 22px / 18px 8px 22px 10px; border:2px solid rgba(31,26,23,.14); background:var(--cream); box-shadow:4px 5px 0 rgba(31,26,23,.09); padding:1.3rem 1.2rem; transition:transform .2s,box-shadow .2s; position:relative; overflow:hidden; }
     .fact-card::before { content:''; position:absolute; top:0; left:0; width:4px; bottom:0; border-radius:8px 0 0 8px; }
@@ -263,7 +250,6 @@
     .fact-card h3 { font-family:'Playfair Display',serif; margin:0 0 .5rem; font-size:1.1rem; font-weight:900; color:var(--ink); display:flex; align-items:center; gap:.4rem; }
     .fact-card p  { margin:0; color:rgba(31,26,23,.72); font-weight:700; font-size:.93rem; line-height:1.65; }
 
-    /* ─── FOOTER ──────────────────────────────── */
     footer { border-top:2px solid rgba(31,26,23,.12); padding:1.3rem 0; background:rgba(248,241,230,.7); position:relative; }
     footer::before { content:''; position:absolute; top:-5px; left:0; right:0; height:4px; background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 10px,transparent 10px,transparent 16px); opacity:.35; }
     .foot { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
@@ -273,7 +259,6 @@
 
     .page-doodle { position:fixed; pointer-events:none; user-select:none; opacity:.3; z-index:0; font-size:1.4rem; }
 
-    /* ─── RESPONSIVE ──────────────────────────── */
     @media (max-width: 880px) {
       .hero-grid { grid-template-columns:1fr; min-height:auto; }
       .hero-right { height:360px; }
@@ -307,7 +292,6 @@
   <div class="page-doodle" style="top:65%;right:1.5%">🌱</div>
   <div class="page-doodle" style="top:82%;right:1%">🐾</div>
 
-  <!-- ░░ HEADER ░░ -->
   <header>
     <div class="container head">
       <a class="brand" href="#" aria-label="На главную">
@@ -329,7 +313,6 @@
   </header>
 
   <main>
-    <!-- ░░ HERO ░░ -->
     <section class="hero">
       <div class="container">
         <div class="hero-grid">
@@ -360,12 +343,8 @@
 
           <div class="hero-right">
             <div class="cat-wash"></div>
-            <!-- герой-картинка: замени src если нужна своя -->
-            
             <div class="cat-placeholder">
-                <img src="./logo.png" alt="Логотип" /> <!--
-              <span class="placeholder-icon">🐱</span>
-              <span class="placeholder-hint">Картинка 1:1 сюда</span> -->
+              <img src="./logo.png" alt="Логотип" />
             </div>
             <div class="thought-bubble deco" style="top:20px;left:8px;">
               🌍 Беречь планету — это мурчательно!
@@ -388,7 +367,6 @@
     <section id="quiz" class="section">
       <div class="container">
         <div class="section-head">
-         <!--- <div class="section-label">🐱 Квиз — 11 вопросов</div> -->
           <h2 class="section-title">Выбери свой ответ</h2>
           <p class="section-sub">Немного экологии, немного юмора — и много котиков ✨</p>
           <div class="scrap-divider">🐾 &nbsp; ♥ &nbsp; 🌿 &nbsp; ✦ &nbsp; 🐾</div>
@@ -396,6 +374,7 @@
 
         <form id="quiz-form" class="quiz" novalidate>
 
+          <!-- 1 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">1</span><span class="qtitle">Ты идёшь за кофе в офисе. Что делаешь?</span></span></legend>
             <div class="opts-grid">
@@ -406,6 +385,7 @@
             </div>
           </fieldset>
 
+          <!-- 2 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">2</span><span class="qtitle">В холодильнике осталась половина огурца. Ты...</span></span></legend>
             <div class="opts-grid">
@@ -416,28 +396,31 @@
             </div>
           </fieldset>
 
+          <!-- 3 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">3</span><span class="qtitle">Какая суперспособность была бы полезнее для планеты?</span></span></legend>
             <div class="opts-grid">
               <label class="opt"><input type="radio" name="q3" value="a" required><span class="key">A</span><span class="opt-text">Мгновенно убирать мусор.</span></label>
               <label class="opt"><input type="radio" name="q3" value="b"><span class="key">B</span><span class="opt-text">Делать любую упаковку многоразовой.</span></label>
               <label class="opt"><input type="radio" name="q3" value="c"><span class="key">C</span><span class="opt-text">Телепортировать отходы в переработку.</span></label>
-              <label class="opt"><input type="radio" name="q3" value="d"><span class="key">D</span><span class="opt-text">Убеждать коллег не печатать письмо из двух строк.</span></label>
+              <label class="opt"><input type="radio" name="q3" value="d"><span class="key">D</span><span class="opt-text">Убеждать коллег не печатать документ ради двух строчек.</span></label>
             </div>
           </fieldset>
 
+          <!-- 4 — новый порядок вариантов -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">4</span><span class="qtitle">Что, по твоему мнению, разлагается дольше?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q4" value="a" required><span class="key">A</span><span class="opt-text">Банановая кожура</span></label>
+              <label class="opt"><input type="radio" name="q4" value="a" required><span class="key">A</span><span class="opt-text">Пластиковая бутылка</span></label>
               <label class="opt"><input type="radio" name="q4" value="b"><span class="key">B</span><span class="opt-text">Алюминиевая банка</span></label>
-              <label class="opt"><input type="radio" name="q4" value="c"><span class="key">C</span><span class="opt-text">Пластиковая бутылка</span></label>
-              <label class="opt"><input type="radio" name="q4" value="d"><span class="key">D</span><span class="opt-text">Пакет с пакетами под раковиной</span></label>
+              <label class="opt"><input type="radio" name="q4" value="c"><span class="key">C</span><span class="opt-text">Пакет с пакетами под раковиной</span></label>
+              <label class="opt"><input type="radio" name="q4" value="d"><span class="key">D</span><span class="opt-text">Банановая кожура</span></label>
             </div>
           </fieldset>
 
+          <!-- 5 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">5</span><span style="font-weight: 1000;" class="qtitl" > Что страшнее?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">5</span><span class="qtitle">Что страшнее?</span></span></legend>
             <div class="opts-grid">
               <label class="opt"><input type="radio" name="q5" value="a" required><span class="key">A</span><span class="opt-text">Остаться без воды.</span></label>
               <label class="opt"><input type="radio" name="q5" value="b"><span class="key">B</span><span class="opt-text">Остаться без Wi‑Fi.</span></label>
@@ -446,6 +429,7 @@
             </div>
           </fieldset>
 
+          <!-- 6 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">6</span><span class="qtitle">Ты увидел(а), что коллега выбрасывает батарейку в обычную урну.</span></span></legend>
             <div class="opts-grid">
@@ -456,6 +440,7 @@
             </div>
           </fieldset>
 
+          <!-- 7 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">7</span><span class="qtitle">Что из этого реально существует?</span></span></legend>
             <div class="opts-grid">
@@ -466,6 +451,7 @@
             </div>
           </fieldset>
 
+          <!-- 8 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">8</span><span class="qtitle">Представь, что твой пластиковый пакет получил LinkedIn‑профиль. Какой у него опыт работы?</span></span></legend>
             <div class="opts-grid">
@@ -476,6 +462,7 @@
             </div>
           </fieldset>
 
+          <!-- 9 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">9</span><span class="qtitle">Какой экологичный поступок кажется самым реалистичным?</span></span></legend>
             <div class="opts-grid">
@@ -486,6 +473,7 @@
             </div>
           </fieldset>
 
+          <!-- 10 -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">10</span><span class="qtitle">Если бы мусор мог оставлять отзывы о людях, твой звучал бы так:</span></span></legend>
             <div class="opts-grid">
@@ -496,13 +484,14 @@
             </div>
           </fieldset>
 
+          <!-- 11 бонус — новые варианты -->
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum" style="font-size:.72rem;padding:0 .3rem;min-width:28px;height:28px;">🎁</span><span class="qtitle"><span class="emoji">🐟</span>Бонус: что находят на пляжах чаще всего?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q11" value="a" required><span class="key">A</span><span class="opt-text">Пластиковые игрушки</span></label>
-              <label class="opt"><input type="radio" name="q11" value="b"><span class="key">B</span><span class="opt-text">Бутылки</span></label>
-              <label class="opt"><input type="radio" name="q11" value="c"><span class="key">C</span><span class="opt-text">Сигаретные окурки</span></label>
-              <label class="opt"><input type="radio" name="q11" value="d"><span class="key">D</span><span class="opt-text">Солнцезащитные очки</span></label>
+              <label class="opt"><input type="radio" name="q11" value="a" required><span class="key">A</span><span class="opt-text">Пластиковые бутылки</span></label>
+              <label class="opt"><input type="radio" name="q11" value="b"><span class="key">B</span><span class="opt-text">Сигаретные окурки</span></label>
+              <label class="opt"><input type="radio" name="q11" value="c"><span class="key">C</span><span class="opt-text">Пищевую упаковку и обёртки</span></label>
+              <label class="opt"><input type="radio" name="q11" value="d"><span class="key">D</span><span class="opt-text">Пластиковые крышки</span></label>
             </div>
           </fieldset>
 
@@ -520,7 +509,7 @@
           <div id="inlineMsg" class="inline-msg" hidden></div>
         </form>
 
-        <!-- ── RESULTS ── -->
+        <!-- RESULTS -->
         <section id="results" class="results" aria-live="polite" hidden>
           <div class="result-top">
             <div>
@@ -534,7 +523,6 @@
               <span>D: <strong id="scoreD">0</strong></span>
             </div>
           </div>
-
           <article id="finalCard" class="final-card" tabindex="-1">
             <div class="final-text">
               <h3 id="finalTitle"></h3>
@@ -552,11 +540,10 @@
       </div>
     </section>
 
-    <!-- ░░ FACTS ░░ -->
+    <!-- FACTS -->
     <section id="facts" class="section">
       <div class="container">
         <div class="section-head">
-         <!-- <div class="section-label">🌍 Знания и миссия</div> -->
           <h2 class="section-title">Интересный факт в конце — чтобы квиз стал полезной привычкой.</h2>
           <p class="section-sub"></p>
           <div class="scrap-divider">🌿 &nbsp; ✦ &nbsp; 💚 &nbsp; ✦ &nbsp; 🌿</div>
@@ -568,7 +555,7 @@
           </article>
           <article class="fact-card">
             <h3>🏆 Финальная миссия Plastic Free July</h3>
-            <p>Выбери один одноразовый предмет, от которого сможешь отказаться <strong>хотя бы на месяц</strong>. Даже маленькая привычка может дать большой эффект для нашей общей планеты. 😺🌍</p>
+            <p>Выбери один одноразовый предмет, от которого сможешь отказаться <strong>хотя бы на месяц</strong>. Небольшие изменения в повседневных привычках часто приводят к большим результатам! 🐱</p>
           </article>
         </div>
       </div>
@@ -599,33 +586,25 @@
     const finalText      = document.getElementById('finalText');
     const finalResultImg = document.getElementById('finalResultImg');
 
-    /* ─── РЕЗУЛЬТАТЫ ──────────────────────────────
-       Все файлы лежат рядом с index.html:
-         pere.png  → Котик‑Переработкин
-         oso.png   → Котик‑Осознанность
-         kofe.png  → Котик‑«Главное кофе»
-         haos.png  → Котик‑Хаос
-         logo.png  → логотип в шапке (уже подключён в HTML)
-    ─────────────────────────────────────────────── */
     const RESULT = {
       a: {
         title:  '♻️ Котик‑Переработкин',
-        text:   'Ты ходячая экологическая инструкция. Вероятно, у тебя есть любимый контейнер для сортировки отходов и многоразовая бутылка старше некоторых коллег.',
+        text:   'Ты настоящий мастер экопривычек. Скорее всего, у тебя уже есть свои проверенные способы сокращать отходы, а многоразовая бутылка и контейнеры давно стали частью повседневной жизни. Планета одобрительно мурчит. 🌍',
         imgSrc: 'pere.png'
       },
       b: {
         title:  '🌿 Котик‑Осознанность',
-        text:   'Ты не фанат крайностей, но регулярно принимаешь разумные решения. Планета одобрительно мурчит.',
+        text:   'Ты не стремишься к крайностям, но регулярно делаешь выбор в пользу более экологичных решений. Для тебя забота о планете — это часть повседневной жизни, а не отдельный проект. Продолжай в том же духе! 🌱',
         imgSrc: 'oso.png'
       },
       c: {
-        title:  '☕ Котик‑«Главное кофе»',
-        text:   'Ты хороший человек, но эко‑привычки иногда проигрывают дедлайнам. Начни с одного маленького изменения — и оно «прилипнет».',
+        title:  '🐾 Котик «Шаг за шагом»',
+        text:   'Ты уверен(а), что большие изменения начинаются с маленьких действий. Возможно, не все экопривычки ещё вошли в твою рутину, но каждый небольшой шаг имеет значение. Plastic Free July — отличный повод попробовать что-то новое! ✨',
         imgSrc: 'kofe.png'
       },
       d: {
         title:  '😹 Котик‑Хаос',
-        text:   'Ты пришёл(ла) за весельем, а не за лекцией. Но именно такие котики чаще всего внезапно становятся эко‑героями месяца.',
+        text:   'Ты здесь за хорошим настроением, и это уже отличный старт. Экопривычки тоже могут быть лёгкими и ненапряжными — иногда достаточно одного маленького шага, чтобы начать! 🌿',
         imgSrc: 'haos.png'
       }
     };
@@ -652,10 +631,7 @@
     }
 
     function renderResultImg(r) {
-      /* Всегда показываем картинку через <img>.
-         Если файл не найдётся — браузер покажет alt-текст. */
-      finalResultImg.innerHTML =
-        `<img src="${r.imgSrc}" alt="${r.title}" />`;
+      finalResultImg.innerHTML = `<img src="${r.imgSrc}" alt="${r.title}" />`;
     }
 
     function calc() {
