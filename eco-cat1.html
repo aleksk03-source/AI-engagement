@@ -62,7 +62,7 @@
       background: repeating-linear-gradient(90deg, var(--red) 0px, var(--red) 12px, transparent 12px, transparent 18px);
       opacity: .4;
     }
-    .head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .9rem 0; }
+    .head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem 0; }
 
     .brand { display: flex; align-items: center; gap: .7rem; text-decoration: none; color: var(--ink); }
     .brand-logo {
@@ -157,11 +157,11 @@
     .pls{animation:pulse  2.8s ease-in-out infinite}
     .deco-sym { font-size: 1.3rem; display: block; line-height: 1; }
 
-    .thought-bubble { position: absolute; z-index: 3; background: var(--cream); border: 2px solid rgba(31,26,23,.18); border-radius: 22px 28px 24px 20px / 20px 24px 22px 26px; padding: .65rem 1rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: 1rem; font-weight: 700; color: var(--ink); transform: rotate(2deg); max-width: 168px; text-align: center; line-height: 1.5; }
+    .thought-bubble { position: absolute; z-index: 3; background: var(--cream); border: 2px solid rgba(31,26,23,.18); border-radius: 22px 28px 24px 20px / 20px 24px 22px 26px; padding: .65rem 1rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: 1.1rem; font-weight: 700; color: var(--ink); transform: rotate(2deg); max-width: 168px; text-align: center; line-height: 1.5; }
     .thought-bubble::after  { content:''; position:absolute; width:10px; height:10px; background:var(--cream); border:2px solid rgba(31,26,23,.18); border-radius:50%; bottom:-15px; left:22px; }
     .thought-bubble::before { content:''; position:absolute; width:6px;  height:6px;  background:var(--cream); border:2px solid rgba(31,26,23,.15); border-radius:50%; bottom:-25px; left:10px; }
 
-    .note-card { position: absolute; z-index: 3; border: 1.5px solid rgba(31,26,23,.15); border-radius: 6px 14px 8px 10px / 10px 6px 12px 8px; padding: .5rem .85rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: .92rem; font-weight: 700; color: var(--ink); line-height: 1.45; }
+    .note-card { position: absolute; z-index: 3; border: 1.5px solid rgba(31,26,23,.15); border-radius: 6px 14px 8px 10px / 10px 6px 12px 8px; padding: .5rem .85rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: 1.3rem; font-weight: 700; color: var(--ink); line-height: 1.45; }
     .note-card.rotate-neg { transform: rotate(-4deg); }
     .note-card.rotate-pos { transform: rotate(3deg); }
     .note-card.pink  { background: #f5e4e5; border-color: rgba(215,165,168,.5); }
@@ -308,7 +308,6 @@
         <a href="#facts">🌍 Факты</a>
         <a href="#results">🏆 Результат</a>
       </nav>
-      <a class="nav-cta" href="#quiz">🐾 Начать квиз</a>
     </div>
   </header>
 
@@ -317,26 +316,19 @@
       <div class="container">
         <div class="hero-grid">
           <div class="hero-left">
-            <div class="hero-tag">🌿 Plastic Free July · Эко‑квиз 2026</div>
             <h1>
               Узнай, какой ты<br/>
               <span class="accent-red">эко‑котик</span>
             </h1>
             <div class="ink-divider"></div>
-            <p class="hero-desc">
-              Ответь на 11 коротких вопросов — немного экологии,
-              немного юмора — и мы расскажем, какой мурлыкающий
-              персонаж живёт внутри тебя 🐱
+           <!--- <p class="hero-desc">
+              Plastic Free July — отличный повод проверить себя. Ответь на 10 вопросов и выясни, какой эко-котик живёт внутри тебя. 🐱
             </p>
-            <div class="cta-row">
-              <a class="btn btn-red"     href="#quiz">🐾 Пройти квиз</a>
-              <a class="btn btn-outline" href="#facts">🌱 Интересный факт</a>
-            </div>
+          -->
             <div class="how-it-works">
-              <p class="how-title">Как считается результат</p>
+              <p class="how-title">Plastic Free July</p>
               <ul class="how-list">
-                <li>Выбирай варианты A / B / C / D в каждом вопросе и нажимай кнопку в конце.</li>
-                <li>Мы посчитаем, каких ответов у тебя больше всего.</li>
+                <li> отличный повод проверить себя. <br> Ответь на вопросы и выясни, какой эко-котик живёт внутри тебя. 🐱 </li>
               </ul>
             </div>
           </div>
@@ -486,12 +478,12 @@
 
           <!-- 11 бонус — новые варианты -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum" style="font-size:.72rem;padding:0 .3rem;min-width:28px;height:28px;">🎁</span><span class="qtitle"><span class="emoji">🐟</span>Бонус: что находят на пляжах чаще всего?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum" style="font-size:.72rem;padding:0 .3rem;min-width:28px;height:28px;">11</span><span class="qtitle"><span class="emoji">🐟</span>Представь, что все одноразовые вещи решили объявить забастовку. Без чего тебе было бы проще всего обойтись?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q11" value="a" required><span class="key">A</span><span class="opt-text">Пластиковые бутылки</span></label>
-              <label class="opt"><input type="radio" name="q11" value="b"><span class="key">B</span><span class="opt-text">Сигаретные окурки</span></label>
-              <label class="opt"><input type="radio" name="q11" value="c"><span class="key">C</span><span class="opt-text">Пищевую упаковку и обёртки</span></label>
-              <label class="opt"><input type="radio" name="q11" value="d"><span class="key">D</span><span class="opt-text">Пластиковые крышки</span></label>
+              <label class="opt"><input type="radio" name="q11" value="a" required><span class="key">A</span><span class="opt-text">Пластиковых бутылок — у меня есть многоразовая</span></label>
+              <label class="opt"><input type="radio" name="q11" value="b"><span class="key">B</span><span class="opt-text">Пакетов — всегда можно взять шопер</span></label>
+              <label class="opt"><input type="radio" name="q11" value="c"><span class="key">C</span><span class="opt-text">Одноразовых стаканчиков — своя кружка ближе к сердцу</span></label>
+              <label class="opt"><input type="radio" name="q11" value="d"><span class="key">D</span><span class="opt-text">Палочки для размешивания кофе — обычно я и так использую всё, что попадётся под руку 😺</span></label>
             </div>
           </fieldset>
 
@@ -544,18 +536,15 @@
     <section id="facts" class="section">
       <div class="container">
         <div class="section-head">
-          <h2 class="section-title">Интересный факт в конце — чтобы квиз стал полезной привычкой.</h2>
+          <h2 class="section-title">🏆 Финальная миссия Plastic Free July</h2>
           <p class="section-sub"></p>
           <div class="scrap-divider">🌿 &nbsp; ✦ &nbsp; 💚 &nbsp; ✦ &nbsp; 🌿</div>
         </div>
-        <div class="facts-grid">
+        <div class="facts-grd">
+          
           <article class="fact-card">
-            <h3>🐟 Важный факт</h3>
-            <p>Фильтры большинства сигарет содержат пластик и входят в число <strong>самых распространённых видов мусора</strong> на планете. Один маленький окурок — сотни лет разложения в природе.</p>
-          </article>
-          <article class="fact-card">
-            <h3>🏆 Финальная миссия Plastic Free July</h3>
-            <p>Выбери один одноразовый предмет, от которого сможешь отказаться <strong>хотя бы на месяц</strong>. Небольшие изменения в повседневных привычках часто приводят к большим результатам! 🐱</p>
+            <h3></h3>
+            <p>Выбери один одноразовый предмет, от которого сможешь отказаться <strong>хотя бы на месяц</strong>. <br> Небольшие изменения в повседневных привычках часто приводят к большим результатам! 🐱</p>
           </article>
         </div>
       </div>
@@ -604,7 +593,7 @@
       },
       d: {
         title:  '😹 Котик‑Хаос',
-        text:   'Ты здесь за хорошим настроением, и это уже отличный старт. Экопривычки тоже могут быть лёгкими и ненапряжными — иногда достаточно одного маленького шага, чтобы начать! 🌿',
+        text:   'Ты здесь за хорошим настроением, и это уже отличный старт. Экопривычки тоже могут быть лёгкими и ненапряжными — иногда достаточно одного маленького шага, чтобы начать! 🌿 ',
         imgSrc: 'haos.png'
       }
     };
