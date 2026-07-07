@@ -6,6 +6,7 @@
   <title>Какой ты ЭКО‑КОТИК? — Plastic Free July</title>
   <meta name="description" content="Эко‑квиз: ответь на 11 вопросов и узнай, какой ты котик." />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link type="image/png" sizes="120x120" rel="icon" href="./fav.png">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -157,11 +158,11 @@
     .pls{animation:pulse  2.8s ease-in-out infinite}
     .deco-sym { font-size: 1.3rem; display: block; line-height: 1; }
 
-    .thought-bubble { position: absolute; z-index: 3; background: var(--cream); border: 2px solid rgba(31,26,23,.18); border-radius: 22px 28px 24px 20px / 20px 24px 22px 26px; padding: .65rem 1rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: 1.1rem; font-weight: 700; color: var(--ink); transform: rotate(2deg); max-width: 168px; text-align: center; line-height: 1.5; }
+    .thought-bubble { position: absolute; z-index: 3; background: var(--cream); border: 2px solid rgba(31,26,23,.18); border-radius: 22px 28px 24px 20px / 20px 24px 22px 26px; padding: .65rem 1rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: 1.3rem; font-weight: 700; color: var(--ink); transform: rotate(2deg); max-width: 168px; text-align: center; line-height: 1.5; }
     .thought-bubble::after  { content:''; position:absolute; width:10px; height:10px; background:var(--cream); border:2px solid rgba(31,26,23,.18); border-radius:50%; bottom:-15px; left:22px; }
     .thought-bubble::before { content:''; position:absolute; width:6px;  height:6px;  background:var(--cream); border:2px solid rgba(31,26,23,.15); border-radius:50%; bottom:-25px; left:10px; }
 
-    .note-card { position: absolute; z-index: 3; border: 1.5px solid rgba(31,26,23,.15); border-radius: 6px 14px 8px 10px / 10px 6px 12px 8px; padding: .5rem .85rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: 1.3rem; font-weight: 700; color: var(--ink); line-height: 1.45; }
+    .note-card { position: absolute; z-index: 3; border: 1.5px solid rgba(31,26,23,.15); border-radius: 6px 14px 8px 10px / 10px 6px 12px 8px; padding: .5rem .85rem; box-shadow: 3px 4px 0 rgba(31,26,23,.1); font-family: 'Caveat', cursive; font-size: 1.5rem; font-weight: 700; color: var(--ink); line-height: 1.45; }
     .note-card.rotate-neg { transform: rotate(-4deg); }
     .note-card.rotate-pos { transform: rotate(3deg); }
     .note-card.pink  { background: #f5e4e5; border-color: rgba(215,165,168,.5); }
@@ -248,7 +249,7 @@
     .fact-card:nth-child(2)::before { background:var(--moss); }
     .fact-card:hover { transform:rotate(-.5deg) translateY(-3px); box-shadow:6px 7px 0 rgba(31,26,23,.12); }
     .fact-card h3 { font-family:'Playfair Display',serif; margin:0 0 .5rem; font-size:1.1rem; font-weight:900; color:var(--ink); display:flex; align-items:center; gap:.4rem; }
-    .fact-card p  { margin:0; color:rgba(31,26,23,.72); font-weight:700; font-size:.93rem; line-height:1.65; }
+    .fact-card p  { margin:0; color:rgba(31,26,23,.72); font-weight:700; font-size:1rem; line-height:1.65; }
 
     footer { border-top:2px solid rgba(31,26,23,.12); padding:1.3rem 0; background:rgba(248,241,230,.7); position:relative; }
     footer::before { content:''; position:absolute; top:-5px; left:0; right:0; height:4px; background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 10px,transparent 10px,transparent 16px); opacity:.35; }
@@ -296,7 +297,7 @@
     <div class="container head">
       <a class="brand" href="#" aria-label="На главную">
         <div class="brand-logo">
-          <img src="./logo.png" alt="Логотип" />
+          <img src="./fav.png" alt="Логотип" />
         </div>
         <div class="brand-text">
           <small>Plastic Free July</small>
@@ -319,14 +320,10 @@
               <span class="accent-red">эко‑котик</span>
             </h1>
             <div class="ink-divider"></div>
-           <!--- <p class="hero-desc">
-              Plastic Free July — отличный повод проверить себя. Ответь на 10 вопросов и выясни, какой эко-котик живёт внутри тебя. 🐱
-            </p>
-          -->
             <div class="how-it-works">
               <p class="how-title">Plastic Free July</p>
               <ul class="how-list">
-                <li> отличный повод проверить себя. <br> Ответь на вопросы и выясни, какой эко-котик живёт внутри тебя. 🐱 </li>
+                <li> отличный повод проверить себя. <br> Ответь на вопросы и выясни, какой эко-котик живёт внутри тебя. </li>
               </ul>
             </div>
           </div>
@@ -368,10 +365,10 @@
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">1</span><span class="qtitle">Ты идёшь за кофе в офисе. Что делаешь?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q1" value="a" required><span class="key">A</span><span class="opt-text">Беру свою кружку, которая пережила уже три офиса.</span></label>
-              <label class="opt"><input type="radio" name="q1" value="b"><span class="key">B</span><span class="opt-text">Если есть бумажный стаканчик — нормально.</span></label>
-              <label class="opt"><input type="radio" name="q1" value="c"><span class="key">C</span><span class="opt-text">Беру любой стаканчик, главное — кофе.</span></label>
-              <label class="opt"><input type="radio" name="q1" value="d"><span class="key">D</span><span class="opt-text">Я вообще сюда пришёл(ла) поговорить с коллегами.</span></label>
+              <label class="opt"><input type="radio" name="q1" value="a" required><span class="key">A</span><span class="opt-text">Берёшь свою кружку, которая пережила уже три офиса.</span></label>
+              <label class="opt"><input type="radio" name="q1" value="b"><span class="key">B</span><span class="opt-text">Берёшь бумажный стаканчик, если он есть под рукой.</span></label>
+              <label class="opt"><input type="radio" name="q1" value="c"><span class="key">C</span><span class="opt-text">Берёшь любой стаканчик — главное, чтобы был кофе.</span></label>
+              <label class="opt"><input type="radio" name="q1" value="d"><span class="key">D</span><span class="opt-text">Вообще приходишь сюда пообщаться с коллегами.</span></label>
             </div>
           </fieldset>
 
@@ -379,109 +376,109 @@
           <fieldset class="q">
             <legend><span class="legend-pill"><span class="qnum">2</span><span class="qtitle">В холодильнике осталась половина огурца. Ты...</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q2" value="a" required><span class="key">A</span><span class="opt-text">Убираю в контейнер.</span></label>
-              <label class="opt"><input type="radio" name="q2" value="b"><span class="key">B</span><span class="opt-text">Заворачиваю во что найдётся.</span></label>
-              <label class="opt"><input type="radio" name="q2" value="c"><span class="key">C</span><span class="opt-text">Забываю о нём до появления новой формы жизни.</span></label>
-              <label class="opt"><input type="radio" name="q2" value="d"><span class="key">D</span><span class="opt-text">Огурец? Какой огурец?</span></label>
+              <label class="opt"><input type="radio" name="q2" value="a" required><span class="key">A</span><span class="opt-text">Убираешь её в контейнер.</span></label>
+              <label class="opt"><input type="radio" name="q2" value="b"><span class="key">B</span><span class="opt-text">Заворачиваешь её во что найдётся.</span></label>
+              <label class="opt"><input type="radio" name="q2" value="c"><span class="key">C</span><span class="opt-text">Забываешь о ней до появления новой формы жизни.</span></label>
+              <label class="opt"><input type="radio" name="q2" value="d"><span class="key">D</span><span class="opt-text">Спрашиваешь: «Огурец? Какой огурец?» 😸</span></label>
             </div>
           </fieldset>
 
           <!-- 3 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">3</span><span class="qtitle">Какая суперспособность была бы полезнее для планеты?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">3</span><span class="qtitle">Ты увидел(а), что коллега выбрасывает батарейку в обычную урну. Ты...</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q3" value="a" required><span class="key">A</span><span class="opt-text">Мгновенно убирать мусор.</span></label>
-              <label class="opt"><input type="radio" name="q3" value="b"><span class="key">B</span><span class="opt-text">Делать любую упаковку многоразовой.</span></label>
-              <label class="opt"><input type="radio" name="q3" value="c"><span class="key">C</span><span class="opt-text">Телепортировать отходы в переработку.</span></label>
-              <label class="opt"><input type="radio" name="q3" value="d"><span class="key">D</span><span class="opt-text">Убеждать коллег не печатать документ ради двух строчек.</span></label>
+              <label class="opt"><input type="radio" name="q3" value="a" required><span class="key">A</span><span class="opt-text">Вежливо подсказываешь, куда её можно сдать.</span></label>
+              <label class="opt"><input type="radio" name="q3" value="b"><span class="key">B</span><span class="opt-text">Устраиваешь спасательную операцию для батарейки.</span></label>
+              <label class="opt"><input type="radio" name="q3" value="c"><span class="key">C</span><span class="opt-text">Делишься этой историей в семейном чате.</span></label>
+              <label class="opt"><input type="radio" name="q3" value="d"><span class="key">D</span><span class="opt-text">Тихо переживаешь экологическую драму. 😿</span></label>
             </div>
           </fieldset>
 
-          <!-- 4 — новый порядок вариантов -->
+          <!-- 4 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">4</span><span class="qtitle">Что, по твоему мнению, разлагается дольше?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">4</span><span class="qtitle">Представь, что все одноразовые вещи решили объявить забастовку. Без чего тебе было бы проще всего обойтись?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q4" value="a" required><span class="key">A</span><span class="opt-text">Пластиковая бутылка</span></label>
-              <label class="opt"><input type="radio" name="q4" value="b"><span class="key">B</span><span class="opt-text">Алюминиевая банка</span></label>
-              <label class="opt"><input type="radio" name="q4" value="c"><span class="key">C</span><span class="opt-text">Пакет с пакетами под раковиной</span></label>
-              <label class="opt"><input type="radio" name="q4" value="d"><span class="key">D</span><span class="opt-text">Банановая кожура</span></label>
+              <label class="opt"><input type="radio" name="q4" value="a" required><span class="key">A</span><span class="opt-text">Без пластиковых бутылок — у меня есть многоразовая.</span></label>
+              <label class="opt"><input type="radio" name="q4" value="b"><span class="key">B</span><span class="opt-text">Без пакетов — всегда можно взять шопер.</span></label>
+              <label class="opt"><input type="radio" name="q4" value="c"><span class="key">C</span><span class="opt-text">Без одноразовых стаканчиков — своя кружка ближе к сердцу.</span></label>
+              <label class="opt"><input type="radio" name="q4" value="d"><span class="key">D</span><span class="opt-text">Без палочек для размешивания кофе — обычно я и так использую всё, что попадётся под руку.</span></label>
             </div>
           </fieldset>
 
           <!-- 5 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">5</span><span style="font-weight: 1000;" class="qtitl">Что страшнее?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">5</span><span class="qtitle">Представь, что твой пластиковый пакет получил LinkedIn‑профиль. Какой у него опыт работы?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q5" value="a" required><span class="key">A</span><span class="opt-text">Остаться без воды.</span></label>
-              <label class="opt"><input type="radio" name="q5" value="b"><span class="key">B</span><span class="opt-text">Остаться без Wi‑Fi.</span></label>
-              <label class="opt"><input type="radio" name="q5" value="c"><span class="key">C</span><span class="opt-text">Остаться без кофе.</span></label>
-              <label class="opt"><input type="radio" name="q5" value="d"><span class="key">D</span><span class="opt-text">Найти пакет из магазина, которого уже не существует.</span></label>
+              <label class="opt"><input type="radio" name="q5" value="a" required><span class="key">A</span><span class="opt-text">15 минут переносил продукты.</span></label>
+              <label class="opt"><input type="radio" name="q5" value="b"><span class="key">B</span><span class="opt-text">3 года работал сумкой.</span></label>
+              <label class="opt"><input type="radio" name="q5" value="c"><span class="key">C</span><span class="opt-text">Руководил отделом логистики.</span></label>
+              <label class="opt"><input type="radio" name="q5" value="d"><span class="key">D</span><span class="opt-text">Стал арт‑объектом.</span></label>
             </div>
           </fieldset>
 
           <!-- 6 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">6</span><span class="qtitle">Ты увидел(а), что коллега выбрасывает батарейку в обычную урну.</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">6</span><span class="qtitle">Если бы мусор мог оставлять отзывы о людях, твой звучал бы так:</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q6" value="a" required><span class="key">A</span><span class="opt-text">Вежливо подскажу, куда её можно сдать.</span></label>
-              <label class="opt"><input type="radio" name="q6" value="b"><span class="key">B</span><span class="opt-text">Сделаю вид экологического супергероя и спасу батарейку.</span></label>
-              <label class="opt"><input type="radio" name="q6" value="c"><span class="key">C</span><span class="opt-text">Расскажу об этом в семейном чате.</span></label>
-              <label class="opt"><input type="radio" name="q6" value="d"><span class="key">D</span><span class="opt-text">Начну внутренне страдать.</span></label>
+              <label class="opt"><input type="radio" name="q6" value="a" required><span class="key">A</span><span class="opt-text">«Очень редко вижу этого человека».</span></label>
+              <label class="opt"><input type="radio" name="q6" value="b"><span class="key">B</span><span class="opt-text">«Старается, молодец».</span></label>
+              <label class="opt"><input type="radio" name="q6" value="c"><span class="key">C</span><span class="opt-text">«Мы встречаемся слишком часто».</span></label>
+              <label class="opt"><input type="radio" name="q6" value="d"><span class="key">D</span><span class="opt-text">«Кто-нибудь объясните ему(ей), зачем нужен раздельный сбор».</span></label>
             </div>
           </fieldset>
 
           <!-- 7 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">7</span><span class="qtitle">Что из этого реально существует?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">7</span><span class="qtitle">Какую экосуперсилу ты бы выбрал(а)?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q7" value="a" required><span class="key">A</span><span class="opt-text">Остров мусора в океане</span></label>
-              <label class="opt"><input type="radio" name="q7" value="b"><span class="key">B</span><span class="opt-text">Пластиковые деревья</span></label>
-              <label class="opt"><input type="radio" name="q7" value="c"><span class="key">C</span><span class="opt-text">Морские котики, которые сортируют отходы</span></label>
-              <label class="opt"><input type="radio" name="q7" value="d"><span class="key">D</span><span class="opt-text">Эколог без многоразовой бутылки</span></label>
+              <label class="opt"><input type="radio" name="q7" value="a" required><span class="key">A</span><span class="opt-text">Мгновенно убирать мусор там, где он появляется.</span></label>
+              <label class="opt"><input type="radio" name="q7" value="b"><span class="key">B</span><span class="opt-text">Превращать любую упаковку в многоразовую.</span></label>
+              <label class="opt"><input type="radio" name="q7" value="c"><span class="key">C</span><span class="opt-text">Отправлять отходы сразу в нужный контейнер для переработки.</span></label>
+              <label class="opt"><input type="radio" name="q7" value="d"><span class="key">D</span><span class="opt-text">Превращать «Пакет нужен?» в автоматическое «Нет, спасибо».</span></label>
             </div>
           </fieldset>
 
           <!-- 8 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">8</span><span class="qtitle">Представь, что твой пластиковый пакет получил LinkedIn‑профиль. Какой у него опыт работы?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">8</span><span class="qtitle">С чем тебе было бы сложнее всего смириться?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q8" value="a" required><span class="key">A</span><span class="opt-text">15 минут переносил продукты.</span></label>
-              <label class="opt"><input type="radio" name="q8" value="b"><span class="key">B</span><span class="opt-text">3 года работал сумкой.</span></label>
-              <label class="opt"><input type="radio" name="q8" value="c"><span class="key">C</span><span class="opt-text">Руководил отделом логистики.</span></label>
-              <label class="opt"><input type="radio" name="q8" value="d"><span class="key">D</span><span class="opt-text">Стал арт‑объектом.</span></label>
+              <label class="opt"><input type="radio" name="q8" value="a" required><span class="key">A</span><span class="opt-text">Остаться без воды.</span></label>
+              <label class="opt"><input type="radio" name="q8" value="b"><span class="key">B</span><span class="opt-text">Остаться без Wi‑Fi.</span></label>
+              <label class="opt"><input type="radio" name="q8" value="c"><span class="key">C</span><span class="opt-text">Остаться без кофе.</span></label>
+              <label class="opt"><input type="radio" name="q8" value="d"><span class="key">D</span><span class="opt-text">Понять, что пакеты оказались долговечнее большинства покупок.</span></label>
             </div>
           </fieldset>
 
           <!-- 9 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">9</span><span class="qtitle">Какой экологичный поступок кажется самым реалистичным?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">9</span><span class="qtitle">Что, по твоему мнению, разлагается дольше?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q9" value="a" required><span class="key">A</span><span class="opt-text">Использовать многоразовую бутылку.</span></label>
-              <label class="opt"><input type="radio" name="q9" value="b"><span class="key">B</span><span class="opt-text">Брать пакет только при необходимости.</span></label>
-              <label class="opt"><input type="radio" name="q9" value="c"><span class="key">C</span><span class="opt-text">Использовать кружку вместо одноразовых стаканчиков.</span></label>
-              <label class="opt"><input type="radio" name="q9" value="d"><span class="key">D</span><span class="opt-text">Не покупать вещи, которые не нужны.</span></label>
+              <label class="opt"><input type="radio" name="q9" value="a" required><span class="key">A</span><span class="opt-text">Пластиковая бутылка.</span></label>
+              <label class="opt"><input type="radio" name="q9" value="b"><span class="key">B</span><span class="opt-text">Алюминиевая банка.</span></label>
+              <label class="opt"><input type="radio" name="q9" value="c"><span class="key">C</span><span class="opt-text">Пакет с пакетами под раковиной.</span></label>
+              <label class="opt"><input type="radio" name="q9" value="d"><span class="key">D</span><span class="opt-text">Банановая кожура.</span></label>
             </div>
           </fieldset>
 
           <!-- 10 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum">10</span><span class="qtitle">Если бы мусор мог оставлять отзывы о людях, твой звучал бы так:</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum">10</span><span class="qtitle">Что из этого реально существует?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q10" value="a" required><span class="key">A</span><span class="opt-text">«Очень редко вижу этого человека.»</span></label>
-              <label class="opt"><input type="radio" name="q10" value="b"><span class="key">B</span><span class="opt-text">«Старается, молодец.»</span></label>
-              <label class="opt"><input type="radio" name="q10" value="c"><span class="key">C</span><span class="opt-text">«Мы встречаемся слишком часто.»</span></label>
-              <label class="opt"><input type="radio" name="q10" value="d"><span class="key">D</span><span class="opt-text">«Кто-нибудь объясните ему(ей), зачем нужен раздельный сбор.»</span></label>
+              <label class="opt"><input type="radio" name="q10" value="a" required><span class="key">A</span><span class="opt-text">Остров мусора в океане.</span></label>
+              <label class="opt"><input type="radio" name="q10" value="b"><span class="key">B</span><span class="opt-text">Пластиковые деревья.</span></label>
+              <label class="opt"><input type="radio" name="q10" value="c"><span class="key">C</span><span class="opt-text">Морские котики, которые сортируют отходы.</span></label>
+              <label class="opt"><input type="radio" name="q10" value="d"><span class="key">D</span><span class="opt-text">Эколог без многоразовой бутылки.</span></label>
             </div>
           </fieldset>
 
-          <!-- 11 бонус — новые варианты -->
+          <!-- 11 -->
           <fieldset class="q">
-            <legend><span class="legend-pill"><span class="qnum" style="font-size:.72rem;padding:0 .3rem;min-width:28px;height:28px;">11</span><span class="qtitle"><span class="emoji">🐟</span>Представь, что все одноразовые вещи решили объявить забастовку. Без чего тебе было бы проще всего обойтись?</span></span></legend>
+            <legend><span class="legend-pill"><span class="qnum" style="font-size:.72rem;padding:0 .3rem;min-width:28px;height:28px;">11</span><span class="qtitle">Какой экологичный поступок кажется тебе самым реалистичным?</span></span></legend>
             <div class="opts-grid">
-              <label class="opt"><input type="radio" name="q11" value="a" required><span class="key">A</span><span class="opt-text">Пластиковых бутылок — у меня есть многоразовая</span></label>
-              <label class="opt"><input type="radio" name="q11" value="b"><span class="key">B</span><span class="opt-text">Пакетов — всегда можно взять шопер</span></label>
-              <label class="opt"><input type="radio" name="q11" value="c"><span class="key">C</span><span class="opt-text">Одноразовых стаканчиков — своя кружка ближе к сердцу</span></label>
-              <label class="opt"><input type="radio" name="q11" value="d"><span class="key">D</span><span class="opt-text">Палочки для размешивания кофе — обычно я и так использую всё, что попадётся под руку 😺</span></label>
+              <label class="opt"><input type="radio" name="q11" value="a" required><span class="key">A</span><span class="opt-text">Использовать многоразовую бутылку.</span></label>
+              <label class="opt"><input type="radio" name="q11" value="b"><span class="key">B</span><span class="opt-text">Брать пакет только при необходимости.</span></label>
+              <label class="opt"><input type="radio" name="q11" value="c"><span class="key">C</span><span class="opt-text">Использовать кружку вместо одноразовых стаканчиков.</span></label>
+              <label class="opt"><input type="radio" name="q11" value="d"><span class="key">D</span><span class="opt-text">Не покупать вещи, которые не нужны. 🐾🌿</span></label>
             </div>
           </fieldset>
 
@@ -539,7 +536,6 @@
           <div class="scrap-divider">🌿 &nbsp; ✦ &nbsp; 💚 &nbsp; ✦ &nbsp; 🌿</div>
         </div>
         <div class="facts-grd">
-          
           <article class="fact-card">
             <h3></h3>
             <p>Выбери один одноразовый предмет, от которого сможешь отказаться <strong>хотя бы на месяц</strong>. <br> Небольшие изменения в повседневных привычках часто приводят к большим результатам! 🐱</p>
