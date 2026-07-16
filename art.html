@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Художественная школа — журнал</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1E2A22; --paper:#EFEDE0; --paper-line:rgba(30,42,34,0.07);
+  --board:#2F4538; --board-dark:#243A2E; --chalk:#F5F2E6;
+  --muted:#6B7268; --card-bg:#FFFFFF; --card-border:rgba(30,42,34,0.12);
+  --accent-red:#B5493D; --accent-green:#4C7A5C;
+  --radius:10px; --shadow:0 1px 2px rgba(30,42,34,0.06),0 4px 14px rgba(30,42,34,0.06);
+  --s-plan-bg:#E7E2CF; --s-plan-fg:#6B5E2F;
+  --s-done-bg:#DCEBE0; --s-done-fg:#3A6B4C;
+  --s-canc-bg:#F3DEDA; --s-canc-fg:#B5493D;
+  --hour-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;-webkit-text-size-adjust:100%;}
+body{
+  background:repeating-linear-gradient(to bottom,transparent 0px,transparent 27px,var(--paper-line) 28px),var(--paper);
+  color:var(--ink);font-family:'IBM Plex Sans',sans-serif;min-height:100vh;
+}
+h1,h2,h3,.display{font-family:'Fraunces',serif;}
+.app{max-width:1280px;margin:0 auto;padding:12px 12px 70px;}
+
+/* ── PASSWORD ── */
+.pw-screen{position:fixed;inset:0;background:var(--board);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
+.pw-box{background:var(--chalk);border-radius:16px;padding:36px 32px;width:100%;max-width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.pw-logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(160deg,#E2725B,#D9A441);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:#2A1B12;font-size:24px;margin:0 auto 16px;}
+.pw-box h2{font-size:20px;margin-bottom:6px;color:var(--ink);}
+.pw-box p{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.pw-input{width:100%;border:2px solid var(--card-border);border-radius:10px;padding:12px 14px;font-size:18px;font-family:'IBM Plex Mono',monospace;background:var(--paper);text-align:center;letter-spacing:4px;margin-bottom:12px;transition:border-color .2s;}
+.pw-input:focus{outline:none;border-color:var(--board);}
+.pw-input.error{border-color:var(--accent-red);animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.pw-btn{width:100%;background:var(--board);color:var(--chalk);border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;}
+.pw-btn:hover{background:var(--board-dark);}
+.pw-error{font-size:12px;color:var(--accent-red);margin-top:8px;height:16px;font-weight:600;}
+
+/* ── SYNC BAR ── */
+.sync-bar{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:8px;margin-bottom:10px;font-size:12px;font-weight:600;font-family:'IBM Plex Mono',monospace;transition:all .3s ease;}
+.sync-bar.synced {background:#DCEBE0;color:var(--accent-green);}
+.sync-bar.loading{background:#E7E2CF;color:#6B5E2F;}
+.sync-bar.saving {background:#E8E0F0;color:#6B4FA0;}
+.sync-bar.offline{background:var(--s-canc-bg);color:var(--accent-red);}
+.sync-bar.error  {background:var(--s-canc-bg);color:var(--accent-red);}
+.sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:currentColor;}
+.sync-dot.spin{background:transparent;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.sync-time{margin-left:auto;font-size:10.5px;opacity:.7;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--board);color:var(--chalk);border-radius:14px;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow);margin-bottom:10px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(160deg,#E2725B,#D9A441);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:#2A1B12;font-size:17px;flex-shrink:0;}
+.topbar h1{font-size:19px;font-weight:600;}
+
+/* ── MAIN TABS ── */
+.main-tabs{display:flex;gap:4px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:11px;padding:4px;margin-bottom:14px;box-shadow:var(--shadow);}
+.main-tab{flex:1;border:none;background:transparent;color:var(--muted);padding:10px 8px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;transition:.15s;}
+.main-tab.active{background:var(--board);color:var(--chalk);}
+.main-tab:not(.active):hover{background:var(--paper);color:var(--ink);}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:230px 1fr;gap:14px;align-items:start;}
+@media(max-width:880px){.layout{grid-template-columns:1fr;}}
+
+/* ── PANEL ── */
+.panel{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;}
+.panel h2{font-size:14px;margin-bottom:10px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.panel h2 .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);background:var(--paper);padding:2px 5px;border-radius:4px;}
+.empty-hint{font-size:12.5px;color:var(--muted);line-height:1.5;padding:4px 2px;}
+
+/* ── SIDEBAR ── */
+.teacher-row{display:flex;align-items:center;gap:7px;padding:7px 4px;border-bottom:1px solid var(--paper-line);}
+.teacher-row:last-of-type{border-bottom:none;}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.teacher-name{font-size:13px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.icon-btn{border:none;background:none;cursor:pointer;color:var(--muted);font-size:13px;padding:4px 6px;border-radius:5px;min-width:30px;min-height:30px;display:flex;align-items:center;justify-content:center;}
+.icon-btn:hover{background:var(--paper);color:var(--accent-red);}
+.workdays-row{display:flex;gap:3px;padding:3px 4px 4px;flex-wrap:wrap;}
+.wd-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--card-border);background:var(--paper);font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);cursor:pointer;font-weight:600;}
+.wd-btn.on{background:var(--board);color:var(--chalk);border-color:var(--board);}
+.work-hours-row{display:flex;align-items:center;gap:5px;padding:2px 4px 8px;font-size:11.5px;color:var(--muted);}
+.work-hours-row input[type=time]{border:1px solid var(--card-border);border-radius:5px;padding:3px 5px;font-size:11px;font-family:'IBM Plex Mono',monospace;background:var(--paper);color:var(--ink);width:72px;}
+.add-teacher{display:flex;gap:6px;margin-top:8px;}
+.add-teacher input{flex:1;border:1px solid var(--card-border);border-radius:7px;padding:9px 10px;font-size:13px;font-family:inherit;background:var(--paper);min-height:44px;}
+.add-teacher input:focus{outline:2px solid var(--board);outline-offset:1px;}
+
+/* ── BUTTONS ── */
+.btn{border:none;background:var(--board);color:var(--chalk);padding:10px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
+.btn:hover{background:var(--board-dark);}
+.btn.ghost{background:transparent;color:var(--board);border:1px solid var(--board);}
+.btn.ghost:hover{background:var(--board);color:var(--chalk);}
+.btn.danger{background:var(--accent-red);color:#fff;}
+.btn.danger:hover{background:#9a3d32;}
+.btn.small{padding:7px 12px;font-size:12px;min-height:36px;}
+
+/* ── NAV ── */
+.nav-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.nav-row .range{font-family:'Fraunces',serif;font-size:18px;font-weight:600;}
+.nav-controls{display:flex;gap:6px;align-items:center;}
+.nav-btn{border:1px solid var(--card-border);background:var(--card-bg);width:38px;height:38px;border-radius:8px;cursor:pointer;font-size:15px;color:var(--ink);display:flex;align-items:center;justify-content:center;}
+.nav-btn:hover{background:var(--paper);}
+.today-badge{font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:var(--board);color:var(--chalk);padding:0 12px;height:38px;border-radius:7px;cursor:pointer;font-weight:600;border:none;display:flex;align-items:center;}
+
+/* ── WEEK ── */
+.grid-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--card-border);background:var(--card-bg);box-shadow:var(--shadow);-webkit-overflow-scrolling:touch;}
+.week-grid{display:grid;grid-template-columns:110px repeat(7,minmax(120px,1fr));min-width:760px;}
+.gcell{border-bottom:1px solid var(--card-border);border-right:1px solid var(--card-border);padding:7px;min-height:38px;}
+.week-grid>.gcell:nth-child(8n){border-right:none;}
+.head-cell{background:var(--paper);position:sticky;top:0;z-index:2;padding:9px 7px;cursor:pointer;}
+.head-cell.corner{cursor:default;}
+.head-cell .dname{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.head-cell .ddate{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin-top:1px;}
+.head-cell.is-today .ddate{color:var(--accent-red);}
+.head-cell .dcount{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.row-label{background:var(--paper);position:sticky;left:0;z-index:1;display:flex;align-items:center;gap:6px;}
+.row-label span{font-size:12px;font-weight:600;}
+.day-cell{position:relative;}
+.day-cell.off-day{background:repeating-linear-gradient(-45deg,rgba(30,42,34,0.05) 0px,rgba(30,42,34,0.05) 3px,transparent 3px,transparent 8px) !important;background-color:rgba(30,42,34,0.09) !important;}
+.slot-card{border-radius:7px;padding:5px 8px;margin-bottom:4px;cursor:pointer;font-size:11px;line-height:1.4;border-left:3px solid transparent;transition:box-shadow .15s;}
+.slot-card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.14);}
+.slot-card .t{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:10.5px;}
+.slot-card .who{font-weight:700;}
+.slot-card .subj{opacity:.75;font-size:10.5px;}
+.slot-card.planned {background:var(--s-plan-bg);color:var(--s-plan-fg);}
+.slot-card.done    {background:var(--s-done-bg);color:var(--s-done-fg);}
+.slot-card.cancelled{background:var(--s-canc-bg);color:var(--s-canc-fg);text-decoration:line-through;}
+.add-slot-btn{width:100%;border:1px dashed rgba(30,42,34,0.18);background:transparent;border-radius:5px;color:var(--muted);font-size:14px;cursor:pointer;padding:3px 0;margin-top:2px;}
+.add-slot-btn:hover{background:var(--paper);color:var(--board);}
+
+/* ── MONTH ── */
+.month-grid-wrap{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.month-head-cell{background:var(--paper);padding:8px 6px;text-align:center;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--card-border);border-right:1px solid var(--card-border);}
+.month-head-cell:last-child{border-right:none;}
+.month-day{min-height:100px;padding:5px;border-bottom:1px solid var(--card-border);border-right:1px solid var(--card-border);cursor:pointer;position:relative;display:flex;flex-direction:column;gap:2px;}
+.month-day:hover{background:rgba(76,122,92,0.04);}
+.month-day:nth-child(7n){border-right:none;}
+.month-day.other-month{background:rgba(30,42,34,0.025);}
+.month-day.other-month .mday-num{color:var(--muted);opacity:.4;}
+.month-day.is-today .mday-num{background:var(--accent-red);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.mday-num{font-family:'Fraunces',serif;font-size:13px;font-weight:600;margin-bottom:2px;width:22px;flex-shrink:0;}
+
+/* teacher dots row in month */
+.month-teacher-dots{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:3px;}
+.month-teacher-dot{
+  display:flex;align-items:center;gap:2px;
+  font-size:9px;font-weight:600;font-family:'IBM Plex Mono',monospace;
+  color:var(--muted);
+}
+.month-teacher-dot .d{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+.month-slot-pill{display:block;border-radius:3px;padding:1px 5px;font-size:10px;font-weight:600;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;flex-shrink:0;}
+.month-slot-pill.planned {background:var(--s-plan-bg);color:var(--s-plan-fg);}
+.month-slot-pill.done    {background:var(--s-done-bg);color:var(--s-done-fg);}
+.month-slot-pill.cancelled{background:var(--s-canc-bg);color:var(--s-canc-fg);text-decoration:line-through;}
+.month-more{font-size:9.5px;color:var(--muted);margin-top:1px;}
+
+/* ── DAY VIEW ── */
+.day-outer{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.teacher-tabs{display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--paper);border-bottom:1px solid var(--card-border);padding:6px 8px;gap:6px;}
+.teacher-tab{flex-shrink:0;border:1px solid var(--card-border);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;background:var(--card-bg);color:var(--muted);min-height:36px;white-space:nowrap;transition:.15s;}
+.teacher-tab.active{color:#fff;}
+@media(max-width:640px){.teacher-tabs{display:flex;}}
+.day-scroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 210px);-webkit-overflow-scrolling:touch;}
+.day-grid{display:grid;position:relative;}
+.tg-time-label{height:var(--hour-h);display:flex;align-items:flex-start;padding:4px 5px 0 4px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);border-bottom:1px solid var(--card-border);border-right:1px solid var(--card-border);}
+.tg-teacher-header{position:sticky;top:0;z-index:4;background:var(--paper);border-bottom:2px solid var(--card-border);display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 6px;font-size:12.5px;font-weight:700;text-align:center;border-right:1px solid var(--card-border);}
+.tg-teacher-header:last-child{border-right:none;}
+.tg-cell{border-bottom:1px solid var(--card-border);border-right:1px solid var(--card-border);height:var(--hour-h);position:relative;cursor:pointer;transition:background .1s;}
+.tg-cell.half{border-bottom:1px dashed rgba(30,42,34,0.06);height:calc(var(--hour-h)/2);}
+.tg-cell.off-day{background:repeating-linear-gradient(-45deg,rgba(30,42,34,0.05) 0px,rgba(30,42,34,0.05) 3px,transparent 3px,transparent 8px) !important;background-color:rgba(30,42,34,0.09) !important;cursor:default;}
+.tg-cell.off-hours{background-color:rgba(30,42,34,0.055) !important;cursor:default;}
+.tg-cell:not(.off-day):not(.off-hours):hover{background:rgba(76,122,92,0.07);}
+.tg-slot{position:absolute;left:3px;right:3px;border-radius:6px;padding:3px 6px;font-size:10.5px;line-height:1.35;cursor:pointer;z-index:2;overflow:hidden;border-left:3px solid rgba(0,0,0,0.15);box-shadow:0 1px 3px rgba(0,0,0,0.1);transition:box-shadow .15s,transform .1s;}
+.tg-slot:hover{box-shadow:0 3px 10px rgba(0,0,0,0.18);transform:translateY(-1px);}
+.tg-slot .ts-time{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;opacity:.8;}
+.tg-slot .ts-name{font-weight:700;font-size:11px;}
+.tg-slot .ts-subj{font-size:10px;opacity:.7;}
+.tg-slot.planned {background:var(--s-plan-bg);color:var(--s-plan-fg);}
+.tg-slot.done    {background:var(--s-done-bg);color:var(--s-done-fg);}
+.tg-slot.cancelled{background:var(--s-canc-bg);color:var(--s-canc-fg);text-decoration:line-through;}
+.tg-now-line{position:absolute;left:0;right:0;height:2px;background:var(--accent-red);z-index:5;pointer-events:none;}
+.tg-now-dot{position:absolute;left:-4px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--accent-red);}
+.day-nav{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.day-nav input[type=date]{border:1px solid var(--card-border);border-radius:8px;padding:0 10px;font-family:inherit;font-size:13.5px;background:var(--card-bg);height:38px;}
+.day-title{font-family:'Fraunces',serif;font-size:20px;font-weight:600;}
+.day-stat{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* ── TEACHERS PAGE ── */
+.teachers-page{display:flex;flex-direction:column;gap:14px;}
+.teacher-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.tc-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--card-border);}
+.tc-head .dot{width:13px;height:13px;}
+.tc-head .name{font-weight:700;font-size:15px;flex:1;font-family:'Fraunces',serif;}
+.tc-head .stats{font-size:11.5px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.tc-workdays{padding:8px 16px 10px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--paper-line);}
+.tc-wd{font-size:10.5px;font-family:'IBM Plex Mono',monospace;font-weight:600;}
+.tc-wd.on{color:var(--board);}
+.tc-wd.off{color:var(--muted);text-decoration:line-through;}
+.tc-hours{font-size:11px;color:var(--muted);margin-left:8px;font-family:'IBM Plex Mono',monospace;}
+.tc-section-title{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:10px 16px 5px;background:var(--paper);}
+.tc-slot-row{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--paper-line);cursor:pointer;}
+.tc-slot-row:last-of-type{border-bottom:none;}
+.tc-slot-row:hover{background:var(--paper);}
+.tc-slot-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);width:68px;flex-shrink:0;}
+.tc-slot-time{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;width:100px;flex-shrink:0;}
+.tc-slot-info{flex:1;min-width:0;}
+.tc-slot-info .who{font-weight:600;font-size:13px;}
+.tc-slot-info .subj{font-size:11.5px;color:var(--muted);}
+.tc-status-pill{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
+.tc-status-pill.planned {background:var(--s-plan-bg);color:var(--s-plan-fg);}
+.tc-status-pill.done    {background:var(--s-done-bg);color:var(--s-done-fg);}
+.tc-status-pill.cancelled{background:var(--s-canc-bg);color:var(--s-canc-fg);}
+.tc-empty{font-size:12.5px;color:var(--muted);padding:14px 16px;}
+.sub-badge{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:10px;background:#E8E0F0;color:#6B4FA0;margin-left:4px;}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(30,42,34,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:0;}
+@media(min-width:540px){.overlay{align-items:center;padding:16px;}}
+.modal{background:var(--card-bg);border-radius:16px 16px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 -4px 40px rgba(0,0,0,0.2);}
+@media(min-width:540px){.modal{border-radius:14px;max-width:420px;padding:22px;max-height:90vh;box-shadow:0 10px 40px rgba(0,0,0,0.25);}}
+.modal-drag{width:36px;height:4px;background:var(--card-border);border-radius:2px;margin:0 auto 14px;}
+@media(min-width:540px){.modal-drag{display:none;}}
+.modal h3{font-size:17px;margin-bottom:14px;}
+.field{margin-bottom:11px;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;}
+.field input,.field select{width:100%;border:1px solid var(--card-border);border-radius:7px;padding:10px 11px;font-family:inherit;font-size:14px;background:var(--paper);min-height:44px;}
+.field input:focus,.field select:focus{outline:2px solid var(--board);outline-offset:1px;}
+.field-row{display:flex;gap:8px;}
+.field-row .field{flex:1;}
+.status-choice{display:flex;gap:5px;}
+.status-choice button{flex:1;border:1px solid var(--card-border);background:var(--paper);border-radius:7px;padding:9px 4px;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--muted);min-height:44px;font-family:inherit;transition:.15s;}
+.status-choice button.active.planned {background:var(--s-plan-bg);color:var(--s-plan-fg);border-color:var(--s-plan-bg);}
+.status-choice button.active.done    {background:var(--s-done-bg);color:var(--s-done-fg);border-color:var(--s-done-bg);}
+.status-choice button.active.cancelled{background:var(--s-canc-bg);color:var(--s-canc-fg);border-color:var(--s-canc-bg);}
+.sub-toggle{display:flex;gap:6px;}
+.sub-toggle button{flex:1;border:1px solid var(--card-border);background:var(--paper);border-radius:7px;padding:9px 4px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);min-height:44px;font-family:inherit;transition:.15s;}
+.sub-toggle button.active{background:#E8E0F0;color:#6B4FA0;border-color:#C8B8E0;}
+.modal-actions{display:flex;justify-content:space-between;margin-top:16px;gap:8px;}
+.modal-actions .right{display:flex;gap:8px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(80px);background:var(--board);color:var(--chalk);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:100;transition:transform .3s ease;white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.loading{padding:60px 20px;text-align:center;color:var(--muted);font-size:14px;}
+.spinner{width:28px;height:28px;border:3px solid var(--card-border);border-top-color:var(--board);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+
+@media(max-width:600px){
+  .app{padding:8px 8px 70px;}
+  .topbar{padding:10px 12px;border-radius:10px;}
+  .topbar h1{font-size:15px;}
+  .main-tab{font-size:12px;padding:8px 4px;}
+  .month-day{min-height:72px;}
+}
+</style>
+</head>
+<body>
+
+<div class="pw-screen" id="pw-screen">
+  <div class="pw-box">
+    <div class="pw-logo">Ж</div>
+    <h2>Художественная школа</h2>
+    <p>Введите пароль для входа</p>
+    <input class="pw-input" id="pw-input" type="password" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkPassword()">
+    <button class="pw-btn" onclick="checkPassword()">Войти</button>
+    <div class="pw-error" id="pw-error"></div>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none">
+  <div class="loading"><div class="spinner"></div>Загружаю…</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
+const API_URL    = 'https://script.google.com/macros/s/AKfycbzkY_XYsqWZ0KtzgM2bSTj_LU5idwPURhjSCNvLgA3h35GXGI-DLxjvAQqIWQ3rvDvC/exec';
+const API_TOKEN  = 'AKfycbwDwOTGEryaBBlLbQmtRTiIT0gEHfSX7fIeOdT3rUshAwYaqpKgd-NWRHrlodMMvRGz';
+const APP_PASS   = '15051997';
+const GRID_START = 8;
+const GRID_END   = 21;
+const SLOT_STEP  = 30;
+
+// ══════════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════════
+const DAY_NAMES      = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const DAY_NAMES_FULL = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+const MONTHS         = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const MONTHS_SHORT   = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+const MONTHS_FULL    = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const COLOR_PALETTE  = ['#E2725B','#4C86C6','#D9A441','#8B5FA0','#3E8E8A','#C6577A','#7C9070','#B08968'];
+
+// ══════════════════════════════════════════
+//  PASSWORD
+// ══════════════════════════════════════════
+function checkPassword(){
+  const inp=document.getElementById('pw-input');
+  const err=document.getElementById('pw-error');
+  if(inp.value===APP_PASS){
+    sessionStorage.setItem('auth','1');
+    document.getElementById('pw-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    init();
+  } else {
+    err.textContent='Неверный пароль';
+    inp.classList.add('error');inp.value='';
+    setTimeout(()=>{inp.classList.remove('error');err.textContent='';},1500);
+  }
+}
+function logout(){ sessionStorage.removeItem('auth'); location.reload(); }
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(sessionStorage.getItem('auth')==='1'){
+    document.getElementById('pw-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    init();
+  } else {
+    setTimeout(()=>document.getElementById('pw-input').focus(),100);
+  }
+});
+
+// ══════════════════════════════════════════
+//  SYNC
+// ══════════════════════════════════════════
+let syncState='loading', lastSyncTime=null;
+
+function setSyncState(s){
+  syncState=s;
+  if(s==='synced') lastSyncTime=new Date();
+  const el=document.getElementById('sync-bar');
+  if(!el)return;
+  const cfg={
+    loading:{cls:'loading',spin:true, text:'Загружаю данные…'},
+    saving: {cls:'saving', spin:true, text:'Сохраняю…'},
+    synced: {cls:'synced', spin:false,text:'Синхронизировано'},
+    offline:{cls:'offline',spin:false,text:'Нет соединения'},
+    error:  {cls:'error',  spin:false,text:'Ошибка синхронизации'},
+  };
+  const c=cfg[s]||cfg.synced;
+  const t=lastSyncTime?lastSyncTime.toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'}):'';
+  el.className=`sync-bar ${c.cls}`;
+  el.innerHTML=`
+    <span class="sync-dot ${c.spin?'spin':''}"></span>
+    <span>${c.text}</span>
+    ${s==='synced'&&t?`<span class="sync-time">обновлено в ${t}</span>`:''}
+    ${s==='offline'||s==='error'?`<button onclick="retryLoad()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:11px;font-weight:700;color:inherit;text-decoration:underline;">Повторить</button>`:''}
+  `;
+}
+async function retryLoad(){ setSyncState('loading'); await loadAll(); render(); }
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let state={
+  teachers:[],slots:[],
+  view:'week',
+  weekStart:startOfWeek(new Date()),
+  day:toISO(new Date()),
+  monthYear:new Date().getFullYear(),
+  monthMonth:new Date().getMonth(),
+  modal:null,
+  activeTeacherTab:null,
+};
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function pad(n){return n<10?'0'+n:''+n;}
+function toISO(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function parseISO(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function startOfWeek(d){
+  const r=new Date(d);const day=r.getDay();
+  r.setDate(r.getDate()+(day===0?-6:1-day));r.setHours(0,0,0,0);return r;
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function jsDayToIdx(j){return j===0?6:j-1;}
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&#60;','>':'&#62;','"':'&quot;',"'":'&#39;'}[c]));}
+function timeToMins(t){if(!t)return 0;const[h,m]=t.split(':').map(Number);return h*60+(m||0);}
+function minsToTime(m){return pad(Math.floor(m/60))+':'+pad(m%60);}
+function showToast(msg,dur=2400){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+// ══════════════════════════════════════════
+//  API
+// ══════════════════════════════════════════
+async function apiCall(action,payload={}){
+  const res=await fetch(API_URL,{
+    method:'POST',
+    body:JSON.stringify({token:API_TOKEN,action,...payload}),
+    headers:{'Content-Type':'text/plain'}
+  });
+  const data=await res.json();
+  if(!data.ok)throw new Error(data.error||'API error');
+  return data;
+}
+
+async function loadAll(){
+  setSyncState('loading');
+  try{
+    const data=await apiCall('loadAll');
+
+    state.teachers=(data.teachers||[]).map(t=>({
+      ...t,
+      workdays:t.workdays?t.workdays.split(',').map(Number).filter(n=>!isNaN(n)):[1,2,3,4,5],
+      workStart:t.workStart||'09:00',
+      workEnd:  t.workEnd  ||'18:00',
+    }));
+
+    state.slots=(data.slots||[]).map(s=>{
+      // Нормализация: поддержка старых полей time/duration
+      let ts = s.timeStart || s.time || '';
+      let te = s.timeEnd   || '';
+      if(!te && ts && s.duration){
+        te = minsToTime(timeToMins(ts) + parseInt(s.duration));
+      }
+      // Защита от мусорных значений (Date-объекты, попавшие как строки)
+      ts = sanitizeTime(ts);
+      te = sanitizeTime(te);
+      return {
+        id:           s.id           || '',
+        teacherId:    s.teacherId    || '',
+        date:         sanitizeDate(s.date),
+        timeStart:    ts,
+        timeEnd:      te,
+        student:      s.student      || '',
+        lessonType:   s.lessonType   || s.subject || '',
+        note:         s.note         || '',
+        status:       s.status       || 'planned',
+        subscription: s.subscription || 'no',
+      };
+    // Отфильтровываем записи с пустым/кривым id или датой
+    }).filter(s => s.id && s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date));
+
+    if(!state.activeTeacherTab && state.teachers.length>0)
+      state.activeTeacherTab=state.teachers[0].id;
+
+    setSyncState('synced');
+  }catch(e){
+    console.error('loadAll:',e);
+    setSyncState(navigator.onLine?'error':'offline');
+    showToast('⚠️ Не удалось загрузить данные');
+  }
+}
+
+// Защита: если время пришло как строка с датой 1899 — вернуть ''
+function sanitizeTime(val){
+  if(!val) return '';
+  const s = String(val);
+  // Нормальный формат HH:mm
+  if(/^\d{1,2}:\d{2}$/.test(s)) return s.padStart(5,'0').slice(0,5);
+  // Всё остальное — мусор
+  return '';
+}
+
+// Защита: дата должна быть YYYY-MM-DD
+function sanitizeDate(val){
+  if(!val) return '';
+  const s = String(val);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  return '';
+}
+
+async function saveTeacher(t,isUpdate=false){
+  setSyncState('saving');
+  try{
+    await apiCall(isUpdate?'updateTeacher':'addTeacher',{row:{...t,workdays:t.workdays.join(',')}});
+    setSyncState('synced');
+  }catch(e){setSyncState('error');showToast('Ошибка: '+e.message);}
+}
+async function removeTeacher(id){
+  setSyncState('saving');
+  try{await apiCall('deleteTeacher',{id});setSyncState('synced');}
+  catch(e){setSyncState('error');showToast('Ошибка: '+e.message);}
+}
+async function saveSlot(s,isUpdate=false){
+  setSyncState('saving');
+  try{await apiCall(isUpdate?'updateSlot':'addSlot',{row:s});setSyncState('synced');}
+  catch(e){setSyncState('error');showToast('Ошибка: '+e.message);}
+}
+async function removeSlot(id){
+  setSyncState('saving');
+  try{await apiCall('deleteSlot',{id});setSyncState('synced');}
+  catch(e){setSyncState('error');showToast('Ошибка: '+e.message);}
+}
+
+// ══════════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════════
+async function addTeacher(name){
+  if(!name.trim())return;
+  const t={id:uid(),name:name.trim(),color:COLOR_PALETTE[state.teachers.length%COLOR_PALETTE.length],workdays:[1,2,3,4,5],workStart:'09:00',workEnd:'18:00'};
+  state.teachers.push(t);
+  if(!state.activeTeacherTab)state.activeTeacherTab=t.id;
+  render();await saveTeacher(t,false);showToast('Преподаватель добавлен');
+}
+async function deleteTeacher(id){
+  const has=state.slots.some(s=>s.teacherId===id);
+  if(!confirm(has?'Удалить преподавателя и все занятия?':'Удалить преподавателя?'))return;
+  const del=state.slots.filter(s=>s.teacherId===id);
+  state.teachers=state.teachers.filter(t=>t.id!==id);
+  state.slots=state.slots.filter(s=>s.teacherId!==id);
+  if(state.activeTeacherTab===id)state.activeTeacherTab=state.teachers[0]?.id||null;
+  render();await removeTeacher(id);
+  for(const s of del)await removeSlot(s.id);
+  showToast('Преподаватель удалён');
+}
+async function toggleWorkday(tid,jsDay){
+  const t=state.teachers.find(t=>t.id===tid);if(!t)return;
+  const idx=t.workdays.indexOf(jsDay);
+  idx>-1?t.workdays.splice(idx,1):t.workdays.push(jsDay);
+  render();await saveTeacher(t,true);
+}
+async function updateWorkHours(tid,field,value){
+  const t=state.teachers.find(t=>t.id===tid);if(!t)return;
+  t[field]=value;await saveTeacher(t,true);
+}
+
+function openModal(teacherId,date,slotId){
+  const slot=slotId?state.slots.find(s=>s.id===slotId):null;
+  state.modal={
+    teacherId:teacherId||slot?.teacherId||state.teachers[0]?.id||'',
+    date:     date||slot?.date||state.day,
+    slot,
+    pendingStatus:slot?.status||'planned',
+    pendingSub:   slot?.subscription||'no',
+  };
+  render();
+}
+function closeModal(){state.modal=null;render();}
+
+// Читаем поля из DOM в state (без ре-рендера)
+function snapshotModalFields(){
+  if(!state.modal)return;
+  const g=id=>document.getElementById(id);
+  if(g('m-teacher'))     state.modal.teacherId       = g('m-teacher').value;
+  if(g('m-date'))        state.modal.date             = g('m-date').value;
+  if(g('m-time-start'))  state.modal.snapTimeStart    = g('m-time-start').value;
+  if(g('m-time-end'))    state.modal.snapTimeEnd      = g('m-time-end').value;
+  if(g('m-student'))     state.modal.snapStudent      = g('m-student').value;
+  if(g('m-lesson-type')) state.modal.snapLessonType   = g('m-lesson-type').value;
+  if(g('m-note'))        state.modal.snapNote         = g('m-note').value;
+}
+
+// Переключение статуса — только swap классов, без ре-рендера
+function setModalStatus(status){
+  snapshotModalFields();
+  state.modal.pendingStatus=status;
+  document.querySelectorAll('.status-choice button').forEach(btn=>{
+    btn.classList.remove('active');
+    if(btn.dataset.status===status)btn.classList.add('active');
+  });
+}
+// Переключение абонемента — только swap классов
+function setModalSub(val){
+  snapshotModalFields();
+  state.modal.pendingSub=val;
+  document.querySelectorAll('.sub-toggle button').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.sub===val);
+  });
+}
+
+async function saveSlotFromModal(){
+  const g=id=>document.getElementById(id);
+  const teacherId  =g('m-teacher').value;
+  const date       =g('m-date').value;
+  const timeStart  =g('m-time-start').value;
+  const timeEnd    =g('m-time-end').value;
+  const student    =g('m-student').value.trim();
+  const lessonType =g('m-lesson-type').value.trim();
+  const note       =g('m-note').value.trim();
+  const status     =state.modal.pendingStatus||'planned';
+  const subscription=state.modal.pendingSub||'no';
+
+  if(!teacherId||!date||!timeStart||!timeEnd||!student){
+    showToast('Заполните преподавателя, дату, время и ученика');return;
+  }
+  if(timeToMins(timeEnd)<=timeToMins(timeStart)){
+    showToast('Время окончания должно быть позже начала');return;
+  }
+  const isUpdate=!!state.modal.slot;
+  let slotObj;
+  if(isUpdate){
+    Object.assign(state.modal.slot,{teacherId,date,timeStart,timeEnd,student,lessonType,note,status,subscription});
+    slotObj=state.modal.slot;
+  }else{
+    slotObj={id:uid(),teacherId,date,timeStart,timeEnd,student,lessonType,note,status,subscription};
+    state.slots.push(slotObj);
+  }
+  closeModal();
+  await saveSlot(slotObj,isUpdate);
+  showToast(isUpdate?'Занятие обновлено':'Занятие добавлено');
+}
+async function deleteSlotFromModal(){
+  if(!state.modal.slot)return;
+  if(!confirm('Удалить занятие?'))return;
+  const id=state.modal.slot.id;
+  state.slots=state.slots.filter(s=>s.id!==id);
+  closeModal();await removeSlot(id);showToast('Занятие удалено');
+}
+async function duplicateSlot(slotId){
+  const src=state.slots.find(s=>s.id===slotId);if(!src)return;
+  const copy={...src,id:uid(),timeStart:'',timeEnd:'',status:'planned'};
+  state.slots.push(copy);
+  state.modal={teacherId:copy.teacherId,date:copy.date,slot:copy,pendingStatus:'planned',pendingSub:copy.subscription||'no'};
+  render();await saveSlot(copy,false);showToast('Скопировано — выберите время');
+}
+async function cycleStatus(slotId,ev){
+  ev&&ev.stopPropagation();
+  const s=state.slots.find(s=>s.id===slotId);if(!s)return;
+  const order=['planned','done','cancelled'];
+  s.status=order[(order.indexOf(s.status)+1)%order.length];
+  render();await saveSlot(s,true);
+}
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function statusLabel(s){return s==='done'?'Проведено':s==='cancelled'?'Отменено':'Запланировано';}
+function teacherById(id){return state.teachers.find(t=>t.id===id);}
+function slotsFor(tid,dateISO){
+  return state.slots.filter(s=>s.teacherId===tid&&s.date===dateISO)
+    .sort((a,b)=>(a.timeStart||'').localeCompare(b.timeStart||''));
+}
+function slotsForDate(dateISO){
+  return state.slots.filter(s=>s.date===dateISO)
+    .sort((a,b)=>(a.timeStart||'').localeCompare(b.timeStart||''));
+}
+function fmtRange(ws){
+  const end=addDays(ws,6);
+  return ws.getMonth()===end.getMonth()
+    ?`${ws.getDate()}–${end.getDate()} ${MONTHS[end.getMonth()]} ${end.getFullYear()}`
+    :`${ws.getDate()} ${MONTHS_SHORT[ws.getMonth()]} – ${end.getDate()} ${MONTHS_SHORT[end.getMonth()]} ${end.getFullYear()}`;
+}
+function fmtDateShort(iso){
+  if(!iso)return'';
+  const d=parseISO(iso);
+  return`${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`;
+}
+function isWorkHour(t,timeStr){
+  const m=timeToMins(timeStr);
+  return m>=timeToMins(t.workStart||'09:00')&&m<timeToMins(t.workEnd||'18:00');
+}
+// Какие преподаватели работают в этот jsDay
+function teachersWorkingOn(jsDay){
+  return state.teachers.filter(t=>t.workdays.includes(jsDay));
+}
+
+// ══════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════
+function render(){
+  const app=document.getElementById('app');
+  const todayISO=toISO(new Date());
+  let main='';
+  if(state.view==='week')      main=renderWeek(todayISO);
+  else if(state.view==='day')  main=renderDay(todayISO);
+  else if(state.view==='month')main=renderMonth(todayISO);
+  else                         main=renderTeachersPage();
+
+  app.innerHTML=`
+    <div id="sync-bar" class="sync-bar loading"><span class="sync-dot spin"></span><span>Загружаю…</span></div>
+    ${renderTopbar()}
+    <div class="layout">
+      ${renderSidebar()}
+      <div>${main}</div>
+    </div>
+    ${state.modal?renderModal():''}
+  `;
+
+  setSyncState(syncState); // восстанавливаем после ре-рендера
+
+  if(state.modal){
+    const m=state.modal;
+    const g=id=>document.getElementById(id);
+    g('m-date').value        = m.date;
+    g('m-time-start').value  = m.snapTimeStart  ?? (m.slot?.timeStart  || '');
+    g('m-time-end').value    = m.snapTimeEnd    ?? (m.slot?.timeEnd    || '');
+    g('m-student').value     = m.snapStudent    ?? (m.slot?.student    || '');
+    g('m-lesson-type').value = m.snapLessonType ?? (m.slot?.lessonType || '');
+    g('m-note').value        = m.snapNote       ?? (m.slot?.note       || '');
+    if(!m.slot&&!m.snapStudent) setTimeout(()=>g('m-student')?.focus(),80);
+  }
+  if(state.view==='day'&&todayISO===state.day) requestAnimationFrame(drawNowLine);
+}
+
+// ── TOPBAR ──
+function renderTopbar(){return`
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">Ж</div>
+      <div><h1>Художественная школа — журнал</h1></div>
+    </div>
+    <button onclick="logout()" style="background:rgba(255,255,255,0.12);border:none;color:var(--chalk);padding:7px 14px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;">Выйти</button>
+  </div>
+  <div class="main-tabs">
+    <button class="main-tab ${state.view==='week'?'active':''}"     onclick="state.view='week';render()">Неделя</button>
+    <button class="main-tab ${state.view==='day'?'active':''}"      onclick="state.view='day';render()">День</button>
+    <button class="main-tab ${state.view==='month'?'active':''}"    onclick="state.view='month';render()">Месяц</button>
+    <button class="main-tab ${state.view==='teachers'?'active':''}" onclick="state.view='teachers';render()">Преподаватели</button>
+  </div>`;}
+
+// ── SIDEBAR ──
+function renderSidebar(){return`
+  <div class="panel">
+    <h2>Преподаватели <span class="tag">${state.teachers.length}</span></h2>
+    ${state.teachers.length===0?'<div class="empty-hint">Добавьте первого преподавателя.</div>':''}
+    ${state.teachers.map(t=>`
+      <div class="teacher-row">
+        <span class="dot" style="background:${t.color}"></span>
+        <span class="teacher-name">${escHtml(t.name)}</span>
+        <button class="icon-btn" onclick="deleteTeacher('${t.id}')">✕</button>
+      </div>
+      <div class="workdays-row">
+        ${DAY_NAMES.map((dn,li)=>{const jsDay=li===6?0:li+1;
+          return`<button class="wd-btn ${t.workdays.includes(jsDay)?'on':''}" onclick="toggleWorkday('${t.id}',${jsDay})">${dn}</button>`;
+        }).join('')}
+      </div>
+      <div class="work-hours-row">
+        <span>с</span>
+        <input type="time" value="${t.workStart||'09:00'}" onchange="updateWorkHours('${t.id}','workStart',this.value)">
+        <span>до</span>
+        <input type="time" value="${t.workEnd||'18:00'}" onchange="updateWorkHours('${t.id}','workEnd',this.value)">
+      </div>
+    `).join('')}
+    <div class="add-teacher">
+      <input id="new-teacher-input" placeholder="Имя преподавателя"
+        onkeydown="if(event.key==='Enter'){addTeacher(this.value);this.value='';}">
+      <button class="btn small" onclick="const i=document.getElementById('new-teacher-input');addTeacher(i.value);i.value='';">+</button>
+    </div>
+  </div>`;}
+
+// ── WEEK ──
+function renderWeek(todayISO){
+  const ws=state.weekStart;
+  const days=[0,1,2,3,4,5,6].map(i=>addDays(ws,i));
+  const header=`<div class="gcell head-cell corner"></div>`+
+    days.map(d=>{
+      const iso=toISO(d);const jsDay=d.getDay();
+      const wc=state.teachers.filter(t=>t.workdays.includes(jsDay)).length;
+      return`<div class="gcell head-cell ${iso===todayISO?'is-today':''}" onclick="state.view='day';state.day='${iso}';render()">
+        <div class="dname">${DAY_NAMES[jsDayToIdx(jsDay)]}</div>
+        <div class="ddate">${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}</div>
+        <div class="dcount">${wc} преп.</div>
+      </div>`;
+    }).join('');
+  const rows=state.teachers.map(t=>{
+    const label=`<div class="gcell row-label"><span class="dot" style="background:${t.color}"></span><span>${escHtml(t.name)}</span></div>`;
+    const cells=days.map(d=>{
+      const iso=toISO(d);const works=t.workdays.includes(d.getDay());
+      const slots=slotsFor(t.id,iso);
+      return`<div class="gcell day-cell ${!works?'off-day':''}">
+        ${slots.map(s=>`<div class="slot-card ${s.status}" style="border-left-color:${t.color}" onclick="openModal('${t.id}','${iso}','${s.id}')">
+          <span class="t">${s.timeStart||''}${s.timeEnd?'–'+s.timeEnd:''}</span>
+          <span class="who"> ${escHtml(s.student)}</span>
+          ${s.lessonType?`<br><span class="subj">${escHtml(s.lessonType)}</span>`:''}
+          ${s.subscription==='yes'?'<span class="sub-badge">Абон</span>':''}
+        </div>`).join('')}
+        <button class="add-slot-btn" onclick="openModal('${t.id}','${iso}')">+</button>
+      </div>`;
+    }).join('');
+    return label+cells;
+  }).join('');
+  return`
+  <div class="nav-row">
+    <div class="range display">${fmtRange(ws)}</div>
+    <div class="nav-controls">
+      <button class="nav-btn" onclick="state.weekStart=addDays(state.weekStart,-7);render()">←</button>
+      <button class="today-badge" onclick="state.weekStart=startOfWeek(new Date());render()">Сегодня</button>
+      <button class="nav-btn" onclick="state.weekStart=addDays(state.weekStart,7);render()">→</button>
+    </div>
+  </div>
+  ${state.teachers.length===0
+    ?'<div class="panel"><div class="empty-hint">Добавьте преподавателей.</div></div>'
+    :`<div class="grid-wrap"><div class="week-grid">${header}${rows}</div></div>`}`;}
+
+// ── MONTH ──
+function renderMonth(todayISO){
+  const y=state.monthYear,m=state.monthMonth;
+  const firstDay=new Date(y,m,1);const lastDay=new Date(y,m+1,0);
+  let gs=new Date(firstDay);const fd=firstDay.getDay();
+  gs.setDate(firstDay.getDate()-(fd===0?6:fd-1));
+  const days=[];let cur=new Date(gs);
+  while(cur<=lastDay||days.length%7!==0||days.length<35){
+    days.push(new Date(cur));cur=addDays(cur,1);if(days.length>42)break;
+  }
+  const heads=DAY_NAMES.map(n=>`<div class="month-head-cell">${n}</div>`).join('');
+  const cells=days.map(d=>{
+    const iso=toISO(d);
+    const isToday=iso===todayISO;
+    const other=d.getMonth()!==m;
+    const jsDay=d.getDay();
+
+    // Преподаватели работающие в этот день недели
+    const workingTeachers=teachersWorkingOn(jsDay);
+
+    // Занятия этого дня
+    const ds=slotsForDate(iso);
+    const shown=ds.slice(0,2); // показываем 2, остальные — "+N ещё"
+    const total=ds.length;
+
+    const teacherDotsHtml = workingTeachers.length>0
+      ? `<div class="month-teacher-dots">
+          ${workingTeachers.map(t=>`
+            <div class="month-teacher-dot" title="${escHtml(t.name)}">
+              <span class="d" style="background:${t.color}"></span>
+              <span>${escHtml(t.name.split(' ')[0])}</span>
+            </div>`).join('')}
+        </div>`
+      : '';
+
+    return`<div class="month-day ${other?'other-month':''} ${isToday?'is-today':''}"
+      onclick="state.view='day';state.day='${iso}';render()">
+      <div class="mday-num">${d.getDate()}</div>
+      ${!other?teacherDotsHtml:''}
+      ${shown.map(s=>{
+        const t=teacherById(s.teacherId);
+        return`<span class="month-slot-pill ${s.status}"
+          style="border-left:2px solid ${t?.color||'#ccc'}"
+          onclick="event.stopPropagation();openModal('${s.teacherId||''}','${iso}','${s.id}')">
+          ${s.timeStart?s.timeStart+' ':''}${escHtml(s.student)}
+        </span>`;
+      }).join('')}
+      ${total>2?`<div class="month-more">+${total-2} ещё</div>`:''}
+    </div>`;
+  }).join('');
+  return`
+  <div class="nav-row">
+    <div class="range display">${MONTHS_FULL[m]} ${y}</div>
+    <div class="nav-controls">
+      <button class="nav-btn" onclick="prevMonth()">←</button>
+      <button class="today-badge" onclick="state.monthYear=new Date().getFullYear();state.monthMonth=new Date().getMonth();render()">Сегодня</button>
+      <button class="nav-btn" onclick="nextMonth()">→</button>
+    </div>
+  </div>
+  <div class="month-grid-wrap"><div class="month-grid">${heads}${cells}</div></div>`;}
+
+function prevMonth(){if(state.monthMonth===0){state.monthMonth=11;state.monthYear--;}else state.monthMonth--;render();}
+function nextMonth(){if(state.monthMonth===11){state.monthMonth=0;state.monthYear++;}else state.monthMonth++;render();}
+
+// ── DAY ──
+function renderDay(todayISO){
+  const dateObj = parseISO(state.day);
+  const jsDay   = dateObj.getDay();
+  const dayIdx  = jsDayToIdx(jsDay);
+
+  const visible = state.teachers.filter(t =>
+    t.workdays.includes(jsDay) || slotsFor(t.id, state.day).length > 0
+  );
+  const isMobile = window.innerWidth <= 640;
+  const shown = isMobile && state.activeTeacherTab
+    ? visible.filter(t => t.id === state.activeTeacherTab)
+    : visible;
+
+  const hourH      = 56;
+  const halfH      = hourH / 2;
+  const totalMins  = (GRID_END - GRID_START) * 60;
+  const slotsCount = totalMins / SLOT_STEP;
+  const gridH      = slotsCount * halfH;
+  const timeColW   = 52;
+  const colW       = Math.max(140, Math.floor(
+    (window.innerWidth - (isMobile ? 20 : 260) - timeColW) / Math.max(shown.length, 1)
+  ));
+  const totalW = timeColW + shown.length * colW;
+
+  // ── Шапка ──
+  const headerHtml = `
+    <div style="
+      display:flex;
+      min-width:${totalW}px;
+      position:sticky;top:0;z-index:10;
+      background:var(--paper);
+      border-bottom:2px solid var(--card-border);
+      box-sizing:border-box;
+    ">
+      <div style="width:${timeColW}px;flex-shrink:0;border-right:1px solid var(--card-border);"></div>
+      ${shown.map((t,ti) => `
+        <div style="
+          width:${colW}px;flex-shrink:0;
+          display:flex;align-items:center;justify-content:center;gap:6px;
+          padding:10px 6px;font-size:12.5px;font-weight:700;
+          border-right:${ti < shown.length-1 ? '1px solid var(--card-border)' : 'none'};
+          box-sizing:border-box;
+        ">
+          <span style="width:9px;height:9px;border-radius:50%;background:${t.color};flex-shrink:0;display:inline-block;"></span>
+          ${escHtml(t.name)}
+        </div>`).join('')}
+    </div>`;
+
+  // ── Тело: время + колонки ──
+  // Временные метки
+  let timeMarks = '';
+  for(let i = 0; i < slotsCount; i++){
+    const mins   = GRID_START * 60 + i * SLOT_STEP;
+    const isHour = mins % 60 === 0;
+    const topPx  = i * halfH;
+    if(!isHour) continue;
+    timeMarks += `
+      <div style="
+        position:absolute;top:${topPx}px;left:0;
+        width:${timeColW}px;height:${hourH}px;
+        display:flex;align-items:flex-start;
+        padding:4px 6px 0 4px;
+        font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
+        border-bottom:1px solid var(--card-border);
+        box-sizing:border-box;
+      ">${minsToTime(mins)}</div>`;
+  }
+
+  // Горизонтальные линии сетки (фон)
+  let gridLines = '';
+  for(let i = 0; i < slotsCount; i++){
+    const isHour = i % 2 === 0;
+    const topPx  = i * halfH;
+    gridLines += `
+      <div style="
+        position:absolute;
+        top:${topPx}px;left:0;right:0;height:${halfH}px;
+        border-bottom:${isHour
+          ? '1px solid var(--card-border)'
+          : '1px dashed rgba(30,42,34,0.06)'};
+        box-sizing:border-box;pointer-events:none;
+      "></div>`;
+  }
+
+  // Колонки преподавателей
+  let teacherColsHtml = shown.map((t, ti) => {
+    const works  = t.workdays.includes(jsDay);
+    const leftPx = timeColW + ti * colW;
+
+    // Фоновые ячейки (рабочие/нерабочие часы)
+    let bgCells = '';
+    for(let i = 0; i < slotsCount; i++){
+      const mins    = GRID_START * 60 + i * SLOT_STEP;
+      const timeStr = minsToTime(mins);
+      const topPx   = i * halfH;
+      const inHours = isWorkHour(t, timeStr);
+      const clickable = works && inHours;
+
+      let bgStyle = '';
+      if(!works){
+        bgStyle = `
+          background:repeating-linear-gradient(
+            -45deg,
+            rgba(30,42,34,0.05) 0px,rgba(30,42,34,0.05) 3px,
+            transparent 3px,transparent 8px
+          );
+          background-color:rgba(30,42,34,0.09);`;
+      } else if(!inHours){
+        bgStyle = `background-color:rgba(30,42,34,0.055);`;
+      }
+
+      bgCells += `
+        <div style="
+          position:absolute;top:${topPx}px;left:0;right:0;
+          height:${halfH}px;
+          ${bgStyle}
+          cursor:${clickable ? 'pointer' : 'default'};
+          box-sizing:border-box;
+        " ${clickable
+          ? `onclick="handleCellClick('${t.id}','${state.day}','${timeStr}')"`
+          : ''}></div>`;
+    }
+
+    // Слоты занятий
+    let slotBlocksHtml = '';
+    slotsFor(t.id, state.day).forEach(s => {
+      if(!s.timeStart) return;
+      const startM   = timeToMins(s.timeStart);
+      const endM     = timeToMins(s.timeEnd || minsToTime(startM + 60));
+      const dur      = Math.max(15, endM - startM);
+      const topPx    = ((startM - GRID_START * 60) / 60) * hourH;
+      const heightPx = Math.max(22, (dur / 60) * hourH - 4);
+
+      slotBlocksHtml += `
+        <div class="tg-slot ${s.status}"
+          style="
+            position:absolute;
+            top:${topPx}px;
+            left:3px;right:3px;
+            height:${heightPx}px;
+            border-left-color:${t.color};
+          "
+          onclick="openModal('${t.id}','${state.day}','${s.id}')">
+          <div class="ts-time">${s.timeStart}${s.timeEnd ? '–'+s.timeEnd : ''}</div>
+          <div class="ts-name">${escHtml(s.student)}</div>
+          ${s.lessonType ? `<div class="ts-subj">${escHtml(s.lessonType)}</div>` : ''}
+        </div>`;
+    });
+
+    // Каждая колонка — position:relative контейнер
+    // Слоты позиционируются ВНУТРИ него — left/right не вылезают за границы
+    return `
+      <div style="
+        position:absolute;
+        top:0;
+        left:${leftPx}px;
+        width:${colW}px;
+        height:${gridH}px;
+        border-right:${ti < shown.length-1 ? '1px solid var(--card-border)' : 'none'};
+        box-sizing:border-box;
+        overflow:hidden;
+      ">
+        <div style="position:relative;width:100%;height:100%;">
+          ${bgCells}
+          ${slotBlocksHtml}
+        </div>
+      </div>`;
+  }).join('');
+
+  // Линия текущего времени
+  const nowLineHtml = `
+    <div class="tg-now-line" id="now-line" style="display:none;left:${timeColW}px;right:0;">
+      <div class="tg-now-dot"></div>
+    </div>`;
+
+  // Мобильные табы
+  const tabs = state.teachers.length > 1 ? `
+    <div class="teacher-tabs">
+      ${state.teachers.map(t => `
+        <button class="teacher-tab ${state.activeTeacherTab === t.id ? 'active' : ''}"
+          style="${state.activeTeacherTab === t.id
+            ? `background:${t.color};border-color:${t.color};` : ''}"
+          onclick="state.activeTeacherTab='${t.id}';render()">
+          ${escHtml(t.name)}
+        </button>`).join('')}
+    </div>` : '';
+
+  const bodyHtml = `
+    <div style="position:relative;height:${gridH}px;min-width:${totalW}px;">
+
+      <!-- Временная колонка (sticky left) -->
+      <div style="
+        position:sticky;left:0;
+        width:${timeColW}px;height:${gridH}px;
+        background:var(--paper);
+        border-right:1px solid var(--card-border);
+        z-index:3;float:left;
+        box-sizing:border-box;
+      ">
+        <div style="position:relative;height:100%;">${timeMarks}</div>
+      </div>
+
+      <!-- Зона колонок -->
+      <div style="
+        position:absolute;
+        top:0;left:${timeColW}px;right:0;
+        height:${gridH}px;
+      ">
+        <!-- Горизонтальные линии -->
+        <div style="position:absolute;inset:0;pointer-events:none;">${gridLines}</div>
+        <!-- Колонки преподавателей -->
+        ${teacherColsHtml}
+      </div>
+
+      <!-- Линия времени -->
+      ${nowLineHtml}
+    </div>`;
+
+  return `
+  <div class="day-nav">
+    <button class="nav-btn" onclick="state.day=toISO(addDays(parseISO(state.day),-1));render()">←</button>
+    <input type="date" value="${state.day}" onchange="state.day=this.value;render()">
+    <button class="nav-btn" onclick="state.day=toISO(addDays(parseISO(state.day),1));render()">→</button>
+    <button class="today-badge" onclick="state.day=toISO(new Date());render()">Сегодня</button>
+    <div style="flex:1"></div>
+    <button class="btn ghost small" onclick="openModal('','${state.day}')">+ Занятие</button>
+  </div>
+  <div style="margin-bottom:12px;">
+    <div class="day-title">${DAY_NAMES_FULL[dayIdx]}, ${dateObj.getDate()} ${MONTHS[dateObj.getMonth()]}</div>
+    <div class="day-stat">Работают ${visible.length} из ${state.teachers.length} преподавателей</div>
+  </div>
+  ${state.teachers.length === 0
+    ? '<div class="panel"><div class="empty-hint">Добавьте преподавателей.</div></div>'
+    : `<div class="day-outer">
+        ${tabs}
+        <div class="day-scroll" id="day-scroll">
+          ${headerHtml}
+          ${bodyHtml}
+        </div>
+      </div>`
+  }`;
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+async function init(){
+  render();
+  await loadAll();
+  render();
+  setInterval(()=>{if(state.view==='day')drawNowLine();},60000);
+  window.addEventListener('offline',()=>{setSyncState('offline');});
+  window.addEventListener('online', ()=>{showToast('✅ Соединение восстановлено');retryLoad();});
+}
+</script>
+</body>
+</html>
